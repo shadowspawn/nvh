@@ -6,6 +6,9 @@
 
 ### Added
 
+- support for recognition of `arm64` and `aarch64` architectures
+  - [upstream PR #448](https://github.com/tj/n/pull/448)
+
 ### Changed
 
 - Fix `--lts` for mirrors with multiple versions
