@@ -1,4 +1,4 @@
-This is a fork of [tj/n](https://github.com/tj/n). See [CHANGELOG.md] for local changes.
+This is a fork of [tj/n](https://github.com/tj/n). See [CHANGELOG.md](CHANGELOG.md) for local changes.
 
 # `n` – Interactively Manage Your Node.js Versions
 
