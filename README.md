@@ -1,3 +1,5 @@
+This is a fork of [tj/n](https://github.com/tj/n). See [CHANGELOG.md] for local changes.
+
 # `n` – Interactively Manage Your Node.js Versions
 
 [![Join the chat at https://gitter.im/tj/n](https://img.shields.io/gitter/room/tj/n.svg?style=flat-square)](https://gitter.im/tj/n)
