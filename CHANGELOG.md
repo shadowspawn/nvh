@@ -2,6 +2,14 @@
 
 <!-- markdownlint-disable MD024 -->
 
+## [Unreleased]
+
+### Added
+
+### Changed
+
+### Removed
+
 ## 2.2.0
 
 ### Added
