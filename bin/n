@@ -4,7 +4,7 @@
 # Setup.
 #
 
-VERSION="2.2.0"
+VERSION="3.0.0"
 N_PREFIX=${N_PREFIX-/usr/local}
 BASE_VERSIONS_DIR=$N_PREFIX/n/versions
 
@@ -667,7 +667,7 @@ display_bin_path_for_version() {
 
   local bin=${VERSIONS_DIR[$DEFAULT]}/$version/bin/node
   if test -f $bin; then
-    printf "$bin \n"
+    printf "$bin\n"
   else
     abort "$version is not installed"
   fi

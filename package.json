@@ -1,7 +1,7 @@
 {
   "name": "n",
   "description": "Interactively Manage All Your Node Versions",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "author": "John Gee",
   "homepage": "https://github.com/JohnRGee/n",
   "bugs": "https://github.com/JohnRGee/n/issues",
