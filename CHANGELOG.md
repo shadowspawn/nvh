@@ -4,8 +4,18 @@
 
 ## 4.0.0-0
 
-- Added logging to activate when not installing. (Changes messages.)
+### Added
+
+- added logging to install when no download required, saying activated or unchanged
   - [upstream issue #198](https://github.com/tj/n/issues/198)
+- support partial version numbers with `bin` and `use` (e.g. 8)
+  - [upstream issue #252](https://github.com/tj/n/issues/252)
+
+### Changed
+
+- fixed partial number lookups for install/bin/use so 6.1 matches 6.1.0 (not 6.14.3)
+- (internal) share lookups for install/bin/use so consistent behaviour (such as partial number lookups)
+- minor changes to error messages for invalid versions
 
 ## 3.0.0
  

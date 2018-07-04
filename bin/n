@@ -544,27 +544,8 @@ install_lts() {
 #
 
 install() {
-  local version=
-  if [[ "$1" =~ [a-z]{2,} ]]; then
-    version=$(display_latest_codename_version $1)
-    test $version || abort "invalid codename $1"
-  else
-    version=${1#v}
-  fi
-
-  local dots=$(echo $version | sed 's/[^.]*//g')
-  if test ${#dots} -lt 2; then
-    version=$($GET 2> /dev/null ${MIRROR[DEFAULT]} \
-      | egrep "</a>" \
-      | egrep -o '[0-9]+\.[0-9]+\.[0-9]+' \
-      | egrep -v '^0\.[0-7]\.' \
-      | egrep -v '^0\.8\.[0-5]$' \
-      | sort -u -k 1,1n -k 2,2n -k 3,3n -t . \
-      | egrep ^$version \
-      | tail -n1)
-
-    test $version || abort "invalid version ${1#v}"
-  fi
+  local version=$(display_latest_resolved_version $1)
+  test $version || abort "invalid version ${1}"
 
   local dir=${VERSIONS_DIR[$DEFAULT]}/$version
 
@@ -651,20 +632,8 @@ prune_versions() {
 
 display_bin_path_for_version() {
   test -z $1 && abort "version required"
-  local version=$1
-
-  if [ "$version" = "latest" ]; then
-    version=$(display_latest_version)
-  elif [ "$version" = "stable" ]; then
-    version=$(display_latest_stable_version)
-  elif [ "$version" = "lts" ]; then
-    version=$(display_latest_lts_version)
-  elif [[ "$version" =~ [a-z]{2,} ]]; then
-    version=$(display_latest_codename_version $version)
-    test $version || abort "invalid codename $version"
-  else
-    local version=${1#v}
-  fi
+  local version=$(display_latest_resolved_version $1)
+  test $version || abort "invalid version ${1}"
 
   local bin=${VERSIONS_DIR[$DEFAULT]}/$version/bin/node
   if test -f $bin; then
@@ -680,20 +649,8 @@ display_bin_path_for_version() {
 
 execute_with_version() {
   test -z $1 && abort "version required"
-  local version=$1
-
-  if [ "$version" = "latest" ]; then
-    version=$(display_latest_version)
-  elif [ "$version" = "stable" ]; then
-    version=$(display_latest_stable_version)
-  elif [ "$version" = "lts" ]; then
-    version=$(display_latest_lts_version)
-  elif [[ "$version" =~ [a-z]{2,} ]]; then
-    version=$(display_latest_codename_version $version)
-    test $version || abort "invalid codename $version"
-  else
-    version=${1#v}
-  fi
+  local version=$(display_latest_resolved_version $1)
+  test $version || abort "invalid version ${1}"
 
   local bin=${VERSIONS_DIR[$DEFAULT]}/$version/bin/node
 
@@ -711,9 +668,10 @@ execute_with_version() {
 #
 
 display_latest_codename_version() {
+  local codename=$1
   local folder_name=$($GET 2> /dev/null ${MIRROR[$DEFAULT]} \
     | egrep "</a>" \
-    | egrep -o "latest-$1" \
+    | egrep -o "latest-$codename" \
     | sort \
     | tail -n1)
   test $folder_name || return 0
@@ -722,6 +680,23 @@ display_latest_codename_version() {
     | egrep "</a>" \
     | egrep -o '[0-9]+\.[0-9]+\.[0-9]+' \
     | sort -u -k 1,1n -k 2,2n -k 3,3n -t . \
+    | tail -n1
+}
+
+#
+# Display latest partial version number.
+#
+
+display_latest_partial_version() {
+  # quote dots in partial (as \Q\E not widely supported in regular expressions)
+  local partial=$(echo $1 | sed 's/\./\\./g')
+  $GET 2> /dev/null ${MIRROR[DEFAULT]} \
+    | egrep "</a>" \
+    | egrep -o '[0-9]+\.[0-9]+\.[0-9]+' \
+    | egrep -v '^0\.[0-7]\.' \
+    | egrep -v '^0\.8\.[0-5]$' \
+    | sort -u -k 1,1n -k 2,2n -k 3,3n -t . \
+    | egrep "^$partial\." \
     | tail -n1
 }
 
@@ -751,6 +726,30 @@ display_latest_version() {
 display_latest_stable_version() {
   check_io_supported "--stable"
   display_latest_lts_version
+}
+
+#
+# Display resolved version.
+#
+
+display_latest_resolved_version() {
+  local version=$1
+  if [ "$version" = "latest" ]; then
+    version=$(display_latest_version)
+  elif [ "$version" = "stable" ]; then
+    version=$(display_latest_stable_version)
+  elif [ "$version" = "lts" ]; then
+    version=$(display_latest_lts_version)
+  elif [[ "$version" =~ [a-z]{2,} ]]; then
+    version=$(display_latest_codename_version $version)
+  else
+    version=${1#v}
+    local dots=$(echo $version | sed 's/[^.]*//g')
+    if test ${#dots} -lt 2; then
+      version=$(display_latest_partial_version $version)
+    fi
+  fi
+  echo $version
 }
 
 #
@@ -826,9 +825,6 @@ else
       as|use) shift; execute_with_version $@; exit ;;
       rm|-) shift; remove_versions $@; exit ;;
       prune) prune_versions; exit ;;
-      latest) install_latest; exit ;;
-      stable) install_stable; exit ;;
-      lts) install_lts; exit ;;
       ls|list) display_remote_versions; exit ;;
       *) install $1; exit ;;
     esac
