@@ -2,6 +2,11 @@
 
 <!-- markdownlint-disable MD024 -->
 
+## 4.0.0-0
+
+- Added logging to activate when not installing. (Changes messages.)
+  - [upstream issue #198](https://github.com/tj/n/issues/198)
+
 ## 3.0.0
  
  New features. Some changes which are not fully backwards compatible.
