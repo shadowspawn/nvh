@@ -370,9 +370,8 @@ display_versions() {
         ;;
       "")
         # enter key returns empty string
-        activate $selected
         leave_fullscreen
-        echo $selected
+        activate $selected
         exit
         ;;
     esac
@@ -507,6 +506,9 @@ activate() {
       fi
     done
     disable_pax_mprotect "$N_PREFIX/bin/node"
+    log activated $(node --version)
+  else
+    log unchanged $(node --version)
   fi
 }
 
@@ -600,7 +602,6 @@ install() {
 
   if $ACTIVATE ; then
     activate ${BINS[$DEFAULT]}/$version
-    log installed $(node --version)
   fi
   echo
 }
