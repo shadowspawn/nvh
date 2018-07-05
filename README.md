@@ -65,6 +65,11 @@ Use or install the latest LTS official release:
 
     $ n lts
 
+Use or install release streams by codename or partial version number:
+
+    $ n carbon
+    $ n 8
+
 ### Removing Versions
 
 Remove some versions:
