@@ -1,35 +1,38 @@
-This is a fork of [tj/n](https://github.com/tj/n). See [CHANGELOG.md](CHANGELOG.md) for local changes.
-
 # `n` – Interactively Manage Your Node.js Versions
 
-[![Join the chat at https://gitter.im/tj/n](https://img.shields.io/gitter/room/tj/n.svg?style=flat-square)](https://gitter.im/tj/n)
-[![npm](https://img.shields.io/npm/dt/n.svg?style=flat-square)](https://www.npmjs.com/package/n)
-[![npm](https://img.shields.io/npm/dm/n.svg?style=flat-square)](https://www.npmjs.com/package/n)
-[![npm](https://img.shields.io/npm/v/n.svg?style=flat-square)](https://www.npmjs.com/package/n)
-[![npm](https://img.shields.io/npm/l/n.svg?style=flat-square)](https://www.npmjs.com/package/n)
+[![npm](https://img.shields.io/npm/dt/n.svg?style=flat-square)](https://www.npmjs.com/package/@shadowspawn/n)
+[![npm](https://img.shields.io/npm/dm/n.svg?style=flat-square)](https://www.npmjs.com/package/@shadowspawn/n)
+[![npm](https://img.shields.io/npm/v/n.svg?style=flat-square)](https://www.npmjs.com/package/@shadowspawn/n)
+[![npm](https://img.shields.io/npm/l/n.svg?style=flat-square)](https://www.npmjs.com/package/@shadowspawn/n)
 
 Node.js version management: no subshells, no profile setup, no convoluted API, just **simple**.
+
+This is a fork of [tj/n](https://github.com/tj/n). See [CHANGELOG.md](CHANGELOG.md) for fork changes.
 
 ## **Want to install Node nightly releases? Try [this](https://github.com/tj/n/issues/376#issuecomment-250876666)!**
 
 ![](http://nimit.io/images/n/n.gif)
 
-(Unfortunately `n` is not supported on Windows yet. If you're able to make it work, send in a pull request!)
+(Unfortunately `n` is not supported on Windows yet.)
 
 ## Installation
 
 Since you probably already have `node`, the easiest way to install `n` is through `npm`:
 
-    $ npm install -g n
+    npm install -g n
 
 Alternatively, you can clone this repo and
 
-    $ make install
+    make install
 
 to install `n` to `bin/n` of the directory specified in the environment variable `$PREFIX`, which defaults to `/usr/local` (note that you will likely need to use `sudo`). To install `n` in a custom location (such as `$CUSTOM_LOCATION/bin/n`), run `PREFIX=$CUSTOM_LOCATION make install`.
 
 Once installed, `n` installs `node` versions to subdirectory `n/versions` of the directory specified in environment variable `N_PREFIX`, which defaults to `/usr/local`; the _active_ `node`/`iojs` version is installed directly in `N_PREFIX`.
-To change the default to, say, `$HOME`, prefix later calls to `n` with `N_PREFIX=$HOME ` or add `export N_PREFIX=$HOME` to your shell initialization file.
+To change the default to, say, `$HOME`, prefix later calls to `n` with `N_PREFIX=$HOME` or add `export N_PREFIX=$HOME` to your shell initialization file.
+
+### n-install
+
+(Note: This solution use the original `tj\n` and not this fork.)
 
 Additionally, consider third-party installer [n-install](https://github.com/mklement0/n-install), which allows installation directly from GitHub; for instance,
 
@@ -37,16 +40,15 @@ Additionally, consider third-party installer [n-install](https://github.com/mkle
 
 sets both `PREFIX` and `N_PREFIX` to `$HOME/n`, installs `n` to `$HOME/n/bin`, modifies the initialization files of supported shells to export `N_PREFIX` and add `$HOME/n/bin` to the `PATH`, and installs the latest stable `node` version.
 
-
 As a result, both `n` itself and all `node` versions it manages are hosted inside a single, optionally configurable directory, which you can later remove with the included `n-uninstall` script. `n-update` updates `n` itself to the latest version. See the [n-install repo](https://github.com/mklement0/n-install) for more details.
 
-### Installing/Activating Versions
+## Installing/Activating Versions
 
 Simply execute `n <version>` to install a version of `node`. If `<version>` has already been installed (via `n`), `n` will activate that version.
 
-    $ n 0.8.14
-    $ n 0.8.17
-    $ n 0.9.6
+    n 4.9.1
+    n 6.14.3
+    n 8.1.3
 
 Execute `n` on its own to view your currently installed versions. Use the up and down arrow keys to navigate and press enter or the right arrow key to select. Use ^C (control + C) to exit the selection screen.
 If you like vim key bindings during the selection of node versions, you can use `j` and `k` to navigate up or down without using arrows.
@@ -59,34 +61,32 @@ If you like vim key bindings during the selection of node versions, you can use 
 
 Use or install the latest official release:
 
-    $ n latest
+    n latest
 
 Use or install the latest LTS official release:
 
-    $ n lts
+    n lts
 
 Use or install release streams by codename or partial version number:
 
-    $ n carbon
-    $ n 8
+    n carbon
+    n 8
 
-### Removing Versions
+## Removing Versions
 
 Remove some versions:
 
-    $ n rm 0.9.4 v0.10.0
+    n rm 0.9.4 v0.10.0
 
 Alternatively, you can use `-` in lieu of `rm`:
 
-    $ n - 0.9.4
+    n - 0.9.4
 
 Removing all versions except the current version:
 
-```bash
-$ n prune
-```
+    n prune
 
-### Binary Usage
+## Binary Usage
 
 When running multiple versions of `node`, we can target
 them directly by asking `n` for the binary path:
@@ -96,25 +96,17 @@ them directly by asking `n` for the binary path:
 
 Or by using a specific version through `n`'s `use` sub-command:
 
-    $ n use 0.9.4 some.js
+    n use 0.9.4 some.js
 
 Flags also work here:
 
-    $ n as 0.9.4 --debug some.js
+    n as 0.9.4 --debug some.js
 
-### Working with `npm`
+## Working with `npm`
 
 A node install normally includes npm as well, which might be a downgrade if you have upgraded npm separately. You can preserve your current npm and exclude it from the install:
 
-    $ n --preserve-npm 6.1.0
-
-After switching Node.js versions using `n`, `npm` may not work properly. This should fix it (thanks [@mikemoser](https://github.com/mikemoser)!):
-
-```sh
-$ curl -0 -L https://npmjs.com/install.sh | sudo sh
-```
-
-`sudo` may not be required depending on your system configuration.
+    n --preserve-npm 6.1.0
 
 ## Usage
 
@@ -182,11 +174,11 @@ By default `n` picks the binaries matching your system architecture, e.g. `n` wi
 
 Download and use latest 32 bit version of `node`:
 
-    $ n --arch x86 latest
+    n --arch x86 latest
 
 Download and use 64 bit LTS version of `node` for older Mac Intel Core 2 Duo systems (x86 image is no longer available but x64 runs fine):
 
-    $ n --arch x64 lts
+    n --arch x64 lts
 
 ## Additional Details
 
@@ -196,17 +188,7 @@ Activated versions are then installed to the prefix `/usr/local`, which may be a
 
 To alter where `n` operates, simply `export N_PREFIX`.
 
-`n` does not work on Windows at the moment. Pull Requests are appreciated.
-
-If you are searching for the latest version of `n` below 2.x.x, check out the branch `1.x.x`.
-
-## Core Team
-
-* Nimit Kalra – [@qw3rtman](https://github.com/qw3rtman)
-* Ted Gaydos – [@tedgaydos](https://github.com/tedgaydos)
-* Travis Webb – [@tjwebb](https://github.com/tjwebb)
-
-Please Read [Contributing Docs](https://github.com/tj/n/blob/master/.github/CONTRIBUTING.md)
+`n` does not work on Windows at the moment.
 
 ## License
 
