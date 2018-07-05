@@ -16,6 +16,8 @@
 - fixed partial number lookups for install/bin/use so 6.1 matches 6.1.0 (not 6.14.3)
 - (internal) share lookups for install/bin/use so consistent behaviour (such as partial number lookups)
 - minor changes to error messages for invalid versions
+- remove old iojs support from code and help
+  - [upstream PR #516](https://github.com/tj/n/pull/516)
 
 ## 3.0.0
  
