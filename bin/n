@@ -489,31 +489,6 @@ activate() {
 }
 
 #
-# Install latest version.
-#
-
-install_latest() {
-  install $(display_latest_version)
-}
-
-#
-# Install latest stable version.
-# (See additional comments for display_latest_stable_version)
-#
-
-install_stable() {
-  install $(display_latest_stable_version)
-}
-
-#
-# Install latest LTS version.
-#
-
-install_lts() {
-  install $(display_latest_lts_version)
-}
-
-#
 # Install <version>
 #
 
