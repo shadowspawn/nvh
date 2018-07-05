@@ -26,7 +26,7 @@
 - support for recognition of `arm64` and `aarch64` architectures
   - [upstream PR #448](https://github.com/tj/n/pull/448)
 - support codenames (e.g. carbon)
-  - [upstream PR #514](https://github.com/tj/n/pull/514)
+  - [upstream PR #515](https://github.com/tj/n/pull/515)
 
 ### Changed
 
