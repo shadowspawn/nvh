@@ -2,7 +2,7 @@
 
 Easily install Node.js versions. No profile setup required for default install location.
 
-Requires `bash` (but does not require a working node install).
+Requires `bash` (does not require a working node install).
 
 Forked from [tj/n](https://github.com/tj/n)
 
@@ -13,8 +13,7 @@ Since you probably already have `node`, the easiest way to install `nvh` is thro
     npm install -g @shadowspawn/nvh
     nvh --help
 
-The `nvh` command installs node to `/usr/local` by default. The downloads are written to subdirectory `nvh/versions`. You may override the location by defining `NVH_PREFIX`. 
-To change the default to say `$HOME/.nvh`, add `export NVH_PREFIX=$HOME/.nvh` to your shell initialization file and add `$HOME/.nvh/bin` to your `PATH`.
+The `nvh` command installs node to `/usr/local` by default, but you may override this location by defining `NVH_PREFIX` (see [environment variables](#optional-environment-variables)). The downloads are written to subdirectory `nvh/versions`.
 
 One way to bootstrap an install if `npm` is not yet available:
 
@@ -24,109 +23,82 @@ One way to bootstrap an install if `npm` is not yet available:
     npm install -g @shadowspawn/nvh
     nvh --help
 
+## Installing Node Versions
 
-<!-- 
-## Installing/Activating Versions
+Simply execute `nvh <version>` to download and install a version of `node`. If `<version>` has already been downloaded, `nvh` will activate that version.
 
-Simply execute `n <version>` to install a version of `node`. If `<version>` has already been installed (via `n`), `n` will activate that version.
+    nvh 4.9.1
+    nvh 6.14.3
 
-    n 4.9.1
-    n 6.14.3
-    n 8.1.3
-
-Execute `n` on its own to view your currently installed versions. Use the up and down arrow keys to navigate and press enter or the right arrow key to select. Use ^C (control + C) to exit the selection screen.
+Execute `nvh` on its own to view your downloaded versions. Use the up and down arrow keys to navigate and press enter or the right arrow key to select. Use `q` to exit the selection screen.
 If you like vim key bindings during the selection of node versions, you can use `j` and `k` to navigate up or down without using arrows.
 
-    $ n
+    $ nvh
 
       0.8.14
     ο 0.8.17
       0.9.6
 
-Use or install the latest official release:
+Install the latest official release:
 
-    n latest
+    nvh latest
 
-Use or install the latest LTS official release:
+Install the latest LTS official release:
 
-    n lts
+    nvh lts
 
-Use or install release streams by codename or partial version number:
+Install by codename or partial version number:
 
-    n carbon
-    n 8
+    nvh carbon
+    nvh 8
 
-## Removing Versions
+## Removing Downloaded Node Versions
 
-Remove some versions:
+Remove some downloaded versions:
 
-    n rm 0.9.4 v0.10.0
+    nvh rm 0.9.4 v0.10.0
 
-Alternatively, you can use `-` in lieu of `rm`:
+Remove all versions except the installed version:
 
-    n - 0.9.4
-
-Removing all versions except the current version:
-
-    n prune
+    nvh prune
 
 ## Binary Usage
 
 When running multiple versions of `node`, we can target
-them directly by asking `n` for the binary path:
+a downloaded version directly by asking `nvh` for the binary path:
 
-    $ n bin 0.9.4
-    /usr/local/n/versions/0.9.4/bin/node
+    $ nvh bin 0.9.4
+    /usr/local/nvh/versions/0.9.4/bin/node
 
-Or by using a specific version through `n`'s `use` sub-command:
+Or run a downloaded `node` version through `nvh`'s `use` command:
 
-    n use 0.9.4 some.js
+    nvh use 8.11.3 --debug some.js
 
-Flags also work here:
+## Preserving npm
 
-    n as 0.9.4 --debug some.js
+A `node` install normally includes `npm` as well, but you may wish to preserve an updated `npm` (and `npx`) leaving them out of the install:
 
-Output can also be obtained from `n --help`.
+    nvh --preserve 6.1.0
 
+## Custom Architecture
 
-## Working with `npm`
+By default `nvh` picks the binaries matching your system architecture, e.g. `nvh` will download 64 bit binaries for a 64 bit system. You can override this by using the `-a` or `--arch` option. (Note: `nvh` does not track the architecture of downloads, so this does not allow switching between architectures with same version.)
 
-A node install normally includes npm as well, which might be a downgrade if you have upgraded npm separately. You can preserve your current npm and exclude it from the install:
+Install latest 32 bit version of `node`:
 
-    n --preserve-npm 6.1.0
+    nvh --arch x86 latest
 
-## Usage
+## Optional Environment Variables
 
+The `nvh` command downloads and installs to `/usr/local` by default, but you may override this location by defining `NVH_PREFIX`. 
+To change the location to say `$HOME/.nvh`, add lines like the following to your shell initialization file:
 
-## Custom source
+    export NVH_PREFIX=$HOME/.nvh
+    export PATH=$NVH_PREFIX/bin:$PATH
 
-If you would like to use a project other than the official Node.js project, you can use the special `n project [command]` which allows you to control the behavior of `n` using environment variables.
+Custom node mirror:
 
-NODE_MIRROR
+- `NVH_NODE_MIRROR`: overide default <https://nodejs.org/dist/>
+- `NVH_NODE_MIRROR_USER`: if custom mirror uses basic authentication
+- `NVH_NODE_MIRROR_PASSWORD`: if custom mirror uses basic authentication
 
-Optional Variables:
-
-* `HTTP_USER`: The username if the `PROJECT_URL` is protected by basic authentication
-* `HTTP_PASSWORD`: The password if the `PROJECT_URL` is protected by basic authentication
-* `PROJECT_VERSION_CHECK`: Many custom projects keep the same version number as the Node.js release they are based on, and maintain their own separate version in process. This allows you to define a JavaScript variable that will be used to check for the version of the process, for example: `process.versions.node`
-
-## Custom architecture
-
-By default `n` picks the binaries matching your system architecture, e.g. `n` will download 64 bit binaries for a 64 bit system. You can override this by using the `-a` or `--arch` option.
-
-Download and use latest 32 bit version of `node`:
-
-    n --arch x86 latest
-
-Download and use 64 bit LTS version of `node` for older Mac Intel Core 2 Duo systems (x86 image is no longer available but x64 runs fine):
-
-    n --arch x64 lts
-
-## Additional Details
-
-`n` installs versions to `/usr/local/n/versions` by default. Here, it can see what versions are currently installed and activate previously installed versions accordingly when `n <version>` is invoked again.
-
-Activated versions are then installed to the prefix `/usr/local`, which may be altered via the __`N_PREFIX`__ environment variable.
-
-To alter where `n` operates, simply `export N_PREFIX`.
- -->

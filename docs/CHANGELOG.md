@@ -39,6 +39,9 @@ Changes from upstream [tj/n](https://github.com/tj/n).
   - [upstream PR #516](https://github.com/tj/n/pull/516)
 - changed N_PREFIX to NVH_PREFIX
 - changed base versions directory from `n/versions` to `nvh/versions`
+- `NODE_MIRROR` changed to `NVH_NODE_MIRROR`
+- `HTTP_USER` changed to `NVH_NODE_MIRROR_USER`
+- `HTTP_PASSWORD` changed to `NVH_NODE_MIRROR_PASSWORD`
 
 ### Removed
 
@@ -47,5 +50,7 @@ Changes from upstream [tj/n](https://github.com/tj/n).
 - removed support for `PROJECT_NAME` (and `n project`)
 - remove support for `PROJECT_VERSION_CHECK`
 - `Makefile`
+- `nvh --latest`
+- `nvh --lts`
 
 [1.0.0-0]: https://github.com/tj/n/compare/8ad6cd3bc76fc674f7faf3d8cf2f4d6e7d1849c3...JohnRGee:develop

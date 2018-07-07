@@ -29,7 +29,7 @@ abort() {
 #
 
 BINS=("node")
-MIRROR=(${NODE_MIRROR-https://nodejs.org/dist/})
+MIRROR=(${NVH_NODE_MIRROR-https://nodejs.org/dist/})
 BIN_NAME=("node")
 VERSIONS_DIR=($BASE_VERSIONS_DIR/node)
 
@@ -45,15 +45,15 @@ WGET_PARAMS=( "--no-check-certificate"
               "-q"
               "-O-")
 
-if [ -n "$HTTP_USER" ];then
-  if [ -z "$HTTP_PASSWORD" ]; then
-    abort "Must specify HTTP_PASSWORD when supplying HTTP_USER"
+if [ -n "$NVH_NODE_MIRROR_USER" ];then
+  if [ -z "$NVH_NODE_MIRROR_PASSWORD" ]; then
+    abort "Must specify NVH_NODE_MIRROR_PASSWORD when supplying NVH_NODE_MIRROR_USER"
   fi
-  CURL_PARAMS+=("-u $HTTP_USER:$HTTP_PASSWORD")
-  WGET_PARAMS+=("--http-password=$HTTP_PASSWORD"
-                "--http-user=$HTTP_USER")
-elif [ -n "$HTTP_PASSWORD" ]; then
-  abort "Must specify HTTP_USER when supplying HTTP_PASSWORD"
+  CURL_PARAMS+=("-u $NVH_NODE_MIRROR_USER:$NVH_NODE_MIRROR_PASSWORD")
+  WGET_PARAMS+=("--http-password=$NVH_NODE_MIRROR_PASSWORD"
+                "--http-user=$NVH_NODE_MIRROR_USER")
+elif [ -n "$NVH_NODE_MIRROR_PASSWORD" ]; then
+  abort "Must specify NVH_NODE_MIRROR_USER when supplying NVH_NODE_MIRROR_PASSWORD"
 fi
 
 GET=
@@ -140,34 +140,48 @@ display_help() {
 
   Commands:
 
-    n                              Output versions installed
-    n latest                       Install or activate the latest node release
-    n -a x86 latest                As above but force 32 bit architecture
-    n lts                          Install or activate the latest LTS node release
-    n <version>                    Install node <version>
-    n use <version> [args ...]     Execute node <version> with [args ...]
-    n bin <version>                Output bin path for <version>
-    n rm <version ...>             Remove the given version(s)
-    n prune                        Remove all versions except the current version
-    n --latest                     Output the latest node version available
-    n --lts                        Output the latest LTS node version available
-    n ls                           Output the versions of node available
+    nvh                              Display downloaded node versions and install selection
+    nvh <version>                    Install node <version> (downloading if necessary)
+    nvh use <version> [args ...]     Execute downloaded node <version> with [args ...]
+    nvh bin <version>                Output bin path for downloaded node <version>
+    nvh rm <version ...>             Remove the given (exact) version(s)
+    nvh prune                        Remove all downloaded versions except the active version
+    nvh ls                           Output the versions of node available for download
+
+  Versions:
+
+    You can use an exact version like "8.11.3". A leading v is allowed like "v6.0.0".
+
+    You can also use named versions and incomplete versions, which lookup the latest downloadable version.
+
+    lts       Latest LTS node release
+    latest    Latest (current) node release
+    8         Latest 8.x.y release
+    6.1       Latest 6.1.x release
+    argon     Latest release in argon release stream (also boron, carbon...)
 
   Options:
 
-    -V, --version       Output current version of n
+    -V, --version       Output version of n
     -h, --help          Display help information
     -q, --quiet         Disable curl output (if available)
-    -d, --download      Download only
+    -d, --download      Download only, do not install
     -a, --arch          Override system architecture
-    -p, --preserve-npm  Preserve current npm during install or activate of node
+    -p, --preserve      Preserve npm and npx during install of node
 
   Aliases:
 
-    which   bin
-    use     as
-    list    ls
-    -       rm
+    current   = latest
+    list      = ls
+    use       = as
+    which     = bin
+    -         = rm
+
+  Examples:
+
+    nvh latest      Install the latest (current) node release
+    nvh -p lts      Install latest LTS version, preserving installed npm and npx
+    nvh rm 6.11.1   Remove downloaded 6.11.1
 
 EOF
 }
