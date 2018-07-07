@@ -40,3 +40,4 @@ Changes from upstream [tj/n](https://github.com/tj/n).
   - [upstream PR #467](https://github.com/tj/n/pull/467)
 - removed support for `PROJECT_NAME` (and `n project`)
 - remove support for `PROJECT_VERSION_CHECK`
+- `Makefile`

@@ -12,11 +12,7 @@ Since you probably already have `node`, the easiest way to install `nvh` is thro
 
     npm install -g @shadowspawn/nvh
 
-**[WORK IN PROGRESS]** Alternatively, you can clone this repo and
-
-    make install
-
-to install `n` to `bin/n` of the directory specified in the environment variable `$PREFIX`, which defaults to `/usr/local` (note that you will likely need to use `sudo`). To install `n` in a custom location (such as `$CUSTOM_LOCATION/bin/n`), run `PREFIX=$CUSTOM_LOCATION make install`.
+**[WORK IN PROGRESS]** 
 
 Once installed, `n` installs `node` versions to subdirectory `n/versions` of the directory specified in environment variable `N_PREFIX`, which defaults to `/usr/local`; the _active_ `node`/`iojs` version is installed directly in `N_PREFIX`.
 To change the default to, say, `$HOME`, prefix later calls to `n` with `N_PREFIX=$HOME` or add `export N_PREFIX=$HOME` to your shell initialization file.
