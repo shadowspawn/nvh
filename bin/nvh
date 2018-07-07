@@ -744,8 +744,6 @@ else
       -q|--quiet) set_quiet ;;
       -d|--download) ACTIVATE=false ;;
       -p|--preserve-npm) PRESERVE_NPM=true ;;
-      --latest) display_latest_version; exit ;;
-      --lts) display_latest_lts_version; exit ;;
       -a|--arch) shift; set_arch $1;; # set arch and continue
       bin|which) display_bin_path_for_version $2; exit ;;
       as|use) shift; execute_with_version $@; exit ;;
