@@ -5,8 +5,8 @@
 #
 
 VERSION="1.0.0-0"
-N_PREFIX=${N_PREFIX-/usr/local}
-BASE_VERSIONS_DIR=$N_PREFIX/n/versions
+NVH_PREFIX=${NVH_PREFIX-/usr/local}
+BASE_VERSIONS_DIR=$NVH_PREFIX/nvh/versions
 
 #
 # Log <type> <msg>
@@ -33,15 +33,6 @@ MIRROR=(${NODE_MIRROR-https://nodejs.org/dist/})
 BIN_NAME=("node")
 VERSIONS_DIR=($BASE_VERSIONS_DIR/node)
 
-if [ -n "$PROJECT_NAME" ]; then
-  BINS+=($PROJECT_NAME)
-  BIN_NAME+=($PROJECT_NAME)
-  if [ -z "$PROJECT_URL" ]; then
-    abort "Must specify PROJECT_URL when supplying PROJECT_NAME"
-  fi
-  MIRROR+=(${PROJECT_URL})
-  VERSIONS_DIR+=($BASE_VERSIONS_DIR/$PROJECT_NAME)
-fi
 
 #
 # Ensure we have curl or wget support.
@@ -145,11 +136,7 @@ handle_sigtstp() {
 display_help() {
   cat <<-EOF
 
-  Usage: n [options/env] [COMMAND] [args]
-
-  Environments:
-    n [COMMAND] [args]            Uses default env (node)
-    n project [COMMAND]           Uses custom env-variables to use non-official sources
+  Usage: n [options] [COMMAND] [args]
 
   Commands:
 
@@ -240,9 +227,6 @@ check_current_version() {
   command -v node &> /dev/null
   if test $? -eq 0; then
     local current=$(node --version)
-    if [ -n "$PROJECT_VERSION_CHECK" ]; then
-      current=$(node -p "$PROJECT_VERSION_CHECK || process.exit(1)" || node --version)
-    fi
     current=${current#v}
     for bin in ${BINS[@]}; do
       if diff &> /dev/null \
@@ -466,22 +450,22 @@ activate() {
     local dir=$BASE_VERSIONS_DIR/$version
     # Remove old npm to avoid potential issues with simple overwrite.
     if [[ $PRESERVE_NPM == false && -d "$dir/lib/node_modules/npm" ]]; then
-      if test -d "$N_PREFIX/lib/node_modules/npm"; then
-        rm -rf "$N_PREFIX/lib/node_modules/npm"
+      if test -d "$NVH_PREFIX/lib/node_modules/npm"; then
+        rm -rf "$NVH_PREFIX/lib/node_modules/npm"
       fi
     fi
     # Copy (lib before bin to avoid error messages on Darwin when cp over dangling link)
     for subdir in lib bin include share; do
       if [[ $PRESERVE_NPM == true ]]; then
-        mkdir -p "$N_PREFIX/$subdir"
-        (cd "$dir/$subdir"; tar -cf - --exclude npm --exclude npx .) | (cd "$N_PREFIX/$subdir"; tar -xf -)
-      elif test -L "$N_PREFIX/$subdir"; then
-        find "$dir/$subdir" -mindepth 1 -maxdepth 1 -exec cp -fR "{}" "$N_PREFIX/$subdir" \;
+        mkdir -p "$NVH_PREFIX/$subdir"
+        (cd "$dir/$subdir"; tar -cf - --exclude npm --exclude npx .) | (cd "$NVH_PREFIX/$subdir"; tar -xf -)
+      elif test -L "$NVH_PREFIX/$subdir"; then
+        find "$dir/$subdir" -mindepth 1 -maxdepth 1 -exec cp -fR "{}" "$NVH_PREFIX/$subdir" \;
       else
-        cp -fR "$dir/$subdir" $N_PREFIX
+        cp -fR "$dir/$subdir" $NVH_PREFIX
       fi
     done
-    disable_pax_mprotect "$N_PREFIX/bin/node"
+    disable_pax_mprotect "$NVH_PREFIX/bin/node"
     log activated $(node --version)
   else
     log unchanged $(node --version)
@@ -766,7 +750,6 @@ else
       --latest) display_latest_version; exit ;;
       --stable) display_latest_stable_version; exit ;;
       --lts) display_latest_lts_version; exit ;;
-      project) DEFAULT=1 ;;
       -a|--arch) shift; set_arch $1;; # set arch and continue
       bin|which) display_bin_path_for_version $2; exit ;;
       as|use) shift; execute_with_version $@; exit ;;

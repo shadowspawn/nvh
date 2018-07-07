@@ -33,5 +33,7 @@ Changes from upstream [tj/n](https://github.com/tj/n).
 - minor changes to error messages for invalid versions
 - remove old iojs support from code and help
   - [upstream PR #516](https://github.com/tj/n/pull/516)
+- changed N_PREFIX to NVH_PREFIX
+- changed base versions directory from `n/versions` to `nvh/versions`
 
 ### Removed
