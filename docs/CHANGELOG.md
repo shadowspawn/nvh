@@ -13,7 +13,7 @@ Changes from upstream [tj/n](https://github.com/tj/n).
 
 ### Added
 
-- add support for preserving npm+npx during install (`-p | --preserve-npm`)
+- add support for preserving npm+npx during install (`-p | --preserve`)
     - [upstream PR #513](https://github.com/tj/n/pull/513)
 - support for recognition of `arm64` and `aarch64` architectures
     - [upstream PR #448](https://github.com/tj/n/pull/448)

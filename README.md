@@ -76,9 +76,16 @@ Or run a downloaded `node` version through `nvh`'s `use` command:
 
 ## Preserving npm
 
-A `node` install normally includes `npm` as well, but you may wish to preserve an updated `npm` (and `npx`) leaving them out of the install:
+A `node` install normally includes `npm` as well, but you may wish to preserve an updated `npm` and `npx` leaving them out of the install:
 
-    nvh --preserve 6.1.0
+    $ nvh latest
+    activated : v10.6.0
+    $ npm --version
+    6.1.0
+    $ nvh --preserve lts
+    activated : v8.11.3
+    $ npm --version
+    6.1.0
 
 ## Custom Architecture
 
