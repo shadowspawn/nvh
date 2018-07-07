@@ -140,19 +140,21 @@ display_help() {
 
   Commands:
 
-    nvh                              Display downloaded node versions and install selection
-    nvh <version>                    Install node <version> (downloading if necessary)
-    nvh use <version> [args ...]     Execute downloaded node <version> with [args ...]
-    nvh bin <version>                Output bin path for downloaded node <version>
-    nvh rm <version ...>             Remove the given (exact) version(s)
-    nvh prune                        Remove all downloaded versions except the active version
-    nvh ls                           Output the versions of node available for download
+    nvh                             Display downloaded node versions and install selection
+    nvh <version>                   Install node <version> (downloading if necessary)
+    nvh use <version> [args ...]    Execute downloaded node <version> with [args ...]
+    nvh bin <version>               Output bin path for downloaded node <version>
+    nvh rm <version ...>            Remove the given (exact) version(s)
+    nvh prune                       Remove all downloaded versions except the active version
+    nvh ls                          Output all the versions of node available for download
+    nvh ls <inexact-version>        Output latest version available for download
 
   Versions:
 
     You can use an exact version like "8.11.3". A leading v is allowed like "v6.0.0".
 
-    You can also use named versions and incomplete versions, which lookup the latest downloadable version.
+    You can also use named versions and incomplete versions (except with rm),
+    which will lookup the latest matching version.
 
     lts       Latest LTS node release
     latest    Latest (current) node release
@@ -182,6 +184,7 @@ display_help() {
     nvh latest      Install the latest (current) node release
     nvh -p lts      Install latest LTS version, preserving installed npm and npx
     nvh rm 6.11.1   Remove downloaded 6.11.1
+    nvh ls lts      Output latest lts version
 
 EOF
 }
@@ -666,7 +669,7 @@ display_latest_version() {
 
 display_latest_resolved_version() {
   local version=$1
-  if [ "$version" = "latest" ]; then
+  if [ "$version" = "latest" ] || [ "$version" = "current" ]; then
     version=$(display_latest_version)
   elif [ "$version" = "lts" ]; then
     version=$(display_latest_lts_version)
@@ -730,6 +733,19 @@ display_remote_versions() {
 }
 
 #
+# Decide which versions to display.
+#
+
+display_resolved_remote_version() {
+  if test -z "$1"; then
+    display_remote_versions
+  else
+    display_latest_resolved_version $1
+  fi
+
+}
+
+#
 # Handle arguments.
 #
 
@@ -745,11 +761,11 @@ else
       -d|--download) ACTIVATE=false ;;
       -p|--preserve-npm) PRESERVE_NPM=true ;;
       -a|--arch) shift; set_arch $1;; # set arch and continue
-      bin|which) display_bin_path_for_version $2; exit ;;
+      bin|which) shift; display_bin_path_for_version $1; exit ;;
       as|use) shift; execute_with_version $@; exit ;;
       rm|-) shift; remove_versions $@; exit ;;
       prune) prune_versions; exit ;;
-      ls|list) display_remote_versions; exit ;;
+      ls|list) shift; display_resolved_remote_version $1; exit ;;
       *) install $1; exit ;;
     esac
     shift

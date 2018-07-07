@@ -24,6 +24,7 @@ Changes from upstream [tj/n](https://github.com/tj/n).
 - support partial version numbers with `bin` and `use` (e.g. 8)
   - [upstream issue #252](https://github.com/tj/n/issues/252)
   - (developer) `.gitignore` `.editorconfig` `.markdownling.js`
+- `nvh ls [inexact-version]`, like `nvh ls lts` or `nvh ls 6`
 
 ### Changed
 
@@ -50,7 +51,7 @@ Changes from upstream [tj/n](https://github.com/tj/n).
 - removed support for `PROJECT_NAME` (and `n project`)
 - remove support for `PROJECT_VERSION_CHECK`
 - `Makefile`
-- `nvh --latest`
-- `nvh --lts`
+- `nvh --latest` replaced by `nvh ls latest`
+- `nvh --lts` replaced by `nvh ls lts`
 
 [1.0.0-0]: https://github.com/tj/n/compare/8ad6cd3bc76fc674f7faf3d8cf2f4d6e7d1849c3...JohnRGee:develop
