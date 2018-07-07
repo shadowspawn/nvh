@@ -6,17 +6,26 @@ Requires `bash` (but does not require a working node install).
 
 Forked from [tj/n](https://github.com/tj/n)
 
-<!-- ## Installation
+## Installation
 
 Since you probably already have `node`, the easiest way to install `nvh` is through `npm`:
 
     npm install -g @shadowspawn/nvh
+    nvh --help
 
-**[WORK IN PROGRESS]** 
+The `nvh` command installs node to `/usr/local` by default. The downloads are written to subdirectory `nvh/versions`. You may override the location by defining `NVH_PREFIX`. 
+To change the default to say `$HOME/.nvh`, add `export NVH_PREFIX=$HOME/.nvh` to your shell initialization file and add `$HOME/.nvh/bin` to your `PATH`.
 
-Once installed, `n` installs `node` versions to subdirectory `n/versions` of the directory specified in environment variable `N_PREFIX`, which defaults to `/usr/local`; the _active_ `node`/`iojs` version is installed directly in `N_PREFIX`.
-To change the default to, say, `$HOME`, prefix later calls to `n` with `N_PREFIX=$HOME` or add `export N_PREFIX=$HOME` to your shell initialization file.
+One way to bootstrap an install if `npm` is not yet available:
 
+    git clone git@github.com:JohnRGee/nvh.git
+    ./nvh/bin/nvh lts
+    # Now node and npm are available
+    npm install -g @shadowspawn/nvh
+    nvh --help
+
+
+<!-- 
 ## Installing/Activating Versions
 
 Simply execute `n <version>` to install a version of `node`. If `<version>` has already been installed (via `n`), `n` will activate that version.

@@ -15,6 +15,9 @@
   "bin": {
     "nvh": "./bin/nvh"
   },
+  "files": [
+    "bin/nvh"
+  ],
   "repository": {
     "type": "git",
     "url": "git://github.com/JohnRGee/n.git"

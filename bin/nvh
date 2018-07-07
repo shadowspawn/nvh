@@ -136,7 +136,7 @@ handle_sigtstp() {
 display_help() {
   cat <<-EOF
 
-  Usage: n [options] [COMMAND] [args]
+  Usage: nvh [options] [COMMAND] [args]
 
   Commands:
 
