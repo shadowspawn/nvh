@@ -25,7 +25,7 @@ abort() {
 }
 
 #
-# All Bin (node+custom) configurations
+# All Bin (node+custom) configurations (still arrays)
 #
 
 BINS=("node")
@@ -148,6 +148,7 @@ display_help() {
     nvh prune                       Remove all downloaded versions except the active version
     nvh ls                          Output all the versions of node available for download
     nvh ls <inexact-version>        Output latest version available for download
+    nvh doctor                      Output diagnostics to help solve issues
 
   Versions:
 
@@ -746,6 +747,27 @@ display_resolved_remote_version() {
 }
 
 #
+# Show useful diagnostics
+#
+
+show_diagnostics() {
+  echo "Installs"
+  set -x
+  which -a nvh
+  nvh --version
+  which -a node
+  node --version
+  which -a npm
+  npm --version
+  set +x
+  echo
+  echo "Setup"
+  echo "node mirror: $MIRROR"
+  echo "install location: $NVH_PREFIX"
+  test -z "NVH_PREFIX" ||echo "PATH: $PATH"
+}
+
+#
 # Handle arguments.
 #
 
@@ -766,6 +788,7 @@ else
       rm|-) shift; remove_versions $@; exit ;;
       prune) prune_versions; exit ;;
       ls|list) shift; display_resolved_remote_version $1; exit ;;
+      doctor) show_diagnostics; exit ;;
       *) install $1; exit ;;
     esac
     shift
