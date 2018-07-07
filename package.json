@@ -19,7 +19,6 @@
     "type": "git",
     "url": "git://github.com/JohnRGee/n.git"
   },
-  "preferGlobal": true,
   "os": [
     "!win32"
   ],
