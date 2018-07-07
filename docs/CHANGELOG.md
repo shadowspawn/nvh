@@ -10,8 +10,6 @@ Changes from upstream [tj/n](https://github.com/tj/n).
 
 - add support for preserving npm+npx during install (`-p | --preserve-npm`)
   - [upstream PR #513](https://github.com/tj/n/pull/513)
-- turn `stable` into an alias for `lts`
-  - [upstream PR #467](https://github.com/tj/n/pull/467)
 - support for recognition of `arm64` and `aarch64` architectures
   - [upstream PR #448](https://github.com/tj/n/pull/448)
 - support codenames (e.g. carbon)
@@ -37,3 +35,8 @@ Changes from upstream [tj/n](https://github.com/tj/n).
 - changed base versions directory from `n/versions` to `nvh/versions`
 
 ### Removed
+
+- removed support for deprecated `stable` version
+  - [upstream PR #467](https://github.com/tj/n/pull/467)
+- removed support for `PROJECT_NAME` (and `n project`)
+- remove support for `PROJECT_VERSION_CHECK`

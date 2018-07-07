@@ -97,14 +97,7 @@ A node install normally includes npm as well, which might be a downgrade if you 
 
 If you would like to use a project other than the official Node.js project, you can use the special `n project [command]` which allows you to control the behavior of `n` using environment variables.
 
-For example, to grab the latest io.js version:
-
-      PROJECT_NAME="iojs" PROJECT_URL="https://iojs.org/dist/" n project latest
-
-Required Variables:
-
-* `PROJECT_NAME`: The name the project will be stored under
-* `PROJECT_URL`: The location to download the project from. Note, this must follow the same format as the Node.js repos
+NODE_MIRROR
 
 Optional Variables:
 

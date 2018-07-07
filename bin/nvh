@@ -168,7 +168,6 @@ display_help() {
     use     as
     list    ls
     -       rm
-    stable  lts
 
 EOF
 }
@@ -648,20 +647,6 @@ display_latest_version() {
 }
 
 #
-# Display the latest stable release version.
-# Note: Stable is no longer used by nodejs to identify versions,
-# so this could be considered deprecated. To avoid breaking
-# existing usages and minimise code churn in meantime,
-# return the lts version.
-# lts is the version recommended for most users.
-#
-
-display_latest_stable_version() {
-  check_io_supported "--stable"
-  display_latest_lts_version
-}
-
-#
 # Display resolved version.
 #
 
@@ -669,8 +654,6 @@ display_latest_resolved_version() {
   local version=$1
   if [ "$version" = "latest" ]; then
     version=$(display_latest_version)
-  elif [ "$version" = "stable" ]; then
-    version=$(display_latest_stable_version)
   elif [ "$version" = "lts" ]; then
     version=$(display_latest_lts_version)
   elif [[ "$version" =~ [a-z]{2,} ]]; then
@@ -748,7 +731,6 @@ else
       -d|--download) ACTIVATE=false ;;
       -p|--preserve-npm) PRESERVE_NPM=true ;;
       --latest) display_latest_version; exit ;;
-      --stable) display_latest_stable_version; exit ;;
       --lts) display_latest_lts_version; exit ;;
       -a|--arch) shift; set_arch $1;; # set arch and continue
       bin|which) display_bin_path_for_version $2; exit ;;
