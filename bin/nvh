@@ -751,17 +751,23 @@ display_resolved_remote_version() {
 #
 
 show_diagnostics() {
-  echo "Installs"
-  set -x
-  which -a nvh
-  nvh --version
-  which -a node
-  node --version
-  which -a npm
-  npm --version
-  set +x
+  echo "# Commands"
+  echo "## bash"
+  bash --version
+  echo "## nvh"
+  command -v nvh && nvh --version
+  command -v node &> /dev/null
+  if test $? -eq 0; then
+    echo "## node"
+    command -v node && node --version && echo "node engine: $(node -e 'console.log(process.jsEngine)')"
+    echo "## npm"
+    command -v npm && npm --version
+  else
+    echo "## node not found"
+  fi
+
   echo
-  echo "Setup"
+  echo "# nvh Setup"
   echo "node mirror: $MIRROR"
   echo "install location: $NVH_PREFIX"
   test -z "NVH_PREFIX" ||echo "PATH: $PATH"
