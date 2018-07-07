@@ -1,22 +1,19 @@
 {
-  "name": "n",
-  "description": "Interactively Manage All Your Node Versions",
-  "version": "4.0.0-0",
+  "name": "nvh",
+  "description": "Easily install Node.js versions",
   "author": "John Gee",
-  "homepage": "https://github.com/JohnRGee/n",
-  "bugs": "https://github.com/JohnRGee/n/issues",
+  "homepage": "https://github.com/JohnRGee/nvh",
+  "bugs": "https://github.com/JohnRGee/nvh/issues",
   "keywords": [
     "nvm",
     "node",
     "version",
     "manager",
     "switcher",
-    "node",
-    "binary",
-    "env"
+    "node"
   ],
   "bin": {
-    "n": "./bin/n"
+    "nvh": "./bin/nvh"
   },
   "repository": {
     "type": "git",
