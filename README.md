@@ -106,6 +106,7 @@ There are a lot of minor changes! Taking advantage of a fresh start.
 - `n --latest` --> `nvh ls-remote latest`
 - environment variable names and download location
 - always install, even if version appears to match
+- allow removing installed version
 
 ### Removed
 
