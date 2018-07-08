@@ -45,6 +45,7 @@ Changes from upstream [tj/n](https://github.com/tj/n).
 - `HTTP_PASSWORD` changed to `NVH_NODE_MIRROR_PASSWORD`
 - `nvh use` and `nvh as` changed to `nvh run` (as per `nvm` and `nvs`)
 - `nvh ls` to `nvh ls-remote` (with aliases of `lsr` and `list-remote`)
+- `--arch` deprecated, considering alternative syntax
 
 ### Removed
 
@@ -57,5 +58,6 @@ Changes from upstream [tj/n](https://github.com/tj/n).
 - `nvh --lts` replaced by `nvh ls lts`
 - `bin` alias for `nvh which`
 - `-` alias for `nvh rm`
+- `--download`
 
 [1.0.0-0]: https://github.com/tj/n/compare/8ad6cd3bc76fc674f7faf3d8cf2f4d6e7d1849c3...JohnRGee:develop

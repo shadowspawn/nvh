@@ -87,14 +87,6 @@ A `node` install normally includes `npm` as well, but you may wish to preserve a
     $ npm --version
     6.1.0
 
-## Custom Architecture
-
-By default `nvh` picks the binaries matching your system architecture, e.g. `nvh` will download 64 bit binaries for a 64 bit system. You can override this by using the `-a` or `--arch` option. (Note: `nvh` does not track the architecture of downloads, so this does not allow switching between architectures with same version.)
-
-Install latest 32 bit version of `node`:
-
-    nvh --arch x86 latest
-
 ## Coming from `tj/n`
 
 There are a lot of minor changes! Taking advantage of a fresh start.
@@ -114,6 +106,8 @@ There are a lot of minor changes! Taking advantage of a fresh start.
 - `n -` alias
 - `stable`
 - iojs support
+- `--download`
+- `--arch` deprecated
 
 ## Optional Environment Variables
 
