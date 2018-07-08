@@ -95,9 +95,28 @@ Install latest 32 bit version of `node`:
 
     nvh --arch x86 latest
 
+## Coming from `tj/n`
+
+There are a lot of minor changes! Taking advantage of a fresh start.
+
+### Changed
+
+- `n use` and `n as` --> `nvh run`
+- `n --lts` --> `nvh ls-remote lts`
+- `n --latest` --> `nvh ls-remote latest`
+- environment variable names and download location
+- always install, even if version appears to match
+
+### Removed
+
+- `n bin` alias
+- `n -` alias
+- `stable`
+- iojs support
+
 ## Optional Environment Variables
 
-The `nvh` command downloads and installs to `/usr/local` by default, but you may override this location by defining `NVH_PREFIX`. 
+The `nvh` command downloads and installs to `/usr/local` by default, but you may override this location by defining `NVH_PREFIX`.
 To change the location to say `$HOME/.nvh`, add lines like the following to your shell initialization file:
 
     export NVH_PREFIX=$HOME/.nvh
@@ -108,4 +127,3 @@ Custom node mirror:
 - `NVH_NODE_MIRROR`: overide default <https://nodejs.org/dist/>
 - `NVH_NODE_MIRROR_USER`: if custom mirror uses basic authentication
 - `NVH_NODE_MIRROR_PASSWORD`: if custom mirror uses basic authentication
-

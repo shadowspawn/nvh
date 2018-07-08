@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [1.0.0-0] (unreleased)
 
-Changes from upstream [tj/n](https://github.com/tj/n). Some new features, bug fixes, and changes to command names.
+Changes from upstream [tj/n](https://github.com/tj/n).
 
 ### Added
 
@@ -21,22 +21,21 @@ Changes from upstream [tj/n](https://github.com/tj/n). Some new features, bug fi
     - [upstream PR #515](https://github.com/tj/n/pull/515)
 - added logging to install when no download required, saying activated or unchanged
     - [upstream issue #198](https://github.com/tj/n/issues/198)
-- support partial version numbers with `bin` and `use` (e.g. 8)
+- support partial version numbers with `which` and `run` (e.g. 8)
     - [upstream issue #252](https://github.com/tj/n/issues/252)
     - (developer) `.gitignore` `.editorconfig` `.markdownling.js`
-- `nvh ls [inexact-version]`, like `nvh ls lts` or `nvh ls 6`, to lookup latest downloadable version
+- `nvh lsr [inexact-version]`, like `nvh lsr lts` or `nvh lsr 6`, to lookup latest downloadable version
 - `nvh doctor` to show useful diagnostics
 
 ### Changed
 
 - fix `--lts` for mirrors with multiple versions
     - [upstream PR #512](https://github.com/tj/n/pull/512) (and [#360](https://github.com/tj/n/pull/360) for reproduce steps)
-- changed error for missing codename with bin to display numeric version
-- removed trailing space from `bin` output
+- changed error for missing codename with `which` to display numeric version
+- removed trailing space from `which` output
     - [upstream issue #456](https://github.com/tj/n/issues/456)
-- fixed partial number lookups for install/bin/use so 6.1 matches 6.1.0 (not 6.14.3)
-- (internal) share lookups for install/bin/use so consistent behaviour (such as partial number lookups)
-- minor changes to error messages for invalid versions
+- fixed partial number lookups for install/which/run so 6.1 matches 6.1.0 (not 6.14.3)
+- (internal) share lookups for install/which/run so consistent behaviour (such as partial number lookups)
 - remove old iojs support from code and help
     - [upstream PR #516](https://github.com/tj/n/pull/516)
 - changed N_PREFIX to NVH_PREFIX
