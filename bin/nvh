@@ -143,25 +143,25 @@ display_help() {
     nvh                             Display downloaded node versions and install selection
     nvh <version>                   Install node <version> (downloading if necessary)
     nvh run <version> [args ...]    Execute downloaded node <version> with [args ...]
-    nvh bin <version>               Output bin path for downloaded node <version>
-    nvh rm <version ...>            Remove the given (exact) version(s)
+    nvh which <version>             Output path for downloaded node <version>
+    nvh rm <version ...>            Remove the given (explicit) version(s)
     nvh prune                       Remove all downloaded versions except the active version
-    nvh ls                          Output all the versions of node available for download
-    nvh ls <inexact-version>        Output latest version available for download
+    nvh ls-remote                   Output all the versions of node available for download
+    nvh ls-remote <version>         Output latest matching version available for download
     nvh doctor                      Output diagnostics to help solve issues
 
   Versions:
 
-    You can use an exact version like "8.11.3". A leading v is allowed like "v6.0.0".
+    A version can be explicit like "8.11.3". A leading v is allowed like "v6.0.0".
 
-    You can also use named versions and incomplete versions (except with rm),
-    which will lookup the latest matching version.
+    You can also use named versions and incomplete versions,
+    which use a remote lookup to find the explicit version.
 
     lts       Latest LTS node release
     latest    Latest node release
     8         Latest 8.x.y release
     6.1       Latest 6.1.x release
-    argon     Latest release in argon release stream (also boron, carbon...)
+    argon     Latest release in Argon release stream (also boron, carbon...)
 
   Options:
 
@@ -174,9 +174,8 @@ display_help() {
 
   Aliases:
 
-    list      = ls
-    which     = bin
-    -         = rm
+    ls-remote: lsr, list-remote
+    rm: remove
 
   Examples:
 
@@ -787,11 +786,11 @@ else
       -d|--download) ACTIVATE=false ;;
       -p|--preserve) PRESERVE_NPM=true ;;
       -a|--arch) shift; set_arch $1;; # set arch and continue
-      bin|which) shift; display_bin_path_for_version $1; exit ;;
+      which) shift; display_bin_path_for_version $1; exit ;;
       run) shift; execute_with_version $@; exit ;;
-      rm|-) shift; remove_versions $@; exit ;;
+      rm|remove) shift; remove_versions $@; exit ;;
       prune) prune_versions; exit ;;
-      ls|list) shift; display_resolved_remote_version $1; exit ;;
+      lsr|ls-remote|list-remote) shift; display_resolved_remote_version $1; exit ;;
       doctor) show_diagnostics; exit ;;
       *) install $1; exit ;;
     esac

@@ -62,17 +62,17 @@ Remove all versions except the installed version:
 
     nvh prune
 
-## Binary Usage
+## Using Node Without Installing
 
-When running multiple versions of `node`, we can target
-a downloaded version directly by asking `nvh` for the binary path:
+When running multiple versions of `node`, you can target
+a downloaded version directly by asking `nvh` for the path:
 
-    $ nvh bin 0.9.4
+    $ nvh which 0.9.4
     /usr/local/nvh/versions/0.9.4/bin/node
 
-Or run a downloaded `node` version through `nvh`'s `use` command:
+Or run a downloaded `node` version with the `nvh run` command:
 
-    nvh use 8.11.3 --debug some.js
+    nvh run 8.11.3 --debug some.js
 
 ## Preserving npm
 
