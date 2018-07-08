@@ -71,7 +71,6 @@ test -z "$GET" && abort "curl or wget required"
 
 DEFAULT=0
 QUIET=true
-ACTIVATE=true
 ARCH=
 PRESERVE_NPM=false
 
@@ -97,6 +96,7 @@ done
 
 set_arch() {
   if test ! -z $1; then
+    echo "Warning: --arch deprecated"
     ARCH=$1
   else
     abort "missing -a|--arch value"
@@ -144,7 +144,7 @@ display_help() {
     nvh <version>                   Install node <version> (downloading if necessary)
     nvh run <version> [args ...]    Execute downloaded node <version> with [args ...]
     nvh which <version>             Output path for downloaded node <version>
-    nvh rm <version ...>            Remove the given (explicit) version(s)
+    nvh rm <version ...>            Remove the given downloaded (explicit) version(s)
     nvh prune                       Remove all downloaded versions except the active version
     nvh ls-remote                   Output all the versions of node available for download
     nvh ls-remote <version>         Output latest matching version available for download
@@ -168,7 +168,6 @@ display_help() {
     -V, --version       Output version of n
     -h, --help          Display help information
     -q, --quiet         Disable curl output (if available)
-    -d, --download      Download only, do not install
     -a, --arch          Override system architecture
     -p, --preserve      Preserve npm and npx during install of node
 
@@ -494,9 +493,7 @@ install() {
 
   if test -d $dir; then
     if [[ ! -e $dir/n.lock ]] ; then
-      if $ACTIVATE ; then
-        activate ${BINS[$DEFAULT]}/$version
-      fi
+      activate ${BINS[$DEFAULT]}/$version
       exit
     fi
   fi
@@ -524,9 +521,7 @@ install() {
 
   disable_pax_mprotect bin/node
 
-  if $ACTIVATE ; then
-    activate ${BINS[$DEFAULT]}/$version
-  fi
+  activate ${BINS[$DEFAULT]}/$version
   echo
 }
 
@@ -779,7 +774,6 @@ else
       -V|--version) display_n_version ;;
       -h|--help|help) display_help; exit ;;
       -q|--quiet) set_quiet ;;
-      -d|--download) ACTIVATE=false ;;
       -p|--preserve) PRESERVE_NPM=true ;;
       -a|--arch) shift; set_arch $1;; # set arch and continue
       which) shift; display_bin_path_for_version $1; exit ;;
