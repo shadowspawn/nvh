@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [1.0.0-0] (unreleased)
 
-Changes from upstream [tj/n](https://github.com/tj/n).
+Changes from upstream [tj/n](https://github.com/tj/n). Some new features, bug fixes, and changes to command names.
 
 ### Added
 
@@ -26,8 +26,6 @@ Changes from upstream [tj/n](https://github.com/tj/n).
     - (developer) `.gitignore` `.editorconfig` `.markdownling.js`
 - `nvh ls [inexact-version]`, like `nvh ls lts` or `nvh ls 6`, to lookup latest downloadable version
 - `nvh doctor` to show useful diagnostics
-- `current` as alias for `latest`
-    - [upstream isse #354](https://github.com/tj/n/issues/354)
 
 ### Changed
 
@@ -46,6 +44,7 @@ Changes from upstream [tj/n](https://github.com/tj/n).
 - `NODE_MIRROR` changed to `NVH_NODE_MIRROR`
 - `HTTP_USER` changed to `NVH_NODE_MIRROR_USER`
 - `HTTP_PASSWORD` changed to `NVH_NODE_MIRROR_PASSWORD`
+- `nvh use` and `nvh as` changed to `nvh run` (as per `nvm` and `nvs`)
 
 ### Removed
 
