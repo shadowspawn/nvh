@@ -25,12 +25,12 @@ One way to bootstrap an install if `npm` is not yet available:
 
 ## Installing Node Versions
 
-Simply execute `nvh <version>` to download and install a version of `node`. If `<version>` has already been downloaded, `nvh` will activate that version.
+Simply execute `nvh <version>` to download and install a version of `node`. If `<version>` has already been downloaded, `nvh` will install from its cache.
 
     nvh 4.9.1
     nvh 6.14.3
 
-Execute `nvh` on its own to view your downloaded versions. Use the up and down arrow keys to navigate and press enter or the right arrow key to select. Use `q` to exit the selection screen.
+Execute `nvh` on its own to view your downloaded versions. Use the up and down arrow keys to navigate and press enter or the right arrow key to select. Use `q` to exit the selection screen without installing.
 If you like vim key bindings during the selection of node versions, you can use `j` and `k` to navigate up or down without using arrows.
 
     $ nvh
@@ -52,16 +52,6 @@ Install by codename or partial version number:
     nvh carbon
     nvh 8
 
-## Removing Downloaded Node Versions
-
-Remove some downloaded versions:
-
-    nvh rm 0.9.4 v0.10.0
-
-Remove all versions except the installed version:
-
-    nvh prune
-
 ## Using Node Without Installing
 
 When running multiple versions of `node`, you can target
@@ -79,13 +69,36 @@ Or run a downloaded `node` version with the `nvh run` command:
 A `node` install normally includes `npm` as well, but you may wish to preserve an updated `npm` and `npx` leaving them out of the install:
 
     $ nvh latest
-    activated : v10.6.0
+    installed : v10.6.0
     $ npm --version
     6.1.0
     $ nvh --preserve lts
-    activated : v8.11.3
+    installed : v8.11.3
     $ npm --version
     6.1.0
+
+## Miscellaneous
+
+List remote version available for download, or latest available version for a named version or incomplete version:
+
+    nvh ls-remote
+    nvh ls-remote lts
+
+List downloaded versions:
+
+    nvh ls
+
+Remove some downloaded versions. Accepts explicit version numbers, and not named versions or incomplete version numbers.
+
+    nvh rm 0.9.4 v0.10.0
+
+Remove all downloaded versions except the installed version:
+
+    nvh prune
+
+Display diagnostics to help resolve problems:
+
+    nvh doctor
 
 ## Coming from `tj/n`
 
@@ -97,7 +110,7 @@ There are a lot of minor changes! Taking advantage of a fresh start.
 - `n --lts` --> `nvh ls-remote lts`
 - `n --latest` --> `nvh ls-remote latest`
 - environment variable names and download location
-- always install, even if version appears to match
+- always install, even if installed version appears to match
 - allow removing installed version
 
 ### Removed
@@ -119,6 +132,6 @@ To change the location to say `$HOME/.nvh`, add lines like the following to your
 
 Custom node mirror:
 
-- `NVH_NODE_MIRROR`: overide default <https://nodejs.org/dist/>
+- `NVH_NODE_MIRROR`: override default <https://nodejs.org/dist/>
 - `NVH_NODE_MIRROR_USER`: if custom mirror uses basic authentication
 - `NVH_NODE_MIRROR_PASSWORD`: if custom mirror uses basic authentication

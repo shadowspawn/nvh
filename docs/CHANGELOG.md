@@ -19,7 +19,7 @@ Changes from upstream [tj/n](https://github.com/tj/n).
     - [upstream PR #448](https://github.com/tj/n/pull/448)
 - support codenames (e.g. carbon)
     - [upstream PR #515](https://github.com/tj/n/pull/515)
-- added logging to install when no download required, saying activated or unchanged
+- added logging to install when no download required
     - [upstream issue #198](https://github.com/tj/n/issues/198)
 - support partial version numbers with `which` and `run` (e.g. 8)
     - [upstream issue #252](https://github.com/tj/n/issues/252)
@@ -43,21 +43,22 @@ Changes from upstream [tj/n](https://github.com/tj/n).
 - `NODE_MIRROR` changed to `NVH_NODE_MIRROR`
 - `HTTP_USER` changed to `NVH_NODE_MIRROR_USER`
 - `HTTP_PASSWORD` changed to `NVH_NODE_MIRROR_PASSWORD`
-- `nvh use` and `nvh as` changed to `nvh run` (as per `nvm` and `nvs`)
-- `nvh ls` to `nvh ls-remote` (with aliases of `lsr` and `list-remote`)
+- `n use` and `n as` changed to `nvh run` (as per `nvm` and `nvs`)
 - `--arch` deprecated, considering alternative syntax
+- `nvh ls` lists downloaded versions
+- `nvh ls-remote` replaces `n ls`
 
 ### Removed
 
 - removed support for deprecated `stable` version
-    - [upstream isse #354](https://github.com/tj/n/issues/354)
+    - [upstream issue #354](https://github.com/tj/n/issues/354)
 - removed support for `PROJECT_NAME` (and `n project`)
 - remove support for `PROJECT_VERSION_CHECK`
 - `Makefile`
-- `nvh --latest` replaced by `nvh ls latest`
-- `nvh --lts` replaced by `nvh ls lts`
-- `bin` alias for `nvh which`
-- `-` alias for `nvh rm`
+- `n --latest` replaced by `nvh lsr latest`
+- `n --lts` replaced by `nvh lsr lts`
+- `bin` alias for `n which`
+- `-` alias for `n rm`
 - `--download`
 
 [1.0.0-0]: https://github.com/tj/n/compare/8ad6cd3bc76fc674f7faf3d8cf2f4d6e7d1849c3...JohnRGee:develop

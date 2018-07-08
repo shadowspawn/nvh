@@ -148,6 +148,7 @@ display_help() {
     nvh prune                       Remove all downloaded versions except the active version
     nvh ls-remote                   Output all the versions of node available for download
     nvh ls-remote <version>         Output latest matching version available for download
+    nvh ls                          Output downloaded versions
     nvh doctor                      Output diagnostics to help solve issues
 
   Versions:
@@ -174,6 +175,7 @@ display_help() {
   Aliases:
 
     ls-remote: lsr, list-remote
+    ls: list
     rm: remove
 
   Examples:
@@ -187,7 +189,7 @@ EOF
 }
 
 err_no_installed_print_help() {
-  printf "\n  \033[31mError: no installed version\033[0m\n"
+  printf "\n  \033[31mError: no downloaded versions\033[0m\n"
   display_help
   exit 1
 }
@@ -781,6 +783,7 @@ else
       rm|remove) shift; remove_versions $@; exit ;;
       prune) prune_versions; exit ;;
       lsr|ls-remote|list-remote) shift; display_resolved_remote_version $1; exit ;;
+      ls|list) versions_paths; exit ;;
       doctor) show_diagnostics; exit ;;
       *) install $1; exit ;;
     esac
