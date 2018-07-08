@@ -2,9 +2,9 @@
 
 Easily install Node.js versions. No profile setup required for default install location.
 
-Requires `bash` (does not require a working node install).
+Requires `bash` (and does not require a working node install).
 
-Forked from [tj/n](https://github.com/tj/n)
+Forked from [tj/n](https://github.com/tj/n) with changes to command syntax, bug fixes, and feature additions.
 
 ## Installation
 
