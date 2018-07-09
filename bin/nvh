@@ -4,12 +4,35 @@
 # Setup.
 #
 
-VERSION="1.0.0-0"
-NVH_PREFIX=${NVH_PREFIX-/usr/local}
-BASE_VERSIONS_DIR=$NVH_PREFIX/nvh/versions
+readonly VERSION="1.0.0-0"
+readonly NVH_PREFIX=${NVH_PREFIX-/usr/local}
+readonly BASE_VERSIONS_DIR=$NVH_PREFIX/nvh/versions
+
+NODE_MIRROR=${NVH_NODE_MIRROR=https://nodejs.org/dist}
+NODE_MIRROR=${NODE_MIRROR%/}
+readonly NODE_MIRROR
+
+NODE_DOWNLOAD_MIRROR=${NVH_NODE_DOWNLOAD_MIRROR=https://nodejs.org/download}
+NODE_DOWNLOAD_MIRROR=${NODE_DOWNLOAD_MIRROR%/}
+readonly NODE_DOWNLOAD_MIRROR
+
+# ToDo: remove arrays, use new names
+BINS=("node")
+MIRROR=(${NVH_NODE_MIRROR-https://nodejs.org/dist/})
+BIN_NAME=("node")
+VERSIONS_DIR=($BASE_VERSIONS_DIR/node)
+
+# ToDo: change case, these are global not constant
+DEFAULT=0
+QUIET=true
+ARCH=
+PRESERVE_NPM=false
+
+g_ls_remote_max_lines=20
+
 
 #
-# Log <type> <msg>
+# log <action> <msg>
 #
 
 log() {
@@ -17,7 +40,8 @@ log() {
 }
 
 #
-# Exit with the given <msg ...>
+# abort <messages...>
+# Exit with the given messge
 #
 
 abort() {
@@ -25,19 +49,35 @@ abort() {
 }
 
 #
-# All Bin (node+custom) configurations (still arrays)
+# Version test patterns
 #
 
-BINS=("node")
-MIRROR=(${NVH_NODE_MIRROR-https://nodejs.org/dist/})
-BIN_NAME=("node")
-VERSIONS_DIR=($BASE_VERSIONS_DIR/node)
+function is_lts_codename() {
+  # https://github.com/nodejs/Release/blob/master/CODENAMES.md
+  # e.g. argon, Boron
+  [[ "$1" =~ ^([Aa]rgon|[Bb]oron)|[Cc]arbon|[Dd]ubnium|[Ee]rbium|[Ff]ermium|[Gg]allium|[Hh]ydrogen|[Ii]ron$ ]]
+}
 
+function is_release_branch() {
+  # e.g. 8.x, v9.x
+  [[ "$1" =~ ^[v]{0,1}[0-9]+\.x$ ]]
+}
+
+function is_download_folder() {
+  # exact match for name
+  [[ "$1" =~ ^(chakracore-nightly|chakracore-rc|chakracore-release|next-nightly|nightly|rc|release|test|v8-canary)$ ]]
+}
+
+function is_download_version() {
+  # e.g. nightly/latest
+  [[ "$1" =~ ^[^/]+/ ]]
+}
 
 #
 # Ensure we have curl or wget support.
 #
 
+# ToDo: move globals to top of file
 CURL_PARAMS=( "-L"
               "-#")
 
@@ -45,6 +85,7 @@ WGET_PARAMS=( "--no-check-certificate"
               "-q"
               "-O-")
 
+# ToDo: move code to end of file
 if [ -n "$NVH_NODE_MIRROR_USER" ];then
   if [ -z "$NVH_NODE_MIRROR_PASSWORD" ]; then
     abort "Must specify NVH_NODE_MIRROR_PASSWORD when supplying NVH_NODE_MIRROR_USER"
@@ -66,15 +107,6 @@ command -v curl > /dev/null && GET="curl ${CURL_PARAMS[@]}" && QUIET=false
 test -z "$GET" && abort "curl or wget required"
 
 #
-# State
-#
-
-DEFAULT=0
-QUIET=true
-ARCH=
-PRESERVE_NPM=false
-
-#
 # set_default <BIN_NAME>
 #
 
@@ -86,6 +118,7 @@ PRESERVE_NPM=false
 #   done
 # }
 
+# ToDo: move code to end of file, or move into routine and call
 for dir in ${VERSIONS_DIR[@]}; do
   test -d $dir || mkdir -p $dir
 done
@@ -230,7 +263,7 @@ prev_version_installed() {
 # Output n version.
 #
 
-display_n_version() {
+display_nvh_version() {
   echo $VERSION && exit 0
 }
 
@@ -297,7 +330,7 @@ list_versions_installed() {
 # Display current node --version and others installed.
 #
 
-display_versions() {
+display_downloaded_versions() {
   enter_fullscreen
   check_current_version
   clear
@@ -375,6 +408,7 @@ is_ok() {
 #
 # Check if the OSS(Object Storage Service) mirror is ok.
 #
+
 is_oss_ok() {
   if command -v curl > /dev/null; then
     if $GET -Is $1 | head -n 1 | grep 302 > /dev/null; then
@@ -604,6 +638,43 @@ execute_with_version() {
 }
 
 #
+# Lookup remote, filter folders, sort by numeric version
+# display_remote_version_folders <remote> <pattern? = [0-9]+> <last_lines? = g_ls_remote_max_lines>
+#
+
+display_remote_version_folders() {
+  # Ensure traiing slash
+  local remote_url=${1%/}/
+  # Make dots in pattern literal to allow pattern like 8.2
+  local numbers=$(echo ${2-[0-9]+} | sed 's/\./\\./g')
+  [ -n "$numbers" ] || numbers='[0-9]+'
+  local last_lines="$3"
+  [[ -z "${last_lines}" ]] && last_lines=${g_ls_remote_max_lines}
+
+  # dist:     v8.11.3/
+  # nightly:  v10.0.0-nightly201711117b3446e7bb/
+  # rc:       v10.1.0-rc.0/
+  # test:     v10.0.0-test20180410edd9cc466a/
+
+  # <a href="v9.3.1-nightly2018010930273d400c/">v9.3.1-nightly2018010930273d400c/</a>
+  # --> "v9.3.1-nightly2018010930273d400c/"
+  # --> 9.3.1-nightly2018010930273d400c
+  # --> 9.3.1.-nightly2018010930273d400c
+  # --> sort using number . number . number . text . number
+  # --> 9.3.1-nightly2018010930273d400c
+  local partial=$(echo $1 | sed 's/\./\\./g')
+  $GET 2> /dev/null ${remote_url} \
+    | egrep "</a>" \
+    | egrep -o '"[^"]+/"' \
+    | egrep -o '[0-9]+\.[0-9]+\.[0-9]+[^/]*' \
+    | sed 's|-|.-|' \
+    | egrep "^$numbers\." \
+    | sort -u -k 1,1n -k 2,2n -k 3,3n -k 4,4 -k 5,5n -t . \
+    | sed 's|\.-|-|' \
+    | tail -n ${last_lines}
+}
+
+#
 # Display codename version.
 #
 
@@ -645,13 +716,14 @@ display_latest_partial_version() {
 #
 
 display_latest_version() {
-  $GET 2> /dev/null ${MIRROR[$DEFAULT]} \
-    | egrep "</a>" \
-    | egrep -o '[0-9]+\.[0-9]+\.[0-9]+' \
-    | egrep -v '^0\.[0-7]\.' \
-    | egrep -v '^0\.8\.[0-5]$' \
-    | sort -u -k 1,1n -k 2,2n -k 3,3n -t . \
-    | tail -n1
+  # $GET 2> /dev/null ${MIRROR[$DEFAULT]} \
+  #   | egrep "</a>" \
+  #   | egrep -o '[0-9]+\.[0-9]+\.[0-9]+' \
+  #   | egrep -v '^0\.[0-7]\.' \
+  #   | egrep -v '^0\.8\.[0-5]$' \
+  #   | sort -u -k 1,1n -k 2,2n -k 3,3n -t . \
+  #   | tail -n1
+  display_remote_version_folders ${MIRROR[$DEFAULT]} "" 1
 }
 
 #
@@ -698,7 +770,7 @@ display_latest_lts_version() {
 # Display the versions available.
 #
 
-display_remote_versions() {
+highlight_remote_dist_versions() {
   check_current_version
   local versions=""
   versions=$($GET 2> /dev/null ${MIRROR[$DEFAULT]} \
@@ -724,12 +796,28 @@ display_remote_versions() {
 }
 
 #
-# Decide which versions to display.
+# display_remote_versions <version>
 #
 
-display_resolved_remote_version() {
-  if test -z "$1"; then
-    display_remote_versions
+display_remote_versions() {
+  local version="$1"
+  if [[ -z "${version}" ]]; then
+    highlight_remote_dist_versions
+  elif [[ "${version}" = "lts" ]]; then
+    display_latest_lts_version
+  elif [[ "${version}" = "latest" ]]; then
+    display_remote_version_folders "${NODE_MIRROR}/" "" 1
+  elif is_download_folder "${version}"; then
+    display_remote_version_folders "${NODE_DOWNLOAD_MIRROR}/${version}/"
+  elif is_download_version "${version}"; then
+    [[ "${version}" =~ ^([^/]+)/(.*) ]]
+    local remote_folder=${BASH_REMATCH[1]}
+    local version=${BASH_REMATCH[2]}
+    display_remote_version_folders "${NODE_DOWNLOAD_MIRROR}/${remote_folder}/" "${version}"
+  elif is_lts_codename "${version}"; then
+    echo "is_lts_codename"
+  elif is_release_branch "${version}"; then
+    echo "is_release_branch"
   else
     display_latest_resolved_version $1
   fi
@@ -763,26 +851,29 @@ show_diagnostics() {
   test -z "NVH_PREFIX" ||echo "PATH: $PATH"
 }
 
+#######################################################################################################
+
 #
 # Handle arguments.
 #
 
 if test $# -eq 0; then
   test -z "$(versions_paths)" && err_no_installed_print_help
-  display_versions
+  display_downloaded_versions
 else
   while test $# -ne 0; do
     case $1 in
-      -V|--version) display_n_version ;;
+      -V|--version) display_nvh_version ;;
       -h|--help|help) display_help; exit ;;
       -q|--quiet) set_quiet ;;
       -p|--preserve) PRESERVE_NPM=true ;;
-      -a|--arch) shift; set_arch $1;; # set arch and continue
+      --all) g_ls_remote_max_lines=999 ;;
+      --arch) shift; set_arch $1;; # set arch and continue. Deprecated.
       which) shift; display_bin_path_for_version $1; exit ;;
       run) shift; execute_with_version $@; exit ;;
       rm|remove) shift; remove_versions $@; exit ;;
       prune) prune_versions; exit ;;
-      lsr|ls-remote|list-remote) shift; display_resolved_remote_version $1; exit ;;
+      lsr|ls-remote|list-remote) shift; display_remote_versions $1; exit ;;
       ls|list) versions_paths; exit ;;
       doctor) show_diagnostics; exit ;;
       *) install $1; exit ;;
