@@ -646,15 +646,15 @@ display_remote_version_folders() {
   # --> "v9.3.1-nightly2018010930273d400c/"
   # --> 9.3.1-nightly2018010930273d400c
   # --> 9.3.1.-nightly2018010930273d400c
-  # --> sort using number . number . number . text . number
+  # search for pattern followed by dot or end of string, so 8.1 does not match 8.11
+  # sort using number . number . number . text . number
   # --> 9.3.1-nightly2018010930273d400c
-  local partial=$(echo $1 | sed 's/\./\\./g')
   $GET 2> /dev/null "${remote_url}" \
     | egrep "</a>" \
     | egrep -o '"[^"]+/"' \
     | egrep -o '[0-9]+\.[0-9]+\.[0-9]+[^/]*' \
     | sed 's|-|.-|' \
-    | egrep "^$numbers\." \
+    | egrep "^${numbers}(\..+){0,1}$" \
     | sort -u -k 1,1n -k 2,2n -k 3,3n -k 4,4 -k 5,5n -t . \
     | sed 's|\.-|-|' \
     | tail -n ${last_lines}
@@ -696,31 +696,6 @@ display_latest_codename_version() {
 }
 
 #
-# Display latest partial version number.
-#
-
-display_latest_partial_version() {
-  # quote dots in partial (as \Q\E not widely supported in regular expressions)
-  local partial=$(echo $1 | sed 's/\./\\./g')
-  $GET 2> /dev/null "${NODE_MIRROR}/" \
-    | egrep "</a>" \
-    | egrep -o '[0-9]+\.[0-9]+\.[0-9]+' \
-    | egrep -v '^0\.[0-7]\.' \
-    | egrep -v '^0\.8\.[0-5]$' \
-    | sort -u -k 1,1n -k 2,2n -k 3,3n -t . \
-    | egrep "^$partial\." \
-    | tail -n1
-}
-
-#
-# Display the latest release version.
-#
-
-display_latest_version() {
-  display_remote_version_folders "${NODE_MIRROR}" "" 1
-}
-
-#
 # Display resolved version.
 #
 
@@ -751,35 +726,6 @@ display_latest_lts_version() {
 }
 
 #
-# Display the versions available.
-#
-
-highlight_remote_dist_versions() {
-  check_current_version
-  local versions=""
-  versions=$($GET 2> /dev/null "${NODE_MIRROR}/" \
-    | egrep "</a>" \
-    | egrep -o '[0-9]+\.[0-9]+\.[0-9]+' \
-    | sort -u -k 1,1n -k 2,2n -k 3,3n -t . \
-    | awk '{ print "  " $1 }')
-
-  echo
-  local bin=${BINS[$DEFAULT]}
-  for v in $versions; do
-    if test "$active" = "$bin/$v"; then
-      printf "  \033[36mο\033[0m $v \033[0m\n"
-    else
-      if test -d $BASE_VERSIONS_DIR/$bin/$v; then
-        printf "    $v \033[0m\n"
-      else
-        printf "    \e[2m$v\e[22m\n"
-      fi
-    fi
-  done
-  echo
-}
-
-#
 # display_remote_versions <version>
 #
 
@@ -800,6 +746,7 @@ display_remote_versions() {
     if [[ "${version}" = "latest" ]]; then
       display_remote_version_folders "${NODE_DOWNLOAD_MIRROR}/${remote_folder}/" "" 1
     else
+      version=${version#v}
       display_remote_version_folders "${NODE_DOWNLOAD_MIRROR}/${remote_folder}/" "${version}"
     fi
   elif is_lts_codename "${version}"; then
