@@ -21,6 +21,7 @@ BINS=("node")
 VERSIONS_DIR=($BASE_VERSIONS_DIR/node)
 
 # ToDo: change case, these are global not constant
+# ToDo: handle boolean differently
 DEFAULT=0
 QUIET=true
 ARCH=
@@ -28,6 +29,22 @@ PRESERVE_NPM=false
 
 g_ls_remote_max_lines=20
 
+g_custom_mirror_url=${NODE_MIRROR}
+g_custom_folder_name="node"
+
+#
+# update_custom_using_version <version>
+# e.g. <nightly/latest> means using download mirror and custom_name is nightly
+#
+
+function update_custom_using_version() {
+  if is_download_folder "$1" || is_download_version "$1"; then
+    [[ "${1}" =~ ^([^/]+)/(.*) ]]
+    local remote_folder="${BASH_REMATCH[1]}"
+    g_custom_folder_name="${remote_folder}"
+    g_custom_mirror_url="${NODE_DOWNLOAD_MIRROR}/${g_custom_folder_name}"
+  fi
+}
 
 #
 # log <action> <msg>
@@ -445,8 +462,7 @@ tarball_url() {
 
   [ ! -z $ARCH ] && arch=$ARCH
 
-  echo "${NODE_MIRROR}/v${version}/node-v${version}-${os}-${arch}.tar.gz"
-
+  echo "${g_custom_mirror_url}/v${version}/node-v${version}-${os}-${arch}.tar.gz"
 }
 
 #
@@ -508,8 +524,9 @@ activate() {
 #
 
 install() {
-  local version=$(display_latest_resolved_version $1)
-  test $version || abort "invalid version ${1}"
+  local version=$(display_latest_resolved_version "$1")
+  test $version || abort "invalid version $1"
+  update_custom_using_version "$1"
 
   local dir=${VERSIONS_DIR[$DEFAULT]}/$version
 
@@ -524,6 +541,7 @@ install() {
   log downloading ${BINS[$DEFAULT]}-v$version
 
   local url=$(tarball_url $version)
+  echo ${url}
   is_ok $url || is_oss_ok $url || abort "invalid version $version"
 
   log mkdir $dir
@@ -710,6 +728,7 @@ display_latest_resolved_version() {
   local version=$1
   if [[ "${version}" =~ ^[v]{0,1}[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     # Just numbers, already resolved, no need to lookup first. Just try download.
+    version=${version#v}
     echo $version
   else
     g_ls_remote_max_lines=1
@@ -762,8 +781,9 @@ display_remote_versions() {
     version="v${version#v}"
     display_remote_files "${NODE_MIRROR}/latest-${version}/"
   else
-    # only handle incomplete numbers?
-    # display_latest_resolved_version $1
+    if [[ "${version}" =~ ^[v]{0,1}[0-9]+(\.[0-9]+)*$ ]]; then
+      version=${version#v}
+    fi
     display_remote_version_folders "${NODE_MIRROR}/" "${version}"
   fi
 
@@ -822,7 +842,6 @@ else
       lsr|ls-remote|list-remote) shift; display_remote_versions $1; exit ;;
       ls|list) versions_paths; exit ;;
       doctor) show_diagnostics; exit ;;
-      xxx) shift; display_latest_resolved_version $@; exit ;;
       *) install $1; exit ;;
     esac
     shift
