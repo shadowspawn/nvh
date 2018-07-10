@@ -625,15 +625,22 @@ execute_with_version() {
 
 #
 # Access remote, filter folders, sort by numeric version
-# display_remote_version_folders <remote> <number_pattern? = [0-9]+> <last_lines? = g_ls_remote_max_lines>
+# display_remote_version_folders <remote> <version_prefix?> <last_lines? = g_ls_remote_max_lines>
 #
 
 display_remote_version_folders() {
-  # Ensure traiing slash
+  # Ensure trailing slash
   local remote_url=${1%/}/
-  # Make dots in pattern literal to allow pattern like 8.2
-  local numbers=$(echo ${2-[0-9]+} | sed 's/\./\\./g')
-  [ -n "$numbers" ] || numbers='[0-9]+'
+
+  local version_prefix=$2
+  # Could be empty, 1, 1.2, 1.2.3, 10.0.0-nightly201711117b3446e7bb
+  # Turn dashes into dot-dash to match the manipulation to allow numeric sorting
+  version_prefix=${version_prefix//\-/.-}
+  # Quote the dots so they are literal and not special in expression
+  version_prefix=${version_prefix//\./\.}
+  # And if no pattern, just look for a digit
+  [ -z "$version_prefix" ] && version_prefix='[0-9]+'
+
   local last_lines="$3"
   [[ -z "${last_lines}" ]] && last_lines=${g_ls_remote_max_lines}
 
@@ -646,7 +653,7 @@ display_remote_version_folders() {
   # --> "v9.3.1-nightly2018010930273d400c/"
   # --> 9.3.1-nightly2018010930273d400c
   # --> 9.3.1.-nightly2018010930273d400c
-  # search for pattern followed by dot or end of string, so 8.1 does not match 8.11
+  # search for version_prefix followed by dot or end of string, so 8.1 does not match 8.11, 8.1.2 does not match 8.1.23
   # sort using number . number . number . text . number
   # --> 9.3.1-nightly2018010930273d400c
   $GET 2> /dev/null "${remote_url}" \
@@ -654,7 +661,7 @@ display_remote_version_folders() {
     | egrep -o '"[^"]+/"' \
     | egrep -o '[0-9]+\.[0-9]+\.[0-9]+[^/]*' \
     | sed 's|-|.-|' \
-    | egrep "^${numbers}(\..+){0,1}$" \
+    | egrep "^${version_prefix}(\..+){0,1}$" \
     | sort -u -k 1,1n -k 2,2n -k 3,3n -k 4,4 -k 5,5n -t . \
     | sed 's|\.-|-|' \
     | tail -n ${last_lines}
