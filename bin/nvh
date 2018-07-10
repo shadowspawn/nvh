@@ -18,8 +18,6 @@ readonly NODE_DOWNLOAD_MIRROR
 
 # ToDo: remove arrays, use new names
 BINS=("node")
-MIRROR=(${NVH_NODE_MIRROR-https://nodejs.org/dist/})
-BIN_NAME=("node")
 VERSIONS_DIR=($BASE_VERSIONS_DIR/node)
 
 # ToDo: change case, these are global not constant
@@ -105,18 +103,6 @@ command -v wget > /dev/null && GET="wget ${WGET_PARAMS[@]}"
 command -v curl > /dev/null && GET="curl ${CURL_PARAMS[@]}" && QUIET=false
 
 test -z "$GET" && abort "curl or wget required"
-
-#
-# set_default <BIN_NAME>
-#
-
-# set_default() {
-#   for (( i=0 ; i<${#BINS[@]} ; i++ )); do
-#     if test ${BINS[$i]} = $1; then
-#       DEFAULT=$i
-#     fi
-#   done
-# }
 
 # ToDo: move code to end of file, or move into routine and call
 for dir in ${VERSIONS_DIR[@]}; do
@@ -450,7 +436,7 @@ tarball_url() {
     *aarch64*) arch=arm64 ;;
   esac
 
-  if [ ${arch} = "armv6l" -a ${BIN_NAME[$DEFAULT]} = node ]; then
+  if [ ${arch} = "armv6l" ]; then
     local semver=${version//./ }
     local major=$(echo $semver | grep -o -E '[0-9]+' | head -1 | sed -e 's/^0\+//')
     local minor=$(echo $semver | awk '{print $2}' | grep -o -E '[0-9]+' | head -1 | sed -e 's/^0\+//')
@@ -459,7 +445,7 @@ tarball_url() {
 
   [ ! -z $ARCH ] && arch=$ARCH
 
-  echo "${MIRROR[$DEFAULT]}v${version}/${BIN_NAME[$DEFAULT]}-v${version}-${os}-${arch}.tar.gz"
+  echo "${NODE_MIRROR}/v${version}/node-v${version}-${os}-${arch}.tar.gz"
 
 }
 
@@ -638,8 +624,8 @@ execute_with_version() {
 }
 
 #
-# Lookup remote, filter folders, sort by numeric version
-# display_remote_version_folders <remote> <pattern? = [0-9]+> <last_lines? = g_ls_remote_max_lines>
+# Access remote, filter folders, sort by numeric version
+# display_remote_version_folders <remote> <number_pattern? = [0-9]+> <last_lines? = g_ls_remote_max_lines>
 #
 
 display_remote_version_folders() {
@@ -663,7 +649,7 @@ display_remote_version_folders() {
   # --> sort using number . number . number . text . number
   # --> 9.3.1-nightly2018010930273d400c
   local partial=$(echo $1 | sed 's/\./\\./g')
-  $GET 2> /dev/null ${remote_url} \
+  $GET 2> /dev/null "${remote_url}" \
     | egrep "</a>" \
     | egrep -o '"[^"]+/"' \
     | egrep -o '[0-9]+\.[0-9]+\.[0-9]+[^/]*' \
@@ -675,19 +661,34 @@ display_remote_version_folders() {
 }
 
 #
+# Access remote, filter files, sort by numeric version.
+# display_remote_version_folders <remote> <last_lines? = g_ls_remote_max_lines>
+#
+
+display_remote_files() {
+  local remote_url=${1%/}/
+
+  $GET 2> /dev/null "${remote_url}" \
+    | egrep "</a>" \
+    | egrep -o '[0-9]+\.[0-9]+\.[0-9]+' \
+    | sort -u -k 1,1n -k 2,2n -k 3,3n -t . \
+    | tail -n1
+}
+
+#
 # Display codename version.
 #
 
 display_latest_codename_version() {
   local codename=$1
-  local folder_name=$($GET 2> /dev/null ${MIRROR[$DEFAULT]} \
+  local folder_name=$($GET 2> /dev/null "${NODE_MIRROR}/" \
     | egrep "</a>" \
     | egrep -o "latest-$codename" \
     | sort \
     | tail -n1)
   test $folder_name || return 0
 
-  $GET 2> /dev/null ${MIRROR[$DEFAULT]}/$folder_name/ \
+  $GET 2> /dev/null "${NODE_MIRROR}/$folder_name/" \
     | egrep "</a>" \
     | egrep -o '[0-9]+\.[0-9]+\.[0-9]+' \
     | sort -u -k 1,1n -k 2,2n -k 3,3n -t . \
@@ -701,7 +702,7 @@ display_latest_codename_version() {
 display_latest_partial_version() {
   # quote dots in partial (as \Q\E not widely supported in regular expressions)
   local partial=$(echo $1 | sed 's/\./\\./g')
-  $GET 2> /dev/null ${MIRROR[DEFAULT]} \
+  $GET 2> /dev/null "${NODE_MIRROR}/" \
     | egrep "</a>" \
     | egrep -o '[0-9]+\.[0-9]+\.[0-9]+' \
     | egrep -v '^0\.[0-7]\.' \
@@ -716,14 +717,7 @@ display_latest_partial_version() {
 #
 
 display_latest_version() {
-  # $GET 2> /dev/null ${MIRROR[$DEFAULT]} \
-  #   | egrep "</a>" \
-  #   | egrep -o '[0-9]+\.[0-9]+\.[0-9]+' \
-  #   | egrep -v '^0\.[0-7]\.' \
-  #   | egrep -v '^0\.8\.[0-5]$' \
-  #   | sort -u -k 1,1n -k 2,2n -k 3,3n -t . \
-  #   | tail -n1
-  display_remote_version_folders ${MIRROR[$DEFAULT]} "" 1
+  display_remote_version_folders "${NODE_MIRROR}" "" 1
 }
 
 #
@@ -732,20 +726,13 @@ display_latest_version() {
 
 display_latest_resolved_version() {
   local version=$1
-  if [ "$version" = "latest" ]; then
-    version=$(display_latest_version)
-  elif [ "$version" = "lts" ]; then
-    version=$(display_latest_lts_version)
-  elif [[ "$version" =~ [a-z]{2,} ]]; then
-    version=$(display_latest_codename_version $version)
+  if [[ "${version}" =~ ^[v]{0,1}[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    # Just numbers, already resolved, no need to lookup first. Just try download.
+    echo $version
   else
-    version=${1#v}
-    local dots=$(echo $version | sed 's/[^.]*//g')
-    if test ${#dots} -lt 2; then
-      version=$(display_latest_partial_version $version)
-    fi
+    g_ls_remote_max_lines=1
+    display_remote_versions $1
   fi
-  echo $version
 }
 
 #
@@ -753,17 +740,14 @@ display_latest_resolved_version() {
 #
 
 display_latest_lts_version() {
-  local folder_name=$($GET 2> /dev/null ${MIRROR[$DEFAULT]} \
+  # Find the alphabetical last codename
+  local folder_name=$($GET 2> /dev/null "${NODE_MIRROR}/" \
     | egrep "</a>" \
     | egrep -o 'latest-[a-z]{2,}' \
     | sort \
     | tail -n1)
 
-  $GET 2> /dev/null ${MIRROR[$DEFAULT]}/$folder_name/ \
-    | egrep "</a>" \
-    | egrep -o '[0-9]+\.[0-9]+\.[0-9]+' \
-    | sort -u -k 1,1n -k 2,2n -k 3,3n -t . \
-    | tail -n1
+  display_remote_files "${NODE_MIRROR}/${folder_name}/"
 }
 
 #
@@ -773,7 +757,7 @@ display_latest_lts_version() {
 highlight_remote_dist_versions() {
   check_current_version
   local versions=""
-  versions=$($GET 2> /dev/null ${MIRROR[$DEFAULT]} \
+  versions=$($GET 2> /dev/null "${NODE_MIRROR}/" \
     | egrep "</a>" \
     | egrep -o '[0-9]+\.[0-9]+\.[0-9]+' \
     | sort -u -k 1,1n -k 2,2n -k 3,3n -t . \
@@ -802,7 +786,7 @@ highlight_remote_dist_versions() {
 display_remote_versions() {
   local version="$1"
   if [[ -z "${version}" ]]; then
-    highlight_remote_dist_versions
+    display_remote_version_folders "${NODE_MIRROR}/"
   elif [[ "${version}" = "lts" ]]; then
     display_latest_lts_version
   elif [[ "${version}" = "latest" ]]; then
@@ -811,15 +795,22 @@ display_remote_versions() {
     display_remote_version_folders "${NODE_DOWNLOAD_MIRROR}/${version}/"
   elif is_download_version "${version}"; then
     [[ "${version}" =~ ^([^/]+)/(.*) ]]
-    local remote_folder=${BASH_REMATCH[1]}
-    local version=${BASH_REMATCH[2]}
-    display_remote_version_folders "${NODE_DOWNLOAD_MIRROR}/${remote_folder}/" "${version}"
+    local remote_folder="${BASH_REMATCH[1]}"
+    version="${BASH_REMATCH[2]}"
+    if [[ "${version}" = "latest" ]]; then
+      display_remote_version_folders "${NODE_DOWNLOAD_MIRROR}/${remote_folder}/" "" 1
+    else
+      display_remote_version_folders "${NODE_DOWNLOAD_MIRROR}/${remote_folder}/" "${version}"
+    fi
   elif is_lts_codename "${version}"; then
-    echo "is_lts_codename"
+    display_remote_files "${NODE_MIRROR}/latest-${version}/"
   elif is_release_branch "${version}"; then
-    echo "is_release_branch"
+    version="v${version#v}"
+    display_remote_files "${NODE_MIRROR}/latest-${version}/"
   else
-    display_latest_resolved_version $1
+    # only handle incomplete numbers?
+    # display_latest_resolved_version $1
+    display_remote_version_folders "${NODE_MIRROR}/" "${version}"
   fi
 
 }
@@ -846,7 +837,8 @@ show_diagnostics() {
 
   echo
   echo "# nvh Setup"
-  echo "node mirror: $MIRROR"
+  echo "node mirror: ${NODE_MIRROR}"
+  echo "node downloads mirror: ${NODE_DOWNLOAD_MIRROR}"
   echo "install location: $NVH_PREFIX"
   test -z "NVH_PREFIX" ||echo "PATH: $PATH"
 }
@@ -876,6 +868,7 @@ else
       lsr|ls-remote|list-remote) shift; display_remote_versions $1; exit ;;
       ls|list) versions_paths; exit ;;
       doctor) show_diagnostics; exit ;;
+      xxx) shift; display_latest_resolved_version $@; exit ;;
       *) install $1; exit ;;
     esac
     shift
