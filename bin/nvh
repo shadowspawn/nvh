@@ -16,7 +16,7 @@ NODE_DOWNLOAD_MIRROR=${NVH_NODE_DOWNLOAD_MIRROR=https://nodejs.org/download}
 NODE_DOWNLOAD_MIRROR=${NODE_DOWNLOAD_MIRROR%/}
 readonly NODE_DOWNLOAD_MIRROR
 
-# ToDo: remove arrays, use new names
+# ToDo: remove or use new names
 BINS=("node")
 VERSIONS_DIR=($BASE_VERSIONS_DIR/node)
 
@@ -27,18 +27,21 @@ QUIET=true
 ARCH=
 PRESERVE_NPM=false
 
-g_ls_remote_max_lines=20
+g_ls_remote_max_lines=${NVH_MAX_REMOTE_MATCHES=20}
 
 g_custom_mirror_url=${NODE_MIRROR}
 g_custom_folder_name="node"
 
 #
-# update_custom_using_version <version>
+# update_settings_from_version <version>
 # e.g. <nightly/latest> means using download mirror and custom_name is nightly
 #
 
-function update_custom_using_version() {
-  if is_download_folder "$1" || is_download_version "$1"; then
+function update_settings_from_version() {
+  if is_download_folder "$1" ; then
+    g_custom_folder_name="${1}"
+    g_custom_mirror_url="${NODE_DOWNLOAD_MIRROR}/${g_custom_folder_name}"
+  elif is_download_folder "$1" || is_download_version "$1"; then
     [[ "${1}" =~ ^([^/]+)/(.*) ]]
     local remote_folder="${BASH_REMATCH[1]}"
     g_custom_folder_name="${remote_folder}"
@@ -121,7 +124,7 @@ command -v curl > /dev/null && GET="curl ${CURL_PARAMS[@]}" && QUIET=false
 
 test -z "$GET" && abort "curl or wget required"
 
-# ToDo: move code to end of file, or move into routine and call
+# ToDo: move code to end of file, or move into routine and call when needed
 for dir in ${VERSIONS_DIR[@]}; do
   test -d $dir || mkdir -p $dir
 done
@@ -491,13 +494,13 @@ disable_pax_mprotect() {
 }
 
 #
-# Activate <version>
+# activate <path_from_prefix>
+# e.g. activate node/8.11.3, activate nightly/11.0.0-nightly201807118174d0c8ca
 #
 
 activate() {
-  local version=$1
-  check_current_version
-  local dir=$BASE_VERSIONS_DIR/$version
+  local path_from_prefix=$1
+  local dir=$BASE_VERSIONS_DIR/${path_from_prefix}
   # Remove old npm to avoid potential issues with simple overwrite.
   if [[ $PRESERVE_NPM == false && -d "$dir/lib/node_modules/npm" ]]; then
     if test -d "$NVH_PREFIX/lib/node_modules/npm"; then
@@ -524,25 +527,24 @@ activate() {
 #
 
 install() {
-  local version=$(display_latest_resolved_version "$1")
-  test $version || abort "invalid version $1"
-  update_custom_using_version "$1"
+  local resolved_version=$(display_latest_resolved_version "$1")
+  test $resolved_version || abort "did not find remote version for $1"
+  update_settings_from_version "$1"
 
-  local dir=${VERSIONS_DIR[$DEFAULT]}/$version
+  local dir="${BASE_VERSIONS_DIR[$DEFAULT]}/${g_custom_folder_name}/${resolved_version}"
 
   if test -d $dir; then
     if [[ ! -e $dir/n.lock ]] ; then
-      activate ${BINS[$DEFAULT]}/$version
+      activate "${g_custom_folder_name}/${resolved_version}"
       exit
     fi
   fi
 
   echo
-  log downloading ${BINS[$DEFAULT]}-v$version
+  log downloading ${BINS[$DEFAULT]}-v$resolved_version
 
-  local url=$(tarball_url $version)
-  echo ${url}
-  is_ok $url || is_oss_ok $url || abort "invalid version $version"
+  local url=$(tarball_url $resolved_version)
+  is_ok $url || is_oss_ok $url || abort "download failed for $resolved_version"
 
   log mkdir $dir
   mkdir -p $dir
@@ -561,7 +563,7 @@ install() {
 
   disable_pax_mprotect bin/node
 
-  activate ${BINS[$DEFAULT]}/$version
+  activate "${g_custom_folder_name}/${resolved_version}"
   echo
 }
 
@@ -833,7 +835,7 @@ else
       -h|--help|help) display_help; exit ;;
       -q|--quiet) set_quiet ;;
       -p|--preserve) PRESERVE_NPM=true ;;
-      --all) g_ls_remote_max_lines=999 ;;
+      --all) g_ls_remote_max_lines=32000 ;;
       --arch) shift; set_arch $1;; # set arch and continue. Deprecated.
       which) shift; display_bin_path_for_version $1; exit ;;
       run) shift; execute_with_version $@; exit ;;
