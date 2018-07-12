@@ -27,7 +27,7 @@ QUIET=true
 ARCH=
 PRESERVE_NPM=false
 
-g_ls_remote_max_lines=${NVH_MAX_REMOTE_MATCHES=20}
+g_ls_remote_max_matches=${NVH_MAX_REMOTE_MATCHES=20}
 
 g_custom_mirror_url=${NODE_MIRROR}
 g_custom_folder_name="node"
@@ -89,6 +89,11 @@ function is_download_folder() {
 function is_download_version() {
   # e.g. nightly/latest
   [[ "$1" =~ ^[^/]+/ ]]
+}
+
+function is_semver() {
+  # e.g. 6, v7.1, 8.11.3
+  [[ "$1" =~ ^[v]{0,1}[0-9]+(\.[0-9]+){0,2}$ ]]
 }
 
 #
@@ -576,6 +581,18 @@ set_quiet() {
 }
 
 #
+# set number of remote matches
+#
+
+function set_show_all_remote_matches() {
+  g_ls_remote_max_matches=32000
+}
+
+function set_show_single_remote_match() {
+  g_ls_remote_max_matches=1
+}
+
+#
 # Remove <version ...>
 #
 
@@ -645,24 +662,24 @@ execute_with_version() {
 
 #
 # Access remote, filter folders, sort by numeric version
-# display_remote_version_folders <remote> <version_prefix?> <last_lines? = g_ls_remote_max_lines>
+# display_remote_version_folders <remote> <version_prefix?> <last_lines? = g_ls_remote_max_matches>
 #
 
 display_remote_version_folders() {
   # Ensure trailing slash
   local remote_url=${1%/}/
 
+  # Version could be empty, 1, v1.2, 1.2.3, 10.0.0-nightly201711117b3446e7bb
   local version_prefix=$2
-  # Could be empty, 1, 1.2, 1.2.3, 10.0.0-nightly201711117b3446e7bb
-  # Turn dashes into dot-dash to match the manipulation to allow numeric sorting
-  version_prefix=${version_prefix//\-/.-}
+  [[ -z "$version_prefix" ]] && version_prefix='[0-9]+'
+  version_prefix="v${version_prefix#v}" # Ensure leading v
+  # Make semver terminated, so 1.1 does not match 1.11 et al
+  is_semver "${version_prefix}" && version_prefix="${version_prefix}([.-].+){0,1}$"
   # Quote the dots so they are literal and not special in expression
   version_prefix=${version_prefix//\./\.}
-  # And if no pattern, just look for a digit
-  [ -z "$version_prefix" ] && version_prefix='[0-9]+'
 
   local last_lines="$3"
-  [[ -z "${last_lines}" ]] && last_lines=${g_ls_remote_max_lines}
+  [[ -z "${last_lines}" ]] && last_lines=${g_ls_remote_max_matches}
 
   # dist:     v8.11.3/
   # nightly:  v10.0.0-nightly201711117b3446e7bb/
@@ -671,25 +688,25 @@ display_remote_version_folders() {
 
   # <a href="v9.3.1-nightly2018010930273d400c/">v9.3.1-nightly2018010930273d400c/</a>
   # --> "v9.3.1-nightly2018010930273d400c/"
-  # --> 9.3.1-nightly2018010930273d400c
+  # --> v9.3.1-nightly2018010930273d400c
+  # search for version_prefix
   # --> 9.3.1.-nightly2018010930273d400c
-  # search for version_prefix followed by dot or end of string, so 8.1 does not match 8.11, 8.1.2 does not match 8.1.23
   # sort using number . number . number . text . number
-  # --> 9.3.1-nightly2018010930273d400c
+  # --> v9.3.1-nightly2018010930273d400c
   $GET 2> /dev/null "${remote_url}" \
     | egrep "</a>" \
-    | egrep -o '"[^"]+/"' \
-    | egrep -o '[0-9]+\.[0-9]+\.[0-9]+[^/]*' \
-    | sed 's|-|.-|' \
-    | egrep "^${version_prefix}(\..+){0,1}$" \
+    | egrep -o 'href="[^"]+/"' \
+    | egrep -o 'v[0-9]+\.[0-9]+\.[0-9]+[^/]*' \
+    | egrep "^${version_prefix}" \
+    | sed 's|v\(.*\)|\1|; s|-|.-|' \
     | sort -u -k 1,1n -k 2,2n -k 3,3n -k 4,4 -k 5,5n -t . \
-    | sed 's|\.-|-|' \
+    | sed 's|\.-|-|; s|.*|v&|' \
     | tail -n ${last_lines}
 }
 
 #
 # Access remote, filter files, sort by numeric version.
-# display_remote_version_folders <remote> <last_lines? = g_ls_remote_max_lines>
+# display_remote_version_folders <remote> <last_lines? = g_ls_remote_max_matches>
 #
 
 display_remote_files() {
@@ -697,7 +714,7 @@ display_remote_files() {
 
   $GET 2> /dev/null "${remote_url}" \
     | egrep "</a>" \
-    | egrep -o '[0-9]+\.[0-9]+\.[0-9]+' \
+    | egrep -o 'v[0-9]+\.[0-9]+\.[0-9]+' \
     | sort -u -k 1,1n -k 2,2n -k 3,3n -t . \
     | tail -n1
 }
@@ -733,7 +750,7 @@ display_latest_resolved_version() {
     version=${version#v}
     echo $version
   else
-    g_ls_remote_max_lines=1
+    set_show_single_remote_match
     display_remote_versions $1
   fi
 }
@@ -754,18 +771,31 @@ display_latest_lts_version() {
 }
 
 #
+# display_match_limit
+#
+
+display_match_limit(){
+  if [[ "${g_ls_remote_max_matches}" -gt 1 && "${g_ls_remote_max_matches}" < 32000 ]]; then
+    echo "Listing remote... Displaying last ${g_ls_remote_max_matches} matches (use --all to see all)."
+  fi
+}
+
+
+#
 # display_remote_versions <version>
 #
 
 display_remote_versions() {
   local version="$1"
   if [[ -z "${version}" ]]; then
+    display_match_limit
     display_remote_version_folders "${NODE_MIRROR}/"
   elif [[ "${version}" = "lts" ]]; then
     display_latest_lts_version
   elif [[ "${version}" = "latest" ]]; then
     display_remote_version_folders "${NODE_MIRROR}/" "" 1
   elif is_download_folder "${version}"; then
+    display_match_limit
     display_remote_version_folders "${NODE_DOWNLOAD_MIRROR}/${version}/"
   elif is_download_version "${version}"; then
     [[ "${version}" =~ ^([^/]+)/(.*) ]]
@@ -774,17 +804,20 @@ display_remote_versions() {
     if [[ "${version}" = "latest" ]]; then
       display_remote_version_folders "${NODE_DOWNLOAD_MIRROR}/${remote_folder}/" "" 1
     else
-      version=${version#v}
+      display_match_limit
       display_remote_version_folders "${NODE_DOWNLOAD_MIRROR}/${remote_folder}/" "${version}"
     fi
   elif is_lts_codename "${version}"; then
+    # Only one version on nodejs/dist
     display_remote_files "${NODE_MIRROR}/latest-${version}/"
   elif is_release_branch "${version}"; then
+    # Only one version on nodejs/dist
     version="v${version#v}"
     display_remote_files "${NODE_MIRROR}/latest-${version}/"
   else
-    if [[ "${version}" =~ ^[v]{0,1}[0-9]+(\.[0-9]+)*$ ]]; then
-      version=${version#v}
+    if [[ "${version}" =~ ^[v]{0,1}[0-9]+(\.[0-9]+){0,1}$ ]]; then
+      # 8, v8.1: partial match so warn.
+      display_match_limit
     fi
     display_remote_version_folders "${NODE_MIRROR}/" "${version}"
   fi
@@ -835,13 +868,18 @@ else
       -h|--help|help) display_help; exit ;;
       -q|--quiet) set_quiet ;;
       -p|--preserve) PRESERVE_NPM=true ;;
-      --all) g_ls_remote_max_lines=32000 ;;
+      --all) set_show_all_remote_matches ;;
       --arch) shift; set_arch $1;; # set arch and continue. Deprecated.
       which) shift; display_bin_path_for_version $1; exit ;;
       run) shift; execute_with_version $@; exit ;;
       rm|remove) shift; remove_versions $@; exit ;;
       prune) prune_versions; exit ;;
-      lsr|ls-remote|list-remote) shift; display_remote_versions $1; exit ;;
+      lsr|ls-remote|list-remote)
+        shift
+        [[ "$1" = "--all" ]] && set_show_all_remote_matches && shift
+        display_remote_versions $1
+        exit
+        ;;
       ls|list) versions_paths; exit ;;
       doctor) show_diagnostics; exit ;;
       *) install $1; exit ;;
