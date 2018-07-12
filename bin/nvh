@@ -470,7 +470,7 @@ tarball_url() {
 
   [ ! -z $ARCH ] && arch=$ARCH
 
-  echo "${g_custom_mirror_url}/v${version}/node-v${version}-${os}-${arch}.tar.gz"
+  echo "${g_custom_mirror_url}/${version}/node-${version}-${os}-${arch}.tar.gz"
 }
 
 #
@@ -546,22 +546,22 @@ install() {
   fi
 
   echo
-  log downloading ${BINS[$DEFAULT]}-v$resolved_version
+  log "installing" "${BINS[$DEFAULT]}-${resolved_version}"
 
   local url=$(tarball_url $resolved_version)
   is_ok $url || is_oss_ok $url || abort "download failed for $resolved_version"
 
-  log mkdir $dir
-  mkdir -p $dir
+  log "mkdir" "${dir}"
+  mkdir -p "${dir}"
   if [ $? -ne 0 ] ; then
     abort "sudo required"
   else
-    touch $dir/n.lock
+    touch "${dir}/n.lock"
   fi
 
   cd $dir
 
-  log fetch $url
+  log "fetch" "${url}"
   $GET $url | tar -zx --strip-components=1
   [ $QUIET == false ] && erase_line
   rm -f $dir/n.lock
@@ -811,7 +811,7 @@ display_remote_versions() {
     # Only one version on nodejs/dist
     display_remote_files "${NODE_MIRROR}/latest-${version}/"
   elif is_release_branch "${version}"; then
-    # Only one version on nodejs/dist
+    # Only one version on nodejs/dist, so skip display_match_limit
     version="v${version#v}"
     display_remote_files "${NODE_MIRROR}/latest-${version}/"
   else
@@ -850,6 +850,7 @@ show_diagnostics() {
   echo "node downloads mirror: ${NODE_DOWNLOAD_MIRROR}"
   echo "install location: $NVH_PREFIX"
   test -z "NVH_PREFIX" ||echo "PATH: $PATH"
+  echo "ls-remote max matches: ${g_ls_remote_max_matches}"
 }
 
 #######################################################################################################
