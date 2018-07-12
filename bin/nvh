@@ -5,7 +5,7 @@
 #
 
 readonly VERSION="1.0.0-0"
-readonly NVH_PREFIX=${NVH_PREFIX-/usr/local}
+readonly NVH_PREFIX=${NVH_PREFIX=/usr/local}
 readonly BASE_VERSIONS_DIR=$NVH_PREFIX/nvh/versions
 
 NODE_MIRROR=${NVH_NODE_MIRROR=https://nodejs.org/dist}
@@ -259,7 +259,7 @@ show_cursor() {
 #
 
 next_version_installed() {
-  list_versions_installed | grep $selected -A 1 | tail -n 1
+  list_versions_installed | grep "${selected}" -A 1 | tail -n 1
 }
 
 #
@@ -267,7 +267,7 @@ next_version_installed() {
 #
 
 prev_version_installed() {
-  list_versions_installed | grep $selected -B 1 | head -n 1
+  list_versions_installed | grep "${selected}" -B 1 | head -n 1
 }
 
 #
@@ -286,12 +286,14 @@ check_current_version() {
   command -v node &> /dev/null
   if test $? -eq 0; then
     local current=$(node --version)
-    current=${current#v}
-    for bin in ${BINS[@]}; do
+    echo "${current}"
+    for dir in $BASE_VERSIONS_DIR/*/ ; do
+      local folder_name="${dir%/}"
+      folder_name="${folder_name##*/}"
       if diff &> /dev/null \
-        $BASE_VERSIONS_DIR/$bin/$current/bin/node \
-        $(which node) ; then
-        active=$bin/$current
+        "${BASE_VERSIONS_DIR}/${folder_name}/${current}/bin/node" \
+        "$(which node)" ; then
+        active="${folder_name}/${current}"
       fi
     done
   fi
@@ -302,12 +304,15 @@ check_current_version() {
 #
 
 versions_paths() {
+  # e.g. node/v8.11.3
+  # sort string . number . number . number
+
   find $BASE_VERSIONS_DIR -maxdepth 2 -type d \
     | sed 's|'$BASE_VERSIONS_DIR'/||g' \
-    | egrep "/[0-9]+\.[0-9]+\.[0-9]+$" \
-    | sed 's|/|.|' \
+    | egrep "/v[0-9]+\.[0-9]+\.[0-9]+" \
+    | sed 's|/v|.|' \
     | sort -k 1,1 -k 2,2n -k 3,3n -k 4,4n -t . \
-    | sed 's|\.|/|'
+    | sed 's|\.|/v|'
 }
 
 #
@@ -315,10 +320,10 @@ versions_paths() {
 #
 
 display_versions_with_selected() {
-  selected=$1
+  selected="$1"
   echo
   for version in $(versions_paths); do
-    if test "$version" = "$selected"; then
+    if test "${version}" = "${selected}"; then
       printf "  \033[36mο\033[0m $version\033[0m\n"
     else
       printf "    \e[2m$version\e[22m\n"
@@ -345,7 +350,7 @@ display_downloaded_versions() {
   enter_fullscreen
   check_current_version
   clear
-  display_versions_with_selected $active
+  display_versions_with_selected "${active}"
 
   trap handle_sigint INT
   trap handle_sigtstp SIGTSTP
@@ -598,11 +603,9 @@ function set_show_single_remote_match() {
 
 remove_versions() {
   test -z $1 && abort "version(s) required"
-  check_current_version
   while test $# -ne 0; do
-    local version=${1#v}
-    # [ "${BINS[$DEFAULT]}/$version" == "$active" ] && abort "cannot remove currently active version ($active)"
-    rm -rf ${VERSIONS_DIR[$DEFAULT]}/$version
+    local version=$1
+    rm -rf "${VERSIONS_DIR[$DEFAULT]}/${version}"
     shift
   done
 }
@@ -614,10 +617,10 @@ remove_versions() {
 prune_versions() {
   check_current_version
   for version in $(versions_paths); do
-    if [ $version != $active ]
+    if [ "${version}" != "${active}" ]
     then
-      echo $version
-      rm -rf ${BASE_VERSIONS_DIR[$DEFAULT]}/$version
+      echo "${version}"
+      rm -rf "${BASE_VERSIONS_DIR[$DEFAULT]}/${version}"
       shift
     fi
   done
