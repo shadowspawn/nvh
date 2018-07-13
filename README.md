@@ -11,7 +11,7 @@ Forked from [tj/n](https://github.com/tj/n) with changes to command syntax, bug 
 Since you probably already have `node`, the easiest way to install `nvh` is through `npm`:
 
     npm install -g @shadowspawn/nvh
-    nvh --help
+    nvh help
 
 The `nvh` command installs node to `/usr/local` by default, but you may override this location by defining `NVH_PREFIX` (see [environment variables](#optional-environment-variables)). The downloads are written to subdirectory `nvh/versions`.
 
@@ -21,7 +21,7 @@ One way to bootstrap an install if `npm` is not yet available:
     ./nvh/bin/nvh lts
     # Now node and npm are available
     npm install -g @shadowspawn/nvh
-    nvh --help
+    nvh help
 
 ## Installing Node Versions
 
