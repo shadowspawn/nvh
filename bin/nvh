@@ -39,10 +39,10 @@ g_custom_folder_name="node"
 
 function update_settings_from_version() {
   if is_download_folder "$1" ; then
-    g_custom_folder_name="${1}"
+    g_custom_folder_name="$1"
     g_custom_mirror_url="${NODE_DOWNLOAD_MIRROR}/${g_custom_folder_name}"
   elif is_download_folder "$1" || is_download_version "$1"; then
-    [[ "${1}" =~ ^([^/]+)/(.*) ]]
+    [[ "$1" =~ ^([^/]+)/(.*) ]]
     local remote_folder="${BASH_REMATCH[1]}"
     g_custom_folder_name="${remote_folder}"
     g_custom_mirror_url="${NODE_DOWNLOAD_MIRROR}/${g_custom_folder_name}"
@@ -286,7 +286,6 @@ check_current_version() {
   command -v node &> /dev/null
   if test $? -eq 0; then
     local current=$(node --version)
-    echo "${current}"
     for dir in $BASE_VERSIONS_DIR/*/ ; do
       local folder_name="${dir%/}"
       folder_name="${folder_name##*/}"
@@ -322,11 +321,11 @@ versions_paths() {
 display_versions_with_selected() {
   selected="$1"
   echo
-  for version in $(versions_paths); do
-    if test "${version}" = "${selected}"; then
-      printf "  \033[36mο\033[0m $version\033[0m\n"
+  for folder_and_version in $(versions_paths); do
+    if test "${folder_and_version}" = "${selected}"; then
+      printf "  \033[36mο\033[0m ${folder_and_version}\033[0m\n"
     else
-      printf "    \e[2m$version\e[22m\n"
+      printf "    \e[2m${folder_and_version}\e[22m\n"
     fi
   done
   echo
@@ -337,8 +336,8 @@ display_versions_with_selected() {
 #
 
 list_versions_installed() {
-  for version in $(versions_paths); do
-    echo $version
+  for folder_and_version in $(versions_paths); do
+    echo ${folder_and_version}
   done
 }
 
@@ -541,7 +540,7 @@ install() {
   test $resolved_version || abort "did not find remote version for $1"
   update_settings_from_version "$1"
 
-  local dir="${BASE_VERSIONS_DIR[$DEFAULT]}/${g_custom_folder_name}/${resolved_version}"
+  local dir="${BASE_VERSIONS_DIR}/${g_custom_folder_name}/${resolved_version}"
 
   if test -d $dir; then
     if [[ ! -e $dir/n.lock ]] ; then
@@ -604,8 +603,18 @@ function set_show_single_remote_match() {
 remove_versions() {
   test -z $1 && abort "version(s) required"
   while test $# -ne 0; do
-    local version=$1
-    rm -rf "${VERSIONS_DIR[$DEFAULT]}/${version}"
+    local version="$(display_latest_resolved_version $1)"
+    if test $version; then
+      update_settings_from_version "$1"
+      local dir="${BASE_VERSIONS_DIR}/${g_custom_folder_name}/${version}"
+      if [[ -s "${dir}" ]]; then
+        rm -rf "${dir}"
+      else
+        echo "local version not found $1"
+      fi
+    else
+      echo "invalid version $1"
+    fi
     shift
   done
 }
@@ -616,11 +625,11 @@ remove_versions() {
 
 prune_versions() {
   check_current_version
-  for version in $(versions_paths); do
-    if [ "${version}" != "${active}" ]
+  for folder_and_version in $(versions_paths); do
+    if [ "${folder_and_version}" != "${active}" ]
     then
-      echo "${version}"
-      rm -rf "${BASE_VERSIONS_DIR[$DEFAULT]}/${version}"
+      echo "${folder_and_version}"
+      rm -rf "${BASE_VERSIONS_DIR}/${folder_and_version}"
       shift
     fi
   done
@@ -632,14 +641,15 @@ prune_versions() {
 
 display_bin_path_for_version() {
   test -z $1 && abort "version required"
-  local version=$(display_latest_resolved_version $1)
-  test $version || abort "invalid version ${1}"
+  local version="$(display_latest_resolved_version $1)"
+  test $version || abort "invalid version $1}"
 
-  local bin=${VERSIONS_DIR[$DEFAULT]}/$version/bin/node
+  update_settings_from_version "$1"
+  local bin="${BASE_VERSIONS_DIR}/${g_custom_folder_name}/${version}/bin/node"
   if test -f $bin; then
-    printf "$bin\n"
+    printf "${bin}\n"
   else
-    abort "$version is not installed"
+    abort "${version} is not installed"
   fi
 }
 
@@ -649,17 +659,18 @@ display_bin_path_for_version() {
 
 execute_with_version() {
   test -z $1 && abort "version required"
-  local version=$(display_latest_resolved_version $1)
-  test $version || abort "invalid version ${1}"
+  local version="$(display_latest_resolved_version $1)"
+  test $version || abort "invalid version $1"
 
-  local bin=${VERSIONS_DIR[$DEFAULT]}/$version/bin/node
+  update_settings_from_version "$1"
+  local bin="${BASE_VERSIONS_DIR}/${g_custom_folder_name}/${version}/bin/node"
 
   shift # remove version
 
   if test -f $bin; then
     exec $bin "$@"
   else
-    abort "$version is not installed"
+    abort "${version} is not installed"
   fi
 }
 
@@ -747,12 +758,13 @@ display_latest_codename_version() {
 #
 
 display_latest_resolved_version() {
-  local version=$1
+  local version=${1#node/}
   if [[ "${version}" =~ ^[v]{0,1}[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-    # Just numbers, already resolved, no need to lookup first. Just try download.
-    version=${version#v}
+    # Just numbers, already resolved, no need to lookup first.
+    version="v${version#v}"
     echo $version
   else
+    # Complicated recognising exact version, KISS and awlays lookup for now.
     set_show_single_remote_match
     display_remote_versions $1
   fi
