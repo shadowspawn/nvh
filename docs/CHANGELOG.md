@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
-## [1.0.0-0] (unreleased)
+## [0.5.0-0] (unreleased)
 
 Changes from upstream [tj/n](https://github.com/tj/n).
 
@@ -29,26 +29,27 @@ Changes from upstream [tj/n](https://github.com/tj/n).
     - [upstream issue #198](https://github.com/tj/n/issues/198)
 - support partial version numbers with `which` and `run` (e.g. 8)
     - [upstream issue #252](https://github.com/tj/n/issues/252)
-    - (developer) `.gitignore` `.editorconfig` `.markdownling.js`
-- `nvh ls-remote [version]`, like `nvh lsr lts` or `nvh lsr 6`, to lookup downloadable versions
+- (developer) `.gitignore` `.editorconfig` `.markdownlint.js`
+- `nvh ls-remote [version]` to lookup matching downloadable versions
 - `nvh doctor` to show useful diagnostics
 
 ### Changed
 
 - fix `--lts` for mirrors with multiple versions in release stream folders
-    - [upstream PR #512](https://github.com/tj/n/pull/512) (and [#360](https://github.com/tj/n/pull/360) for reproduce steps)
-- changed error for missing codename with `which` to display numeric version
+    - [upstream PR #512](https://github.com/tj/n/pull/512)
+- changed error message for `which` and `run` to include specified and matching version
 - removed trailing space from `which` output
     - [upstream issue #456](https://github.com/tj/n/issues/456)
-- fixed partial number lookups for install/which/run so 6.1 matches 6.1.0 (not 6.14.3)
-- (internal) share lookups for install/which/run so consistent behaviour (such as partial number lookups)
+- fixed partial number lookups so 6.1 matches 6.1.0 (not 6.14.3)
+- (internal) share lookups for install/which/run/rm so consistent behaviour (such as partial number lookups)
 - remove old iojs support from code and help
     - [upstream PR #516](https://github.com/tj/n/pull/516)
-- changed N_PREFIX to NVH_PREFIX
-- changed base versions directory from `n/versions` to `nvh/versions`
-- `NODE_MIRROR` changed to `NVH_NODE_MIRROR`
-- `HTTP_USER` changed to `NVH_NODE_MIRROR_USER`
-- `HTTP_PASSWORD` changed to `NVH_NODE_MIRROR_PASSWORD`
+- changed environment variable names
+    - `N_PREFIX` to `NVH_PREFIX`
+    - `NODE_MIRROR` changed to `NVH_NODE_MIRROR`
+    - `HTTP_USER` changed to `NVH_NODE_MIRROR_USER`
+    - `HTTP_PASSWORD` changed to `NVH_NODE_MIRROR_PASSWORD`
+- changed stash versions directory from `n/versions` to `nvh/versions`
 - `n use` and `n as` changed to `nvh run` (as per `nvm` and `nvs`)
 - `nvh ls` lists downloaded versions
 - `nvh ls-remote` replaces `n ls`
@@ -60,8 +61,7 @@ Changes from upstream [tj/n](https://github.com/tj/n).
 
 - removed support for deprecated `stable` version
     - [upstream issue #354](https://github.com/tj/n/issues/354)
-- removed support for `PROJECT_NAME` (and `n project`)
-- remove support for `PROJECT_VERSION_CHECK`
+- removed support for `n project` (and `PROJECT_NAME` and `PROJECT_VERSION_CHECK`)
 - `Makefile`
 - `n --latest` replaced by `nvh lsr latest`
 - `n --lts` replaced by `nvh lsr lts`
@@ -70,4 +70,4 @@ Changes from upstream [tj/n](https://github.com/tj/n).
 - `--download` option
 - `--arch` option
 
-[1.0.0-0]: https://github.com/tj/n/compare/8ad6cd3bc76fc674f7faf3d8cf2f4d6e7d1849c3...JohnRGee:develop
+[0.5.0-0]: https://github.com/tj/n/compare/8ad6cd3bc76fc674f7faf3d8cf2f4d6e7d1849c3...JohnRGee:develop

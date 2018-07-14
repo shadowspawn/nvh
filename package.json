@@ -1,16 +1,15 @@
 {
   "name": "nvh",
   "description": "Easily install Node.js versions",
+  "version": "0.5.0-0",
   "author": "John Gee",
   "homepage": "https://github.com/JohnRGee/nvh",
   "bugs": "https://github.com/JohnRGee/nvh/issues",
   "keywords": [
-    "nvm",
     "node",
     "version",
     "manager",
-    "switcher",
-    "node"
+    "switcher"
   ],
   "bin": {
     "nvh": "./bin/nvh"
@@ -20,13 +19,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/JohnRGee/n.git"
+    "url": "git://github.com/JohnRGee/nvh.git"
   },
   "os": [
     "!win32"
   ],
-  "engines": {
-    "node": "*"
-  },
   "license": "MIT"
 }
