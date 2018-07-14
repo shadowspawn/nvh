@@ -98,45 +98,6 @@ function is_numeric_version() {
 }
 
 #
-# Ensure we have curl or wget support.
-#
-
-# ToDo: move globals to top of file
-CURL_PARAMS=( "-L"
-              "-#")
-
-WGET_PARAMS=( "--no-check-certificate"
-              "-q"
-              "-O-")
-
-# ToDo: move code to end of file
-if [[ -n "$NVH_NODE_MIRROR_USER" ]];then
-  if [[ -z "$NVH_NODE_MIRROR_PASSWORD" ]]; then
-    abort "Must specify NVH_NODE_MIRROR_PASSWORD when supplying NVH_NODE_MIRROR_USER"
-  fi
-  CURL_PARAMS+=("-u $NVH_NODE_MIRROR_USER:$NVH_NODE_MIRROR_PASSWORD")
-  WGET_PARAMS+=("--http-password=$NVH_NODE_MIRROR_PASSWORD"
-                "--http-user=$NVH_NODE_MIRROR_USER")
-elif [[ -n "$NVH_NODE_MIRROR_PASSWORD" ]]; then
-  abort "Must specify NVH_NODE_MIRROR_USER when supplying NVH_NODE_MIRROR_PASSWORD"
-fi
-
-GET=
-
-# wget support
-command -v wget > /dev/null && GET="wget ${WGET_PARAMS[@]}"
-
-command -v curl > /dev/null && GET="curl ${CURL_PARAMS[@]}"
-
-[[ -z "$GET" ]] && abort "curl or wget required"
-
-# ToDo: move code to end of file, or move into routine and call when needed
-VERSIONS_DIR=("${STASH_DIR}/node")
-for dir in ${VERSIONS_DIR[@]}; do
-  [[ -d "${dir}" ]] || mkdir -p "${dir}"
-done
-
-#
 # Functions used when showing versions installed
 #
 
@@ -853,6 +814,44 @@ function show_diagnostics() {
 }
 
 #######################################################################################################
+
+#
+# Ensure we have curl or wget support.
+#
+
+# ToDo: rename not-constants
+CURL_PARAMS=( "-L"
+              "-#")
+
+WGET_PARAMS=( "--no-check-certificate"
+              "-q"
+              "-O-")
+
+if [[ -n "$NVH_NODE_MIRROR_USER" ]];then
+  if [[ -z "$NVH_NODE_MIRROR_PASSWORD" ]]; then
+    abort "Must specify NVH_NODE_MIRROR_PASSWORD when supplying NVH_NODE_MIRROR_USER"
+  fi
+  CURL_PARAMS+=("-u $NVH_NODE_MIRROR_USER:$NVH_NODE_MIRROR_PASSWORD")
+  WGET_PARAMS+=("--http-password=$NVH_NODE_MIRROR_PASSWORD"
+                "--http-user=$NVH_NODE_MIRROR_USER")
+elif [[ -n "$NVH_NODE_MIRROR_PASSWORD" ]]; then
+  abort "Must specify NVH_NODE_MIRROR_USER when supplying NVH_NODE_MIRROR_PASSWORD"
+fi
+
+GET=
+
+# wget support
+command -v wget > /dev/null && GET="wget ${WGET_PARAMS[@]}"
+
+command -v curl > /dev/null && GET="curl ${CURL_PARAMS[@]}"
+
+[[ -z "$GET" ]] && abort "curl or wget required"
+
+# ToDo: only create when needed?
+VERSIONS_DIR=("${STASH_DIR}/node")
+for dir in ${VERSIONS_DIR[@]}; do
+  [[ -d "${dir}" ]] || mkdir -p "${dir}"
+done
 
 #
 # Handle arguments.
