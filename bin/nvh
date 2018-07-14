@@ -529,7 +529,7 @@ function install() {
   local dir="${STASH_DIR}/${g_custom_folder_name}/${resolved_version}"
 
   if [[ -d "${dir}" ]]; then
-    if [[ ! -e "${dir}/n.lock" ]] ; then
+    if [[ ! -e "${dir}/nvh.lock" ]] ; then
       activate "${g_custom_folder_name}/${resolved_version}"
       exit
     fi
@@ -546,15 +546,15 @@ function install() {
   if [[ $? -ne 0 ]] ; then
     abort "sudo required"
   else
-    touch "${dir}/n.lock"
+    touch "${dir}/nvh.lock"
   fi
 
   cd $dir
 
   log "fetch" "${url}"
-  $GET $url | tar -zx --strip-components=1
+  $GET "${url}" | tar -zx --strip-components=1
   [[ "${QUIET}" = "false" ]] && erase_line
-  rm -f $dir/n.lock
+  rm -f "${dir}/nvh.lock"
 
   disable_pax_mprotect bin/node
 
