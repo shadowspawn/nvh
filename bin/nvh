@@ -6,7 +6,7 @@
 
 readonly VERSION="1.0.0-0"
 readonly NVH_PREFIX=${NVH_PREFIX=/usr/local}
-readonly BASE_VERSIONS_DIR=$NVH_PREFIX/nvh/versions
+readonly STASH_DIR=$NVH_PREFIX/nvh/versions
 
 NODE_MIRROR=${NVH_NODE_MIRROR=https://nodejs.org/dist}
 NODE_MIRROR=${NODE_MIRROR%/}
@@ -15,13 +15,6 @@ readonly NODE_MIRROR
 NODE_DOWNLOAD_MIRROR=${NVH_NODE_DOWNLOAD_MIRROR=https://nodejs.org/download}
 NODE_DOWNLOAD_MIRROR=${NODE_DOWNLOAD_MIRROR%/}
 readonly NODE_DOWNLOAD_MIRROR
-
-# ToDo: remove or use new names
-VERSIONS_DIR=("${BASE_VERSIONS_DIR}/node")
-
-# ToDo: change case, these are global not constant
-# ToDo: handle boolean differently
-ARCH=
 
 # Modified by command options, but otherwise constant
 QUIET="false"
@@ -130,22 +123,10 @@ command -v curl > /dev/null && GET="curl ${CURL_PARAMS[@]}"
 test -z "$GET" && abort "curl or wget required"
 
 # ToDo: move code to end of file, or move into routine and call when needed
+VERSIONS_DIR=("${STASH_DIR}/node")
 for dir in ${VERSIONS_DIR[@]}; do
   test -d $dir || mkdir -p $dir
 done
-
-#
-# set_arch <arch> to override $(uname -a)
-#
-
-function set_arch() {
-  if test ! -z $1; then
-    echo "Warning: --arch deprecated"
-    ARCH=$1
-  else
-    abort "missing -a|--arch value"
-  fi
-}
 
 #
 # Functions used when showing versions installed
@@ -213,7 +194,6 @@ function display_help() {
     -V, --version       Output version of n
     -h, --help          Display help information
     -q, --quiet         Disable download progress (for curl)
-    -a, --arch          Override system architecture
     -p, --preserve      Preserve npm and npx during install of node
 
   Aliases:
@@ -286,11 +266,11 @@ function check_current_version() {
   command -v node &> /dev/null
   if test $? -eq 0; then
     local current=$(node --version)
-    for dir in $BASE_VERSIONS_DIR/*/ ; do
+    for dir in ${STASH_DIR}/*/ ; do
       local folder_name="${dir%/}"
       folder_name="${folder_name##*/}"
       if diff &> /dev/null \
-        "${BASE_VERSIONS_DIR}/${folder_name}/${current}/bin/node" \
+        "${STASH_DIR}/${folder_name}/${current}/bin/node" \
         "$(which node)" ; then
         active="${folder_name}/${current}"
       fi
@@ -306,8 +286,8 @@ function versions_paths() {
   # e.g. node/v8.11.3
   # sort string . number . number . number
 
-  find $BASE_VERSIONS_DIR -maxdepth 2 -type d \
-    | sed 's|'$BASE_VERSIONS_DIR'/||g' \
+  find $STASH_DIR -maxdepth 2 -type d \
+    | sed 's|'$STASH_DIR'/||g' \
     | egrep "/v[0-9]+\.[0-9]+\.[0-9]+" \
     | sed 's|/v|.|' \
     | sort -k 1,1 -k 2,2n -k 3,3n -k 4,4n -t . \
@@ -472,8 +452,6 @@ function tarball_url() {
     [[ $major -eq "" && $minor -lt 12 ]] && arch=arm-pi
   fi
 
-  [ ! -z $ARCH ] && arch=$ARCH
-
   echo "${g_custom_mirror_url}/${version}/node-${version}-${os}-${arch}.tar.gz"
 }
 
@@ -509,7 +487,7 @@ function disable_pax_mprotect() {
 
 function activate() {
   local path_from_prefix=$1
-  local dir=$BASE_VERSIONS_DIR/${path_from_prefix}
+  local dir="${STASH_DIR}/${path_from_prefix}"
   # Remove old npm to avoid potential issues with simple overwrite.
   if [[ "${PRESERVE_NPM}" = "false" && -d "$dir/lib/node_modules/npm" ]]; then
     if test -d "$NVH_PREFIX/lib/node_modules/npm"; then
@@ -540,7 +518,7 @@ function install() {
   test $resolved_version || abort "did not find remote version for $1"
   update_settings_from_version "$1"
 
-  local dir="${BASE_VERSIONS_DIR}/${g_custom_folder_name}/${resolved_version}"
+  local dir="${STASH_DIR}/${g_custom_folder_name}/${resolved_version}"
 
   if test -d $dir; then
     if [[ ! -e $dir/n.lock ]] ; then
@@ -607,7 +585,7 @@ function remove_versions() {
     local version="$(display_latest_resolved_version $1)"
     if test $version; then
       update_settings_from_version "$1"
-      local dir="${BASE_VERSIONS_DIR}/${g_custom_folder_name}/${version}"
+      local dir="${STASH_DIR}/${g_custom_folder_name}/${version}"
       if [[ -s "${dir}" ]]; then
         rm -rf "${dir}"
       else
@@ -630,7 +608,7 @@ function prune_versions() {
     if [ "${folder_and_version}" != "${active}" ]
     then
       echo "${folder_and_version}"
-      rm -rf "${BASE_VERSIONS_DIR}/${folder_and_version}"
+      rm -rf "${STASH_DIR}/${folder_and_version}"
       shift
     fi
   done
@@ -646,7 +624,7 @@ function display_bin_path_for_version() {
   test $version || abort "invalid version $1}"
 
   update_settings_from_version "$1"
-  local bin="${BASE_VERSIONS_DIR}/${g_custom_folder_name}/${version}/bin/node"
+  local bin="${STASH_DIR}/${g_custom_folder_name}/${version}/bin/node"
   if test -f $bin; then
     printf "${bin}\n"
   else
@@ -664,7 +642,7 @@ function execute_with_version() {
   test $version || abort "invalid version $1"
 
   update_settings_from_version "$1"
-  local bin="${BASE_VERSIONS_DIR}/${g_custom_folder_name}/${version}/bin/node"
+  local bin="${STASH_DIR}/${g_custom_folder_name}/${version}/bin/node"
 
   if test -f $bin; then
     shift # remove version from parameters
@@ -885,7 +863,6 @@ else
       -q|--quiet) set_quiet_progress ;;
       -p|--preserve) PRESERVE_NPM="true" ;;
       --all) set_show_all_remote_matches ;;
-      --arch) shift; set_arch $1;; # set arch and continue. Deprecated.
       which) shift; display_bin_path_for_version $1; exit ;;
       run) shift; execute_with_version $@; exit ;;
       rm|remove) shift; remove_versions $@; exit ;;
