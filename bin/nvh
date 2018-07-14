@@ -56,7 +56,7 @@ function log() {
 #
 
 function abort() {
-  printf "\n  \033[31mError: $@\033[0m\n\n" && exit 1
+  >&2 printf "\n  \033[31mError: $@\033[0m\n\n" && exit 1
 }
 
 #
@@ -102,14 +102,14 @@ WGET_PARAMS=( "--no-check-certificate"
               "-O-")
 
 # ToDo: move code to end of file
-if [ -n "$NVH_NODE_MIRROR_USER" ];then
-  if [ -z "$NVH_NODE_MIRROR_PASSWORD" ]; then
+if [[ -n "$NVH_NODE_MIRROR_USER" ]];then
+  if [[ -z "$NVH_NODE_MIRROR_PASSWORD" ]]; then
     abort "Must specify NVH_NODE_MIRROR_PASSWORD when supplying NVH_NODE_MIRROR_USER"
   fi
   CURL_PARAMS+=("-u $NVH_NODE_MIRROR_USER:$NVH_NODE_MIRROR_PASSWORD")
   WGET_PARAMS+=("--http-password=$NVH_NODE_MIRROR_PASSWORD"
                 "--http-user=$NVH_NODE_MIRROR_USER")
-elif [ -n "$NVH_NODE_MIRROR_PASSWORD" ]; then
+elif [[ -n "$NVH_NODE_MIRROR_PASSWORD" ]]; then
   abort "Must specify NVH_NODE_MIRROR_USER when supplying NVH_NODE_MIRROR_PASSWORD"
 fi
 
@@ -120,12 +120,12 @@ command -v wget > /dev/null && GET="wget ${WGET_PARAMS[@]}"
 
 command -v curl > /dev/null && GET="curl ${CURL_PARAMS[@]}"
 
-test -z "$GET" && abort "curl or wget required"
+[[ -z "$GET" ]] && abort "curl or wget required"
 
 # ToDo: move code to end of file, or move into routine and call when needed
 VERSIONS_DIR=("${STASH_DIR}/node")
 for dir in ${VERSIONS_DIR[@]}; do
-  test -d $dir || mkdir -p $dir
+  [[ -d "${dir}" ]] || mkdir -p "${dir}"
 done
 
 #
@@ -264,7 +264,7 @@ function display_nvh_version() {
 
 function check_current_version() {
   command -v node &> /dev/null
-  if test $? -eq 0; then
+  if [[ $? -eq 0 ]]; then
     local current=$(node --version)
     for dir in ${STASH_DIR}/*/ ; do
       local folder_name="${dir%/}"
@@ -302,7 +302,7 @@ function display_versions_with_selected() {
   selected="$1"
   echo
   for folder_and_version in $(versions_paths); do
-    if test "${folder_and_version}" = "${selected}"; then
+    if [[ "${folder_and_version}" = "${selected}" ]]; then
       printf "  \033[36mο\033[0m ${folder_and_version}\033[0m\n"
     else
       printf "    \e[2m${folder_and_version}\e[22m\n"
@@ -445,7 +445,7 @@ function tarball_url() {
     *aarch64*) arch=arm64 ;;
   esac
 
-  if [ ${arch} = "armv6l" ]; then
+  if [[ "${arch}" = "armv6l" ]]; then
     local semver=${version//./ }
     local major=$(echo $semver | grep -o -E '[0-9]+' | head -1 | sed -e 's/^0\+//')
     local minor=$(echo $semver | awk '{print $2}' | grep -o -E '[0-9]+' | head -1 | sed -e 's/^0\+//')
@@ -460,21 +460,21 @@ function tarball_url() {
 #
 
 function disable_pax_mprotect() {
-  test -z $1 && abort "binary required"
+  [[ -z "$1" ]] && abort "binary required"
   local binary=$1
 
   # try to disable mprotect via XATTR_PAX header
   local PAXCTL=$(PATH="/sbin:/usr/sbin:$PATH" which paxctl-ng 2>&1)
   local PAXCTL_ERROR=1
-  if [ -x "$PAXCTL" ]; then
+  if [[ -x "$PAXCTL" ]]; then
     $PAXCTL -l && $PAXCTL -m "$binary" >/dev/null 2>&1
     PAXCTL_ERROR="$?"
   fi
 
   # try to disable mprotect via PT_PAX header
-  if [ $PAXCTL_ERROR != 0 ]; then
+  if [[ $PAXCTL_ERROR != 0 ]]; then
     PAXCTL=$(PATH="/sbin:/usr/sbin:$PATH" which paxctl 2>&1)
-    if [ -x "$PAXCTL" ]; then
+    if [[ -x "$PAXCTL" ]]; then
       $PAXCTL -Cm "$binary" >/dev/null 2>&1
     fi
   fi
@@ -490,7 +490,7 @@ function activate() {
   local dir="${STASH_DIR}/${path_from_prefix}"
   # Remove old npm to avoid potential issues with simple overwrite.
   if [[ "${PRESERVE_NPM}" = "false" && -d "$dir/lib/node_modules/npm" ]]; then
-    if test -d "$NVH_PREFIX/lib/node_modules/npm"; then
+    if [[ -d "$NVH_PREFIX/lib/node_modules/npm" ]]; then
       rm -rf "$NVH_PREFIX/lib/node_modules/npm"
     fi
   fi
@@ -499,7 +499,7 @@ function activate() {
     if [[ "${PRESERVE_NPM}" = "true" ]]; then
       mkdir -p "$NVH_PREFIX/$subdir"
       (cd "$dir/$subdir"; tar -cf - --exclude npm --exclude npx .) | (cd "$NVH_PREFIX/$subdir"; tar -xf -)
-    elif test -L "$NVH_PREFIX/$subdir"; then
+    elif [[ -L "$NVH_PREFIX/$subdir" ]]; then
       find "$dir/$subdir" -mindepth 1 -maxdepth 1 -exec cp -fR "{}" "$NVH_PREFIX/$subdir" \;
     else
       cp -fR "$dir/$subdir" $NVH_PREFIX
@@ -515,13 +515,13 @@ function activate() {
 
 function install() {
   local resolved_version=$(display_latest_resolved_version "$1")
-  test $resolved_version || abort "did not find remote version for $1"
+  [[ -z "${resolved_version}" ]] || abort "did not find remote version for $1"
   update_settings_from_version "$1"
 
   local dir="${STASH_DIR}/${g_custom_folder_name}/${resolved_version}"
 
-  if test -d $dir; then
-    if [[ ! -e $dir/n.lock ]] ; then
+  if [[ -d "${dir}" ]]; then
+    if [[ ! -e "${dir}/n.lock" ]] ; then
       activate "${g_custom_folder_name}/${resolved_version}"
       exit
     fi
@@ -535,7 +535,7 @@ function install() {
 
   log "mkdir" "${dir}"
   mkdir -p "${dir}"
-  if [ $? -ne 0 ] ; then
+  if [[ $? -ne 0 ]] ; then
     abort "sudo required"
   else
     touch "${dir}/n.lock"
@@ -580,10 +580,10 @@ function set_show_single_remote_match() {
 #
 
 function remove_versions() {
-  test -z $1 && abort "version(s) required"
-  while test $# -ne 0; do
+  [[ -z "$1" ]] && abort "version(s) required"
+  while [[ $# -ne 0 ]]; do
     local version="$(display_latest_resolved_version $1)"
-    if test $version; then
+    if [[ -n "${version}" ]]; then
       update_settings_from_version "$1"
       local dir="${STASH_DIR}/${g_custom_folder_name}/${version}"
       if [[ -s "${dir}" ]]; then
@@ -605,8 +605,7 @@ function remove_versions() {
 function prune_versions() {
   check_current_version
   for folder_and_version in $(versions_paths); do
-    if [ "${folder_and_version}" != "${active}" ]
-    then
+    if [[ "${folder_and_version}" != "${active}" ]]; then
       echo "${folder_and_version}"
       rm -rf "${STASH_DIR}/${folder_and_version}"
       shift
@@ -619,13 +618,13 @@ function prune_versions() {
 #
 
 function display_bin_path_for_version() {
-  test -z $1 && abort "version required"
+  [[ -z "$1" ]] && abort "version required"
   local version="$(display_latest_resolved_version $1)"
-  test $version || abort "invalid version $1}"
+  [[ -z "${version}" ]] && abort "invalid version $1"
 
   update_settings_from_version "$1"
   local bin="${STASH_DIR}/${g_custom_folder_name}/${version}/bin/node"
-  if test -f $bin; then
+  if [[ -f "${bin}" ]]; then
     printf "${bin}\n"
   else
     abort "$1 (${version}) not in stash"
@@ -637,14 +636,14 @@ function display_bin_path_for_version() {
 #
 
 function execute_with_version() {
-  test -z $1 && abort "version required"
+  [[ -z "$1" ]] && abort "version required"
   local version="$(display_latest_resolved_version $1)"
-  test $version || abort "invalid version $1"
+  [[ -z "$version" ]] && abort "invalid version $1"
 
   update_settings_from_version "$1"
   local bin="${STASH_DIR}/${g_custom_folder_name}/${version}/bin/node"
 
-  if test -f $bin; then
+  if [[ -f "${bin}" ]]; then
     shift # remove version from parameters
     exec $bin "$@"
   else
@@ -716,15 +715,15 @@ function display_remote_files() {
 #
 
 function display_latest_codename_version() {
-  local codename=$1
+  local codename="$1"
   local folder_name=$($GET 2> /dev/null "${NODE_MIRROR}/" \
     | egrep "</a>" \
     | egrep -o "latest-$codename" \
     | sort \
     | tail -n1)
-  test $folder_name || return 0
+  [[ -z "${folder_name}" ]] && return 0
 
-  $GET 2> /dev/null "${NODE_MIRROR}/$folder_name/" \
+  $GET 2> /dev/null "${NODE_MIRROR}/${folder_name}/" \
     | egrep "</a>" \
     | egrep -o '[0-9]+\.[0-9]+\.[0-9]+' \
     | sort -u -k 1,1n -k 2,2n -k 3,3n -t . \
@@ -828,7 +827,7 @@ function show_diagnostics() {
   echo "## nvh"
   command -v nvh && nvh --version
   command -v node &> /dev/null
-  if test $? -eq 0; then
+  if [[ $? -eq 0 ]]; then
     echo "## node"
     command -v node && node --version && echo "node engine: $(node -e 'console.log(process.jsEngine)')"
     echo "## npm"
@@ -842,7 +841,7 @@ function show_diagnostics() {
   echo "node mirror: ${NODE_MIRROR}"
   echo "node downloads mirror: ${NODE_DOWNLOAD_MIRROR}"
   echo "install location: $NVH_PREFIX"
-  test -z "NVH_PREFIX" ||echo "PATH: $PATH"
+  [[ -n "${NVH_PREFIX}" ]] && echo "PATH: $PATH"
   echo "ls-remote max matches: ${g_ls_remote_max_matches}"
 }
 
@@ -852,11 +851,11 @@ function show_diagnostics() {
 # Handle arguments.
 #
 
-if test $# -eq 0; then
-  test -z "$(versions_paths)" && err_no_installed_print_help
+if [[ $# -eq 0 ]]; then
+  [[ -z "$(versions_paths)" ]] && err_no_installed_print_help
   display_stash_versions
 else
-  while test $# -ne 0; do
+  while [[ $# -ne 0 ]]; do
     case $1 in
       -V|--version) display_nvh_version ;;
       -h|--help|help) display_help; exit ;;

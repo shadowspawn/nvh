@@ -46,6 +46,7 @@ Changes from upstream [tj/n](https://github.com/tj/n).
 - `n use` and `n as` changed to `nvh run` (as per `nvm` and `nvs`)
 - `nvh ls` lists downloaded versions
 - `nvh ls-remote` replaces `n ls`
+- error messages to STDERR
 
 ### Removed
 
