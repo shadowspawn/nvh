@@ -175,12 +175,12 @@ function display_help() {
 
     nvh                             Display downloaded node versions and install selection
     nvh <version>                   Install node <version> (downloading if necessary)
+    nvh install <version>           Same as above
     nvh run <version> [args ...]    Execute downloaded node <version> with [args ...]
     nvh which <version>             Output path for downloaded node <version>
-    nvh rm <version ...>            Remove the given downloaded (explicit) version(s)
+    nvh rm <version ...>            Remove the given downloaded version(s)
     nvh prune                       Remove all downloaded versions except the active version
-    nvh ls-remote                   Output all the versions of node available for download
-    nvh ls-remote <version>         Output latest matching version available for download
+    nvh ls-remote [version]         Output matching versions available for download
     nvh ls                          Output downloaded versions
     nvh doctor                      Output diagnostics to help solve issues
 
@@ -206,8 +206,8 @@ function display_help() {
 
   Aliases:
 
-    ls-remote: lsr, list-remote
     ls: list
+    ls-remote: lsr, list-remote
     rm: remove
 
   Examples:
@@ -597,7 +597,7 @@ function remove_versions() {
       if [[ -s "${dir}" ]]; then
         rm -rf "${dir}"
       else
-        echo "$1 (${version}) not in stash"
+        echo "$1 (${version}) not in downloads stash"
       fi
     else
       echo "invalid version $1"
@@ -635,7 +635,7 @@ function display_bin_path_for_version() {
   if [[ -f "${bin}" ]]; then
     printf "${bin}\n"
   else
-    abort "$1 (${version}) not in stash"
+    abort "$1 (${version}) not in downloads stash"
   fi
 }
 
@@ -655,7 +655,7 @@ function execute_with_version() {
     shift # remove version from parameters
     exec $bin "$@"
   else
-    abort "$1 (${version}) not in stash"
+    abort "$1 (${version}) not in downloads stash"
   fi
 }
 
