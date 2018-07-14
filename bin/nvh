@@ -60,6 +60,14 @@ function abort() {
 }
 
 #
+# trace <messages...>
+#
+
+function trace() {
+  >&2 printf "trace: $@\n"
+}
+
+#
 # Version test patterns
 #
 
@@ -84,7 +92,7 @@ function is_download_version() {
   [[ "$1" =~ ^[^/]+/ ]]
 }
 
-function is_semver() {
+function is_numeric_version() {
   # e.g. 6, v7.1, 8.11.3
   [[ "$1" =~ ^[v]{0,1}[0-9]+(\.[0-9]+){0,2}$ ]]
 }
@@ -515,7 +523,7 @@ function activate() {
 
 function install() {
   local resolved_version=$(display_latest_resolved_version "$1")
-  [[ -z "${resolved_version}" ]] || abort "did not find remote version for $1"
+  [[ -z "${resolved_version}" ]] && abort "did not find remote version for $1"
   update_settings_from_version "$1"
 
   local dir="${STASH_DIR}/${g_custom_folder_name}/${resolved_version}"
@@ -664,14 +672,15 @@ function display_remote_version_folders() {
   local version_prefix=$2
   [[ -z "$version_prefix" ]] && version_prefix='[0-9]+'
   version_prefix="v${version_prefix#v}" # Ensure leading v
-  # Make semver terminated, so 1.1 does not match 1.11 et al
-  is_semver "${version_prefix}" && version_prefix="${version_prefix}([.-].+){0,1}$"
+  # Make numeric version terminated, so 1.1 does not match 1.11 et al
+  is_numeric_version "${version_prefix}" && version_prefix="${version_prefix}([.-].+){0,1}$"
   # Quote the dots so they are literal and not special in expression
   version_prefix=${version_prefix//\./\.}
 
   local last_lines="$3"
-  [[ -z "${last_lines}" ]] && last_lines=${g_ls_remote_max_matches}
+  [[ -z "${last_lines}" ]] && last_lines="${g_ls_remote_max_matches}"
 
+  # filenames
   # dist:     v8.11.3/
   # nightly:  v10.0.0-nightly201711117b3446e7bb/
   # rc:       v10.1.0-rc.0/
@@ -692,7 +701,7 @@ function display_remote_version_folders() {
     | sed 's|v\(.*\)|\1|; s|-|.-|' \
     | sort -u -k 1,1n -k 2,2n -k 3,3n -k 4,4 -k 5,5n -t . \
     | sed 's|\.-|-|; s|.*|v&|' \
-    | tail -n ${last_lines}
+    | tail -n "${last_lines}"
 }
 
 #
@@ -702,12 +711,14 @@ function display_remote_version_folders() {
 
 function display_remote_files() {
   local remote_url=${1%/}/
+  local last_lines="$2"
+  [[ -z "${last_lines}" ]] && last_lines="${g_ls_remote_max_matches}"
 
   $GET 2> /dev/null "${remote_url}" \
     | egrep "</a>" \
     | egrep -o 'v[0-9]+\.[0-9]+\.[0-9]+' \
     | sort -u -k 1,1n -k 2,2n -k 3,3n -t . \
-    | tail -n1
+    | tail -n "${last_lines}"
 }
 
 #
@@ -723,11 +734,7 @@ function display_latest_codename_version() {
     | tail -n1)
   [[ -z "${folder_name}" ]] && return 0
 
-  $GET 2> /dev/null "${NODE_MIRROR}/${folder_name}/" \
-    | egrep "</a>" \
-    | egrep -o '[0-9]+\.[0-9]+\.[0-9]+' \
-    | sort -u -k 1,1n -k 2,2n -k 3,3n -t . \
-    | tail -n1
+  display_remote_files "${NODE_MIRROR}/${folder_name}/" 1
 }
 
 #
@@ -759,7 +766,7 @@ function display_latest_lts_version() {
     | sort \
     | tail -n1)
 
-  display_remote_files "${NODE_MIRROR}/${folder_name}/"
+  display_remote_files "${NODE_MIRROR}/${folder_name}/" 1
 }
 
 #
@@ -800,7 +807,7 @@ function display_remote_versions() {
       display_remote_version_folders "${NODE_DOWNLOAD_MIRROR}/${remote_folder}/" "${version}"
     fi
   elif is_lts_codename "${version}"; then
-    # Only one version on nodejs/dist
+    # Only one version on nodejs/dist, so skip display_match_limit
     display_remote_files "${NODE_MIRROR}/latest-${version}/"
   elif is_release_branch "${version}"; then
     # Only one version on nodejs/dist, so skip display_match_limit
