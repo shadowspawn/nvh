@@ -13,52 +13,65 @@ Since you probably already have `node`, the easiest way to install `nvh` is thro
     npm install -g @shadowspawn/nvh
     nvh help
 
-The `nvh` command installs node to `/usr/local` by default, but you may override this location by defining `NVH_PREFIX` (see [environment variables](#optional-environment-variables)). The downloads are written to subdirectory `nvh/versions`.
+`nvh` installs node to `/usr/local` by default, but you may change this location by defining `NVH_PREFIX` (see [environment variables](#optional-environment-variables)). The downloads are written to a stash in subdirectory `nvh/versions`.
 
 One way to bootstrap an install if `npm` is not yet available:
 
     git clone git@github.com:JohnRGee/nvh.git
     ./nvh/bin/nvh lts
     # Now node and npm are available
-    npm install -g @shadowspawn/nvh
-    nvh help
 
 ## Installing Node Versions
 
-Simply execute `nvh <version>` to download and install a version of `node`. If `<version>` has already been downloaded, `nvh` will install from its cache.
+Simply execute `nvh <version>` to download and install a version of `node`. If `<version>` has already been downloaded, `nvh` will install from its stash.
 
     nvh 4.9.1
-    nvh 6.14.3
+    nvh lts
 
 Execute `nvh` on its own to view your downloaded versions. Use the up and down arrow keys to navigate and press enter or the right arrow key to select. Use `q` to exit the selection screen without installing.
 If you like vim key bindings during the selection of node versions, you can use `j` and `k` to navigate up or down without using arrows.
 
     $ nvh
 
-      0.8.14
-    ο 0.8.17
-      0.9.6
+      node/v4.9.1
+    ο node/v6.14.3
+      node/v8.11.3
 
-Install the latest official release:
+## Specifying Node Versions
 
-    nvh latest
+There are a variety of ways of specifying the target node version for `nvh` commands. Most commands use the latest matching version, and the `ls-remote` command lists multiple matching versions.
 
-Install the latest LTS official release:
+Numeric version numbers can be complete or incomplete, with an optional leading `v`.
 
-    nvh lts
+- `4.9.1`
+- `8`: 8.x.y versions
+- `v6.1`: 6.1.x versions
 
-Install by codename or partial version number:
+There are labels for two especially useful versions:
 
-    nvh carbon
-    nvh 8
+- `lts`: latest Long Term Support official release
+- `latest`: latest official release
 
-## Using Node Without Installing
+There is support for release streams:
 
-When running multiple versions of `node`, you can target
-a downloaded version directly by asking `nvh` for the path:
+- `argon`, `boron`, `carbon`: codename for LTS release stream
+- `v6.x`, `7.x`: major version number release stream
 
-    $ nvh which 0.9.4
-    /usr/local/nvh/versions/0.9.4/bin/node
+The last form is for specifying other releases available using the name of the download folder followed by the complete or incomplete version. (`lts` and release streams are not available, but the other conveniences are.)
+
+- `chakracore-release/latest`
+- `nightly/10`
+- `test/v11.0.0-test20180528`
+- `rc/v10.0.0-rc.1`
+
+## Using Node Versions Without Reinstalling
+
+There are two commands for working directly with your downloaded versions of node, without reinstalling. 
+
+You can show the path to the downloaded version:
+
+    $ nvh which 6.14.3
+    /usr/local/nvh/versions/6.14.3/bin/node
 
 Or run a downloaded `node` version with the `nvh run` command:
 
@@ -79,20 +92,22 @@ A `node` install normally includes `npm` as well, but you may wish to preserve a
 
 ## Miscellaneous
 
-List remote version available for download, or latest available version for a named version or incomplete version:
+List matching remote versions available for download:
 
-    nvh ls-remote
     nvh ls-remote lts
+    nvh ls-remote latest
+    nvh lsr 6
+    nvh lsr --all
 
-List downloaded versions:
+List downloaded versions in stash:
 
     nvh ls
 
-Remove some downloaded versions. Accepts explicit version numbers, and not named versions or incomplete version numbers.
+Remove some downloaded versions:
 
     nvh rm 0.9.4 v0.10.0
 
-Remove all downloaded versions except the installed version:
+Remove all downloaded versions except the current installed version:
 
     nvh prune
 
@@ -117,10 +132,10 @@ There are a lot of minor changes! Taking advantage of a fresh start.
 
 - `n bin` alias
 - `n -` alias
-- `stable`
-- iojs support
-- `--download`
-- `--arch` deprecated
+- `stable` version label
+- explicit iojs support
+- `--download` option
+- `--arch` option
 
 ## Optional Environment Variables
 
@@ -130,8 +145,10 @@ To change the location to say `$HOME/.nvh`, add lines like the following to your
     export NVH_PREFIX=$HOME/.nvh
     export PATH=$NVH_PREFIX/bin:$PATH
 
-Custom node mirror:
+Specifying custom node mirror:
 
 - `NVH_NODE_MIRROR`: override default <https://nodejs.org/dist/>
+- `NVH_NODE_DOWNLOAD_MIRROR`: override default <https://nodejs.org/download> for nightly et al
 - `NVH_NODE_MIRROR_USER`: if custom mirror uses basic authentication
 - `NVH_NODE_MIRROR_PASSWORD`: if custom mirror uses basic authentication
+- `NVH_MAX_REMOTE_MATCHES`: override default 20 for number of lines to show for ls-remote

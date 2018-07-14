@@ -17,19 +17,25 @@ Changes from upstream [tj/n](https://github.com/tj/n).
     - [upstream PR #513](https://github.com/tj/n/pull/513)
 - support for recognition of `arm64` and `aarch64` architectures
     - [upstream PR #448](https://github.com/tj/n/pull/448)
-- support codenames (e.g. carbon)
-    - [upstream PR #515](https://github.com/tj/n/pull/515)
+- support more versions
+    - codenames (e.g. `carbon`)
+        - [upstream PR #515](https://github.com/tj/n/pull/515)
+    - release streams (e.g. `v8.x`)
+        - [upstream PR #515](https://github.com/tj/n/pull/515)
+    - folders on downloads mirror using syntax `<folder>/<release>`
+        - e.g. `nightly` [upstream issue #376](https://github.com/tj/n/issues/376)
+        - e.g. `chakracore-release` [upstream issue #480](https://github.com/tj/n/issues/480)
 - added logging to install when no download required
     - [upstream issue #198](https://github.com/tj/n/issues/198)
 - support partial version numbers with `which` and `run` (e.g. 8)
     - [upstream issue #252](https://github.com/tj/n/issues/252)
     - (developer) `.gitignore` `.editorconfig` `.markdownling.js`
-- `nvh lsr [inexact-version]`, like `nvh lsr lts` or `nvh lsr 6`, to lookup latest downloadable version
+- `nvh ls-remote [version]`, like `nvh lsr lts` or `nvh lsr 6`, to lookup downloadable versions
 - `nvh doctor` to show useful diagnostics
 
 ### Changed
 
-- fix `--lts` for mirrors with multiple versions
+- fix `--lts` for mirrors with multiple versions in release stream folders
     - [upstream PR #512](https://github.com/tj/n/pull/512) (and [#360](https://github.com/tj/n/pull/360) for reproduce steps)
 - changed error for missing codename with `which` to display numeric version
 - removed trailing space from `which` output
@@ -47,6 +53,8 @@ Changes from upstream [tj/n](https://github.com/tj/n).
 - `nvh ls` lists downloaded versions
 - `nvh ls-remote` replaces `n ls`
 - error messages to STDERR
+- limit number of versions listed by ls-remote
+    - [upstream issue #383](https://github.com/tj/n/issues/383)
 
 ### Removed
 
@@ -57,9 +65,9 @@ Changes from upstream [tj/n](https://github.com/tj/n).
 - `Makefile`
 - `n --latest` replaced by `nvh lsr latest`
 - `n --lts` replaced by `nvh lsr lts`
-- `bin` alias for `n which`
-- `-` alias for `n rm`
-- `--download`
-- `--arch`
+- alias of `bin` for `which`
+- alias of `-` for `rm`
+- `--download` option
+- `--arch` option
 
 [1.0.0-0]: https://github.com/tj/n/compare/8ad6cd3bc76fc674f7faf3d8cf2f4d6e7d1849c3...JohnRGee:develop
