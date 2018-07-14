@@ -8,7 +8,7 @@ Forked from [tj/n](https://github.com/tj/n) with changes to command syntax, bug 
 
 ## Installation
 
-Since you probably already have `node`, the easiest way to install `nvh` is through `npm`:
+If you already have `node`, the easiest way to install `nvh` is through `npm`:
 
     npm install -g @shadowspawn/nvh
     nvh help
@@ -39,7 +39,7 @@ If you like vim key bindings during the selection of node versions, you can use 
 
 ## Specifying Node Versions
 
-There are a variety of ways of specifying the target node version for `nvh` commands. Most commands use the latest matching version, and the `ls-remote` command lists multiple matching versions.
+There are a variety of ways of specifying the target node version for `nvh` commands. Most commands use the latest matching version, and  `nvh ls-remote` lists multiple matching versions.
 
 Numeric version numbers can be complete or incomplete, with an optional leading `v`.
 
@@ -54,19 +54,19 @@ There are labels for two especially useful versions:
 
 There is support for release streams:
 
-- `argon`, `boron`, `carbon`: codename for LTS release stream
-- `v6.x`, `7.x`: major version number release stream
+- `argon`, `boron`, `carbon`: codenames for LTS release streams
+- `v6.x`, `7.x`: major version number release streams
 
-The last form is for specifying other releases available using the name of the download folder followed by the complete or incomplete version. (`lts` and release streams are not available, but the other conveniences are.)
+The last form is for specifying [other releases](https://nodejs.org/download) available using the name of the remote download folder followed by the complete or incomplete version.
 
 - `chakracore-release/latest`
 - `nightly/10`
 - `test/v11.0.0-test20180528`
 - `rc/v10.0.0-rc.1`
 
-## Using Node Versions Without Reinstalling
+## Using Downloaded Node Versions Without Reinstalling
 
-There are two commands for working directly with your downloaded versions of node, without reinstalling. 
+There are two commands for working directly with your downloaded versions of `node`, without reinstalling.
 
 You can show the path to the downloaded version:
 
@@ -122,8 +122,8 @@ There are a lot of minor changes! Taking advantage of a fresh start.
 ### Changed
 
 - `n use` and `n as` --> `nvh run`
-- `n --lts` --> `nvh ls-remote lts`
-- `n --latest` --> `nvh ls-remote latest`
+- `n --lts` --> `nvh lsr lts`
+- `n --latest` --> `nvh lsr latest`
 - environment variable names and download location
 - always install, even if installed version appears to match
 - allow removing installed version
@@ -151,4 +151,23 @@ Specifying custom node mirror:
 - `NVH_NODE_DOWNLOAD_MIRROR`: override default <https://nodejs.org/download> for nightly et al
 - `NVH_NODE_MIRROR_USER`: if custom mirror uses basic authentication
 - `NVH_NODE_MIRROR_PASSWORD`: if custom mirror uses basic authentication
+
+Customising behaviour:
+
 - `NVH_MAX_REMOTE_MATCHES`: override default 20 for number of lines to show for ls-remote
+
+## Alternatives to `nvh`
+
+`nvh` is a fork from [tj/n](https://github.com/tj/n), so the original is an alternative!
+
+`nvh` does not:
+
+- manage the global npm modules per version of node
+- dynamically change the available node as navigate in shell
+- run natively on Windows (although there is now the Windows Subsystem for Linux on Windows 10)
+
+Three alternatives offering different feature sets are:
+
+- [nvs](https://github.com/jasongin/nvs) Node Version Switcher
+- [nvm](https://github.com/creationix/nvm) Node Version Manager
+- [nave](https://github.com/isaacs/nave) Virtual Environments for Node
