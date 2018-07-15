@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
+## [Unreleased]
+
 ## [3.0.0] (2018-07-15)
 
 Changes from upstream [tj/n](https://github.com/tj/n) 2.1.12
