@@ -154,7 +154,7 @@ Specifying custom node mirror:
 
 Customising behaviour:
 
-- `NVH_MAX_REMOTE_MATCHES`: override default 20 for number of lines to show for ls-remote
+- `NVH_MAX_REMOTE_MATCHES`: override default of 20 for number of lines to show for ls-remote
 
 ## Alternatives to `nvh`
 
