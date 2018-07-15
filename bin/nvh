@@ -4,7 +4,7 @@
 # Setup.
 #
 
-readonly VERSION="0.5.0-0"
+readonly VERSION="0.5.0"
 readonly NVH_PREFIX=${NVH_PREFIX=/usr/local}
 readonly STASH_DIR=$NVH_PREFIX/nvh/versions
 
