@@ -102,13 +102,24 @@ function is_numeric_version() {
 #
 
 function enter_fullscreen() {
+  # Set cursor to be invisible
+  tput civis 2> /dev/null
+  # Save screen contents
   tput smcup
   stty -echo
 }
 
 function leave_fullscreen() {
+  # Set cursor to normal
+  tput cnorm 2> /dev/null
+  # Restore screen contentsq
   tput rmcup
   stty echo
+}
+
+function clear_screen() {
+  # `clear`` and `tput clear` may clear scrollback, so just send simple clear screen ourselves.
+  printf "\033[H\033[2J"
 }
 
 function handle_sigint() {
@@ -186,22 +197,6 @@ function err_no_installed_print_help() {
   printf "\n  \033[31mError: no downloaded versions\033[0m\n"
   display_help
   exit 1
-}
-
-#
-# Hide cursor.
-#
-
-function hide_cursor() {
-  printf "\e[?25l"
-}
-
-#
-# Show cursor.
-#
-
-function show_cursor() {
-  printf "\e[?25h"
 }
 
 #
@@ -298,7 +293,7 @@ function list_stash_versions() {
 function display_stash_versions() {
   enter_fullscreen
   check_current_version
-  clear
+  clear_screen
   display_versions_with_selected "${active}"
 
   trap handle_sigint INT
@@ -307,6 +302,8 @@ function display_stash_versions() {
   ESCAPE_SEQ=$'\033'
   UP=$'A'
   DOWN=$'B'
+  # To avoid flicker with clearing screen, just reset cursor.
+  PREPARE_FOR_REDISPLAY=$(tput home 2> /dev/null) || PREPARE_FOR_REDISPLAY=$(clear)
 
   while true; do
     read -rsn 1 key
@@ -318,26 +315,26 @@ function display_stash_versions() {
           read -rsn 1 -t 1 arrow
           case "$arrow" in
             $UP)
-              clear
+              printf "${PREPARE_FOR_REDISPLAY}"
               display_versions_with_selected $(prev_version_installed)
               ;;
             $DOWN)
-              clear
+              printf "${PREPARE_FOR_REDISPLAY}"
               display_versions_with_selected $(next_version_installed)
               ;;
           esac
         fi
         ;;
       "k")
-        clear
+        printf "${PREPARE_FOR_REDISPLAY}"
         display_versions_with_selected $(prev_version_installed)
         ;;
       "j")
-        clear
+        printf "${PREPARE_FOR_REDISPLAY}"
         display_versions_with_selected $(next_version_installed)
         ;;
       "q")
-        clear
+        clear_screen
         leave_fullscreen
         exit
         ;;
