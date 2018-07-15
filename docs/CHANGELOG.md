@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
-## [0.5.0] (2018-07-15)
+## [3.0.0] (2018-07-15)
 
 Changes from upstream [tj/n](https://github.com/tj/n).
 
@@ -70,4 +70,5 @@ Changes from upstream [tj/n](https://github.com/tj/n).
 - `--download` option
 - `--arch` option
 
-[0.5.0]: https://github.com/tj/n/compare/8ad6cd3bc76fc674f7faf3d8cf2f4d6e7d1849c3...JohnRGee:v0.5.0
+[Unreleased]: https://github.com/JohnRGee/nvh/compare/master...develop
+[3.0.0]: https://github.com/tj/n/compare/8ad6cd3bc76fc674f7faf3d8cf2f4d6e7d1849c3...JohnRGee:v3.0.0
