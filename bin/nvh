@@ -56,7 +56,7 @@ function log() {
 #
 
 function abort() {
-  >&2 printf "\n  \033[31mError: $@\033[0m\n\n" && exit 1
+  >&2 printf "\n  \033[31mError: $*\033[0m\n\n" && exit 1
 }
 
 #
@@ -64,7 +64,7 @@ function abort() {
 #
 
 function trace() {
-  >&2 printf "trace: $@\n"
+  >&2 printf "trace: $*\n"
 }
 
 #
@@ -733,7 +733,7 @@ function display_latest_lts_version() {
 #
 
 function display_match_limit(){
-  if [[ "${g_ls_remote_max_matches}" -gt 1 && "${g_ls_remote_max_matches}" < 32000 ]]; then
+  if [[ "${g_ls_remote_max_matches}" -gt 1 && "${g_ls_remote_max_matches}" -lt 32000 ]]; then
     echo "Listing remote... Displaying last ${g_ls_remote_max_matches} matches (use --all to see all)."
   fi
 }
@@ -847,7 +847,7 @@ command -v curl > /dev/null && GET="curl ${CURL_PARAMS[@]}"
 
 # ToDo: only create when needed?
 VERSIONS_DIR=("${STASH_DIR}/node")
-for dir in ${VERSIONS_DIR[@]}; do
+for dir in "${VERSIONS_DIR[@]}"; do
   [[ -d "${dir}" ]] || mkdir -p "${dir}"
 done
 
@@ -867,8 +867,8 @@ else
       -p|--preserve) PRESERVE_NPM="true" ;;
       --all) set_show_all_remote_matches ;;
       which) shift; display_bin_path_for_version $1; exit ;;
-      run) shift; execute_with_version $@; exit ;;
-      rm|remove) shift; remove_versions $@; exit ;;
+      run) shift; execute_with_version "$@"; exit ;;
+      rm|remove) shift; remove_versions "$@"; exit ;;
       prune) prune_versions; exit ;;
       lsr|ls-remote|list-remote)
         shift
