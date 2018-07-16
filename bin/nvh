@@ -117,11 +117,6 @@ function leave_fullscreen() {
   stty echo
 }
 
-function clear_screen() {
-  # `clear`` and `tput clear` may clear scrollback, so just send simple clear screen ourselves.
-  printf "\033[H\033[2J"
-}
-
 function handle_sigint() {
   leave_fullscreen
   S="$?"
@@ -274,6 +269,7 @@ function display_versions_with_selected() {
     fi
   done
   echo
+  printf "Use up/down arrow keys to select a version, return key to install, q to quit"
 }
 
 #
@@ -291,9 +287,15 @@ function list_stash_versions() {
 #
 
 function display_stash_versions() {
+  # Linux "clear" added clearing scrollback buffer as well as the screen. Try "clear -x" to opt out of that, if available.
+  # (On Mac, "clear" is flicker-free compared with writing escape sequence ourselves, so use the actual command.)
+  CLEAR="clear"
+  clear -x &> /dev/null && CLEAR="clear -x"
+  readonly CLEAR
+
   enter_fullscreen
   check_current_version
-  clear_screen
+  ${CLEAR}
   display_versions_with_selected "${active}"
 
   trap handle_sigint INT
@@ -302,8 +304,6 @@ function display_stash_versions() {
   ESCAPE_SEQ=$'\033'
   UP=$'A'
   DOWN=$'B'
-  # To avoid flicker with clearing screen, just reset cursor.
-  PREPARE_FOR_REDISPLAY=$(tput home 2> /dev/null) || PREPARE_FOR_REDISPLAY=$(clear)
 
   while true; do
     read -rsn 1 key
@@ -315,26 +315,26 @@ function display_stash_versions() {
           read -rsn 1 -t 1 arrow
           case "$arrow" in
             $UP)
-              printf "${PREPARE_FOR_REDISPLAY}"
+              ${CLEAR}
               display_versions_with_selected $(prev_version_installed)
               ;;
             $DOWN)
-              printf "${PREPARE_FOR_REDISPLAY}"
+              ${CLEAR}
               display_versions_with_selected $(next_version_installed)
               ;;
           esac
         fi
         ;;
       "k")
-        printf "${PREPARE_FOR_REDISPLAY}"
+        ${CLEAR}
         display_versions_with_selected $(prev_version_installed)
         ;;
       "j")
-        printf "${PREPARE_FOR_REDISPLAY}"
+        ${CLEAR}
         display_versions_with_selected $(next_version_installed)
         ;;
       "q")
-        clear_screen
+        ${CLEAR}
         leave_fullscreen
         exit
         ;;

@@ -28,8 +28,7 @@ Simply execute `nvh <version>` to download and install a version of `node`. If `
     nvh 4.9.1
     nvh lts
 
-Execute `nvh` on its own to view your downloaded versions. Use the up and down arrow keys to navigate and press enter or the right arrow key to select. Use `q` to exit the selection screen without installing.
-If you like vim key bindings during the selection of node versions, you can use `j` and `k` to navigate up or down without using arrows.
+Execute `nvh` on its own to view your downloaded versions. Use the up and down arrow keys to select a version, and press enter key to install the selected version. Use `q` to exit the selection screen without installing. If you like vim key bindings, you can also use `j` and `k` to navigate up or down without using arrows.
 
     $ nvh
 

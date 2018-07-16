@@ -9,10 +9,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- instructions at bottom of `nvh` version selection
+
 ### Changed
 
-- modified screen drawing for `nvh` version selection to avoid clearing scrollback buffer and hide cursor
+- modified screen drawing for `nvh` version selection to avoid clearing scrollback buffer, and hide cursor
     - see comments in [upstream PR #499](https://github.com/tj/n/pull/499)
+
+### Removed
+
+- unimplemented right-arrow from README instructions for `nvh` version selection
 
 ## [3.0.0] (2018-07-15)
 
