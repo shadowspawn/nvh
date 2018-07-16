@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC1117,SC2155
 
 #
 # Setup.
@@ -248,7 +249,7 @@ function versions_paths() {
 
   find $STASH_DIR -maxdepth 2 -type d \
     | sed 's|'$STASH_DIR'/||g' \
-    | egrep "/v[0-9]+\.[0-9]+\.[0-9]+" \
+    | grep -E "/v[0-9]+\.[0-9]+\.[0-9]+" \
     | sed 's|/v|.|' \
     | sort -k 1,1 -k 2,2n -k 3,3n -k 4,4n -t . \
     | sed 's|\.|/v|'
@@ -653,10 +654,10 @@ function display_remote_version_folders() {
   # sort using number . number . number . text . number
   # --> v9.3.1-nightly2018010930273d400c
   $GET 2> /dev/null "${remote_url}" \
-    | egrep "</a>" \
-    | egrep -o 'href="[^"]+/"' \
-    | egrep -o 'v[0-9]+\.[0-9]+\.[0-9]+[^/]*' \
-    | egrep "^${version_prefix}" \
+    | grep -E "</a>" \
+    | grep -E -o 'href="[^"]+/"' \
+    | grep -E -o 'v[0-9]+\.[0-9]+\.[0-9]+[^/]*' \
+    | grep -E "^${version_prefix}" \
     | sed 's|v\(.*\)|\1|; s|-|.-|' \
     | sort -u -k 1,1n -k 2,2n -k 3,3n -k 4,4 -k 5,5n -t . \
     | sed 's|\.-|-|; s|.*|v&|' \
@@ -674,8 +675,8 @@ function display_remote_files() {
   [[ -z "${last_lines}" ]] && last_lines="${g_ls_remote_max_matches}"
 
   $GET 2> /dev/null "${remote_url}" \
-    | egrep "</a>" \
-    | egrep -o 'v[0-9]+\.[0-9]+\.[0-9]+' \
+    | grep -E "</a>" \
+    | grep -E -o 'v[0-9]+\.[0-9]+\.[0-9]+' \
     | sort -u -k 1,1n -k 2,2n -k 3,3n -t . \
     | tail -n "${last_lines}"
 }
@@ -687,8 +688,8 @@ function display_remote_files() {
 function display_latest_codename_version() {
   local codename="$1"
   local folder_name=$($GET 2> /dev/null "${NODE_MIRROR}/" \
-    | egrep "</a>" \
-    | egrep -o "latest-$codename" \
+    | grep -E "</a>" \
+    | grep -E -o "latest-$codename" \
     | sort \
     | tail -n1)
   [[ -z "${folder_name}" ]] && return 0
@@ -720,8 +721,8 @@ function display_latest_resolved_version() {
 function display_latest_lts_version() {
   # Find the alphabetical last codename
   local folder_name=$($GET 2> /dev/null "${NODE_MIRROR}/" \
-    | egrep "</a>" \
-    | egrep -o 'latest-[a-z]{2,}' \
+    | grep -E "</a>" \
+    | grep -E -o 'latest-[a-z]{2,}' \
     | sort \
     | tail -n1)
 
