@@ -317,22 +317,22 @@ function display_stash_versions() {
           case "$arrow" in
             $UP)
               ${CLEAR}
-              display_versions_with_selected $(prev_version_installed)
+              display_versions_with_selected "$(prev_version_installed)"
               ;;
             $DOWN)
               ${CLEAR}
-              display_versions_with_selected $(next_version_installed)
+              display_versions_with_selected "$(next_version_installed)"
               ;;
           esac
         fi
         ;;
       "k")
         ${CLEAR}
-        display_versions_with_selected $(prev_version_installed)
+        display_versions_with_selected "$(prev_version_installed)"
         ;;
       "j")
         ${CLEAR}
-        display_versions_with_selected $(next_version_installed)
+        display_versions_with_selected "$(next_version_installed)"
         ;;
       "q")
         ${CLEAR}
@@ -474,7 +474,7 @@ function activate() {
     fi
   done
   disable_pax_mprotect "$NVH_PREFIX/bin/node"
-  log installed $(node --version)
+  log "installed $(node --version)"
 }
 
 #
