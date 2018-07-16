@@ -224,15 +224,15 @@ function display_nvh_version() {
 #
 
 function check_current_version() {
-  command -v node &> /dev/null
-  if [[ $? -eq 0 ]]; then
+  local node_path="$(command -v node)"
+  if [[ -x "${node_path}" ]]; then
     local current=$(node --version)
     for dir in ${STASH_DIR}/*/ ; do
       local folder_name="${dir%/}"
       folder_name="${folder_name##*/}"
       if diff &> /dev/null \
         "${STASH_DIR}/${folder_name}/${current}/bin/node" \
-        "$(which node)" ; then
+        "${node_path}" ; then
         active="${folder_name}/${current}"
       fi
     done
@@ -793,8 +793,7 @@ function show_diagnostics() {
   bash --version
   echo "## nvh"
   command -v nvh && nvh --version
-  command -v node &> /dev/null
-  if [[ $? -eq 0 ]]; then
+  if command -v node &> /dev/null; then
     echo "## node"
     command -v node && node --version && echo "node engine: $(node -e 'console.log(process.jsEngine)')"
     echo "## npm"
