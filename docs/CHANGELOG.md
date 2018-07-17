@@ -21,6 +21,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 
 - unimplemented right-arrow from README instructions for `nvh` version selection
+- remove `--no-check-certificate` for wget, secure by default, matching curl treatment
+    - [upstream PR #509](https://github.com/tj/n/pull/509)
+    - [upstream PR #475](https://github.com/tj/n/pull/475)
 
 ## [3.0.0] (2018-07-15)
 

@@ -821,8 +821,7 @@ function show_diagnostics() {
 CURL_PARAMS=( "-L"
               "-#")
 
-WGET_PARAMS=( "--no-check-certificate"
-              "-q"
+WGET_PARAMS=( "-q"
               "-O-")
 
 if [[ -n "$NVH_NODE_MIRROR_USER" ]];then
