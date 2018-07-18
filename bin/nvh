@@ -48,7 +48,7 @@ function update_settings_from_version() {
 #
 
 function log() {
-  printf "  \033[36m%10s\033[0m : \e[2m%s\e[22m\033[0m\n" $1 $2
+  printf "  \033[36m%10s\033[0m : \e[2m%s\e[22m\033[0m\n" "$1" "$2"
 }
 
 #
@@ -247,8 +247,8 @@ function versions_paths() {
   # e.g. node/v8.11.3
   # sort string . number . number . number
 
-  find $STASH_DIR -maxdepth 2 -type d \
-    | sed 's|'$STASH_DIR'/||g' \
+  find "${STASH_DIR}" -maxdepth 2 -type d \
+    | sed 's|'"${STASH_DIR}"'/||g' \
     | grep -E "/v[0-9]+\.[0-9]+\.[0-9]+" \
     | sed 's|/v|.|' \
     | sort -k 1,1 -k 2,2n -k 3,3n -k 4,4n -t . \
@@ -279,7 +279,7 @@ function display_versions_with_selected() {
 
 function list_stash_versions() {
   for folder_and_version in $(versions_paths); do
-    echo ${folder_and_version}
+    echo "${folder_and_version}"
   done
 }
 
@@ -342,7 +342,7 @@ function display_stash_versions() {
       "")
         # enter key returns empty string
         leave_fullscreen
-        activate $selected
+        activate "${selected}"
         exit
         ;;
     esac
@@ -362,9 +362,9 @@ function erase_line() {
 #
 function is_ok() {
   if command -v curl > /dev/null; then
-    $GET -Is $1 | head -n 1 | grep 200 > /dev/null
+    $GET -Is "$1" | head -n 1 | grep 200 > /dev/null
   else
-    $GET -S --spider 2>&1 $1 | head -n 1 | grep 200 > /dev/null
+    $GET -S --spider 2>&1 "$1" | head -n 1 | grep 200 > /dev/null
   fi
 }
 
@@ -374,16 +374,16 @@ function is_ok() {
 
 function is_oss_ok() {
   if command -v curl > /dev/null; then
-    if $GET -Is $1 | head -n 1 | grep 302 > /dev/null; then
-      is_oss_ok $GET -Is $1 | grep Location | awk -F ': ' '{print $2}'
+    if $GET -Is "$1" | head -n 1 | grep 302 > /dev/null; then
+      is_oss_ok $GET -Is "$1" | grep Location | awk -F ': ' '{print $2}'
     else
-      $GET -Is $1 | head -n 1 | grep 200 > /dev/null
+      $GET -Is "$1" | head -n 1 | grep 200 > /dev/null
     fi
   else
-    if $GET -S --spider 2>&1 $1 | head -n 1 | grep 302 > /dev/null; then
-      is_oss_ok $GET -S --spider 2>&1 $1 | grep Location | awk -F ': ' '{print $2}'
+    if $GET -S --spider 2>&1 "$1" | head -n 1 | grep 302 > /dev/null; then
+      is_oss_ok $GET -S --spider 2>&1 "$1" | grep Location | awk -F ': ' '{print $2}'
     else
-      $GET -S --spider 2>&1 $1 | head -n 1 | grep 200 > /dev/null
+      $GET -S --spider 2>&1 "$1" | head -n 1 | grep 200 > /dev/null
     fi
   fi
 }
@@ -415,8 +415,8 @@ function tarball_url() {
 
   if [[ "${arch}" = "armv6l" ]]; then
     local semver=${version//./ }
-    local major=$(echo $semver | grep -o -E '[0-9]+' | head -1 | sed -e 's/^0\+//')
-    local minor=$(echo $semver | awk '{print $2}' | grep -o -E '[0-9]+' | head -1 | sed -e 's/^0\+//')
+    local major=$(echo "${semver}" | grep -o -E '[0-9]+' | head -1 | sed -e 's/^0\+//')
+    local minor=$(echo "${semver}" | awk '{print $2}' | grep -o -E '[0-9]+' | head -1 | sed -e 's/^0\+//')
     [[ $major -eq "" && $minor -lt 12 ]] && arch=arm-pi
   fi
 
@@ -470,11 +470,11 @@ function activate() {
     elif [[ -L "$NVH_PREFIX/$subdir" ]]; then
       find "$dir/$subdir" -mindepth 1 -maxdepth 1 -exec cp -fR "{}" "$NVH_PREFIX/$subdir" \;
     else
-      cp -fR "$dir/$subdir" $NVH_PREFIX
+      cp -fR "$dir/$subdir" "${NVH_PREFIX}"
     fi
   done
   disable_pax_mprotect "$NVH_PREFIX/bin/node"
-  log "installed $(node --version)"
+  log "installed" "$(node --version)"
 }
 
 #
@@ -498,8 +498,8 @@ function install() {
   echo
   log "installing" "${g_custom_folder_name}/${resolved_version}"
 
-  local url=$(tarball_url $resolved_version)
-  is_ok $url || is_oss_ok $url || abort "download failed for $resolved_version"
+  local url="$(tarball_url "${resolved_version}")"
+  is_ok "${url}" || is_oss_ok "${url}" || abort "download failed for $resolved_version"
 
   log "mkdir" "${dir}"
   mkdir -p "${dir}"
@@ -509,7 +509,7 @@ function install() {
     touch "${dir}/nvh.lock"
   fi
 
-  cd $dir
+  cd "${dir}"
 
   log "fetch" "${url}"
   $GET "${url}" | tar -zx --strip-components=1
@@ -550,7 +550,7 @@ function set_show_single_remote_match() {
 function remove_versions() {
   [[ -z "$1" ]] && abort "version(s) required"
   while [[ $# -ne 0 ]]; do
-    local version="$(display_latest_resolved_version $1)"
+    local version="$(display_latest_resolved_version "$1")"
     if [[ -n "${version}" ]]; then
       update_settings_from_version "$1"
       local dir="${STASH_DIR}/${g_custom_folder_name}/${version}"
@@ -587,7 +587,7 @@ function prune_versions() {
 
 function display_bin_path_for_version() {
   [[ -z "$1" ]] && abort "version required"
-  local version="$(display_latest_resolved_version $1)"
+  local version="$(display_latest_resolved_version "$1")"
   [[ -z "${version}" ]] && abort "invalid version $1"
 
   update_settings_from_version "$1"
@@ -605,7 +605,7 @@ function display_bin_path_for_version() {
 
 function execute_with_version() {
   [[ -z "$1" ]] && abort "version required"
-  local version="$(display_latest_resolved_version $1)"
+  local version="$(display_latest_resolved_version "$1")"
   [[ -z "$version" ]] && abort "invalid version $1"
 
   update_settings_from_version "$1"
@@ -613,7 +613,7 @@ function execute_with_version() {
 
   if [[ -f "${bin}" ]]; then
     shift # remove version from parameters
-    exec $bin "$@"
+    exec "${bin}" "$@"
   else
     abort "$1 (${version}) not in downloads stash"
   fi
@@ -706,11 +706,11 @@ function display_latest_resolved_version() {
   if [[ "${version}" =~ ^[v]{0,1}[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     # Just numbers, already resolved, no need to lookup first.
     version="v${version#v}"
-    echo $version
+    echo "${version}"
   else
     # Complicated recognising exact version, KISS and awlays lookup for now.
     set_show_single_remote_match
-    display_remote_versions $1
+    display_remote_versions "$1"
   fi
 }
 
@@ -865,19 +865,19 @@ else
       -q|--quiet) set_quiet_progress ;;
       -p|--preserve) PRESERVE_NPM="true" ;;
       --all) set_show_all_remote_matches ;;
-      which) shift; display_bin_path_for_version $1; exit ;;
+      which) shift; display_bin_path_for_version "$1"; exit ;;
       run) shift; execute_with_version "$@"; exit ;;
       rm|remove) shift; remove_versions "$@"; exit ;;
       prune) prune_versions; exit ;;
       lsr|ls-remote|list-remote)
         shift
         [[ "$1" = "--all" ]] && set_show_all_remote_matches && shift
-        display_remote_versions $1
+        display_remote_versions "$1"
         exit
         ;;
       ls|list) versions_paths; exit ;;
       doctor) show_diagnostics; exit ;;
-      *) install $1; exit ;;
+      *) install "$1"; exit ;;
     esac
     shift
   done
