@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - modified screen drawing for `nvh` version selection to avoid clearing scrollback buffer, and hide cursor
     - see comments in [upstream PR #499](https://github.com/tj/n/pull/499)
+- adopting suggestions of `shellcheck` (ongoing work-in-progress)
+    - [inspired by upstream PR #465](https://github.com/tj/n/pull/465)
 
 ### Removed
 
