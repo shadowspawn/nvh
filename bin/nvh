@@ -361,30 +361,12 @@ function erase_line() {
 # Check if the HEAD response of <url> is 200.
 #
 function is_ok() {
-  if command -v curl > /dev/null; then
-    $GET -Is "$1" | head -n 1 | grep 200 > /dev/null
+  # Note: both curl and wget will follow redirects, as present on some mirrors (e.g. https://npm.taobao.org/mirrors/node).
+  # The output is complicated with redirects, so keep it simple and use command status rather than parse output.
+  if command -v curl &> /dev/null; then
+    curl --fail --head --location "$1" &> /dev/null || return 1
   else
-    $GET -S --spider 2>&1 "$1" | head -n 1 | grep 200 > /dev/null
-  fi
-}
-
-#
-# Check if the OSS(Object Storage Service) mirror is ok.
-#
-
-function is_oss_ok() {
-  if command -v curl > /dev/null; then
-    if $GET -Is "$1" | head -n 1 | grep 302 > /dev/null; then
-      is_oss_ok $GET -Is "$1" | grep Location | awk -F ': ' '{print $2}'
-    else
-      $GET -Is "$1" | head -n 1 | grep 200 > /dev/null
-    fi
-  else
-    if $GET -S --spider 2>&1 "$1" | head -n 1 | grep 302 > /dev/null; then
-      is_oss_ok $GET -S --spider 2>&1 "$1" | grep Location | awk -F ': ' '{print $2}'
-    else
-      $GET -S --spider 2>&1 "$1" | head -n 1 | grep 200 > /dev/null
-    fi
+    wet --spider "$1" &> /dev/null || return 1
   fi
 }
 
@@ -499,7 +481,7 @@ function install() {
   log "installing" "${g_custom_folder_name}/${resolved_version}"
 
   local url="$(tarball_url "${resolved_version}")"
-  is_ok "${url}" || is_oss_ok "${url}" || abort "download failed for $resolved_version"
+  is_ok "${url}" || abort "download preflight failed for $resolved_version"
 
   log "mkdir" "${dir}"
   mkdir -p "${dir}"
