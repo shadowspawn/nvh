@@ -361,12 +361,13 @@ function erase_line() {
 # Check if the HEAD response of <url> is 200.
 #
 function is_ok() {
+  echo $1
   # Note: both curl and wget will follow redirects, as present on some mirrors (e.g. https://npm.taobao.org/mirrors/node).
   # The output is complicated with redirects, so keep it simple and use command status rather than parse output.
   if command -v curl &> /dev/null; then
     curl --fail --head --location "$1" &> /dev/null || return 1
   else
-    wet --spider "$1" &> /dev/null || return 1
+    wget --spider "$1" &> /dev/null || return 1
   fi
 }
 
