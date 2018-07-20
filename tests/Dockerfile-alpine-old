@@ -1,0 +1,11 @@
+FROM alpine:3.2
+
+# Alpine has wget by default, and not curl, but not compatible with n or nvh.
+# alpine 3.2: wget -s
+# alpine latest: wget --spider
+#
+# NB: downloaded Linux Binaries for node require glic and do not run!
+
+RUN apk add --no-cache bash tar openssl ca-certificates curl
+
+CMD ["/bin/bash"]

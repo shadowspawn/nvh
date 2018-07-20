@@ -1,0 +1,6 @@
+FROM centos:6.6
+
+RUN yum -y install wget tar \
+&& yum clean all
+
+CMD ["/bin/bash"]

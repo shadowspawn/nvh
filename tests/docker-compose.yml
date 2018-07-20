@@ -1,0 +1,23 @@
+version: '3'
+services:
+  ubuntu-old:
+    build:
+      context: .
+      dockerfile: Dockerfile-ubuntu-old
+    volumes:
+      - ../bin/nvh:/usr/local/bin/nvh
+      - ../../n/bin/n:/usr/local/bin/n
+  centos-old:
+    build:
+      context: .
+      dockerfile: Dockerfile-centos-old
+    volumes:
+      - ../bin/nvh:/usr/local/bin/nvh
+      - ../../n/bin/n:/usr/local/bin/n
+  alpine-old:
+    build:
+      context: .
+      dockerfile: Dockerfile-alpine-old
+    volumes:
+      - ../bin/nvh:/usr/local/bin/nvh
+      - ../../n/bin/n:/usr/local/bin/n
