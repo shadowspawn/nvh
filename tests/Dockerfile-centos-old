@@ -1,6 +1,6 @@
 FROM centos:6.6
 
-RUN yum -y install curl tar rsync \
+RUN yum -y install curl wget tar rsync \
 && yum clean all
 
 CMD ["/bin/bash"]
