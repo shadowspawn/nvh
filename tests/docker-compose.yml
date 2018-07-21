@@ -1,16 +1,16 @@
 version: '3'
 services:
-  ubuntu:
+  archlinux:
     build:
       context: .
-      dockerfile: Dockerfile-ubuntu
+      dockerfile: Dockerfile-archlinux
     volumes:
       - ../bin/nvh:/usr/local/bin/nvh
       - ../../n/bin/n:/usr/local/bin/n
-  ubuntu-old:
+  centos:
     build:
       context: .
-      dockerfile: Dockerfile-ubuntu-old
+      dockerfile: Dockerfile-centos
     volumes:
       - ../bin/nvh:/usr/local/bin/nvh
       - ../../n/bin/n:/usr/local/bin/n
@@ -25,6 +25,20 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-alpine-old
+    volumes:
+      - ../bin/nvh:/usr/local/bin/nvh
+      - ../../n/bin/n:/usr/local/bin/n
+  ubuntu:
+    build:
+      context: .
+      dockerfile: Dockerfile-ubuntu
+    volumes:
+      - ../bin/nvh:/usr/local/bin/nvh
+      - ../../n/bin/n:/usr/local/bin/n
+  ubuntu-old:
+    build:
+      context: .
+      dockerfile: Dockerfile-ubuntu-old
     volumes:
       - ../bin/nvh:/usr/local/bin/nvh
       - ../../n/bin/n:/usr/local/bin/n

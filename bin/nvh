@@ -6,7 +6,8 @@
 #
 
 readonly VERSION="3.0.1-0"
-readonly NVH_PREFIX=${NVH_PREFIX=/usr/local}
+NVH_PREFIX=${NVH_PREFIX=/usr/local}
+NVH_PREFIX=${NVH_PREFIX%/}
 readonly STASH_DIR=$NVH_PREFIX/nvh/versions
 
 NODE_MIRROR=${NVH_NODE_MIRROR=https://nodejs.org/dist}
@@ -443,8 +444,7 @@ function activate() {
   # Copy (lib before bin to avoid error messages on Darwin when cp over dangling link)
   for subdir in lib bin include share; do
     if [[ "${PRESERVE_NPM}" = "true" ]]; then
-      mkdir -p "$NVH_PREFIX/$subdir"
-      (cd "$dir/$subdir"; tar -cf - --exclude npm --exclude npx .) | (cd "$NVH_PREFIX/$subdir"; tar -xf -)
+      rsync --recursive --archive --keep-dirlinks --exclude=npm --exclude=npx "${dir}/${subdir}" "${NVH_PREFIX}"
     elif [[ -L "$NVH_PREFIX/$subdir" ]]; then
       find "$dir/$subdir" -mindepth 1 -maxdepth 1 -exec cp -fR "{}" "$NVH_PREFIX/$subdir" \;
     else
@@ -766,22 +766,34 @@ function display_remote_versions() {
 #
 
 function show_diagnostics() {
-  echo "# Commands"
-  echo "## bash"
+  printf "# Commands\n"
+
+  printf "\n## bash\n"
   bash --version
-  echo "## nvh"
+
+  printf "\n## nvh\n"
   command -v nvh && nvh --version
+
+  printf "\n## node\n"
   if command -v node &> /dev/null; then
-    echo "## node"
     command -v node && node --version && echo "node engine: $(node -e 'console.log(process.jsEngine)')"
-    echo "## npm"
+    printf "\n## npm\n"
     command -v npm && npm --version
-  else
-    echo "## node not found"
   fi
 
-  echo
-  echo "# nvh Setup"
+  printf "\n## tar\n"
+  command -v tar && tar --version
+
+  printf "\n## curl\n"
+  command -v curl && curl --version
+
+  printf "\n## wget\n"
+  command -v wget && wget --version
+
+  printf "\n## rsync\n"
+  command -v rsync && rsync --version
+
+  printf "\n\n# nvh Setup\n"
   echo "node mirror: ${NODE_MIRROR}"
   echo "node downloads mirror: ${NODE_DOWNLOAD_MIRROR}"
   echo "install location: $NVH_PREFIX"

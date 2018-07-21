@@ -1,4 +1,4 @@
-FROM centos:6.6
+FROM centos:latest
 
 RUN yum -y install curl tar rsync \
 && yum clean all
