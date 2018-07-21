@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - `--preserve` now works with interactive version selection too
 - put single speech mark around supplied argument in error messages
     - inspired by [upstream PR #485](https://github.com/tj/n/pull/485)
+- switched `--preserve` implementation from `tar` to `rsync`
 
 ### Removed
 

@@ -510,6 +510,15 @@ function set_quiet_progress() {
 }
 
 #
+# Set preserve for npm and npx.
+#
+
+function set_preserve_npm() {
+  PRESERVE_NPM="true"
+  command -v rsync > /dev/null || abort "rsync command missing and is required for --preserve"
+}
+
+#
 # set number of remote matches
 #
 
@@ -849,7 +858,7 @@ while [[ $# -ne 0 ]]; do
     -V|--version) display_nvh_version ;;
     -h|--help|help) display_help; exit ;;
     -q|--quiet) set_quiet_progress ;;
-    -p|--preserve) PRESERVE_NPM="true" ;;
+    -p|--preserve) set_preserve_npm ;;
     --all) set_show_all_remote_matches ;;
     which) shift; display_bin_path_for_version "$1"; exit ;;
     run) shift; execute_with_version "$@"; exit ;;

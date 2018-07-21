@@ -89,6 +89,8 @@ A `node` install normally includes `npm` as well, but you may wish to preserve a
     $ npm --version
     6.1.0
 
+Note: `--preserve` requires the `rsync` command.
+
 ## Miscellaneous
 
 List matching remote versions available for download:
