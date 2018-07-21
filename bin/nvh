@@ -358,8 +358,9 @@ function erase_line() {
 }
 
 #
-# Check if the HEAD response of <url> is 200.
+# Check the HEAD response of <url>.
 #
+
 function is_ok() {
   # Note: both curl and wget can follow redirects, as present on some mirrors (e.g. https://npm.taobao.org/mirrors/node).
   # The output is complicated with redirects, so keep it simple and use command status rather than parse output.
