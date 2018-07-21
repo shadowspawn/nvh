@@ -445,10 +445,13 @@ function activate() {
   for subdir in lib bin include share; do
     if [[ "${PRESERVE_NPM}" = "true" ]]; then
       rsync --recursive --archive --keep-dirlinks --exclude=npm --exclude=npx "${dir}/${subdir}" "${NVH_PREFIX}"
-    elif [[ -L "$NVH_PREFIX/$subdir" ]]; then
-      find "$dir/$subdir" -mindepth 1 -maxdepth 1 -exec cp -fR "{}" "$NVH_PREFIX/$subdir" \;
     else
-      cp -fR "$dir/$subdir" "${NVH_PREFIX}"
+      # Try using rsync for everything, consistent behaviour, more chance notice issues.
+      rsync --recursive --archive --keep-dirlinks "${dir}/${subdir}" "${NVH_PREFIX}"
+    # elif [[ -L "$NVH_PREFIX/$subdir" ]]; then
+    #   find "$dir/$subdir" -mindepth 1 -maxdepth 1 -exec cp -fR "{}" "$NVH_PREFIX/$subdir" \;
+    # else
+    #   cp -fR "$dir/$subdir" "${NVH_PREFIX}"
     fi
   done
   disable_pax_mprotect "$NVH_PREFIX/bin/node"

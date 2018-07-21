@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+REMINDER: experimenting with using rsync for all installs to cope with links better and have consistent behaviour!
+
 ### Added
 
 - instructions at bottom of `nvh` version selection
