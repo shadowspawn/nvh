@@ -15,14 +15,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- modified screen drawing for `nvh` version selection to avoid clearing scrollback buffer, and hide cursor
-    - see comments in [upstream PR #499](https://github.com/tj/n/pull/499)
 - adopting suggestions of `shellcheck` (ongoing work-in-progress)
     - [inspired by upstream PR #465](https://github.com/tj/n/pull/465)
+- preflight test before download to remove broken code and reduce calls for mirrors using redirects
+    - [inspired by upstream PR #479](https://github.com/tj/n/pull/479)
+- `--preserve` now works with interactive version selection too
 
 ### Removed
 
-- unimplemented right-arrow from README instructions for `nvh` version selection
+- unimplemented right-arrow from README instructions for interactive version selection
 - remove `--no-check-certificate` for wget, secure by default, matching curl treatment
     - [upstream PR #509](https://github.com/tj/n/pull/509)
     - [upstream PR #475](https://github.com/tj/n/pull/475)
