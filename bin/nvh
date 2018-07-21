@@ -288,15 +288,9 @@ function list_stash_versions() {
 #
 
 function display_stash_versions() {
-  # Linux "clear" added clearing scrollback buffer as well as the screen. Try "clear -x" to opt out of that, if available.
-  # (On Mac, "clear" is flicker-free compared with writing escape sequence ourselves, so use the actual command.)
-  CLEAR="clear"
-  clear -x &> /dev/null && CLEAR="clear -x"
-  readonly CLEAR
-
   enter_fullscreen
   check_current_version
-  ${CLEAR}
+  clear
   display_versions_with_selected "${active}"
 
   trap handle_sigint INT
@@ -316,26 +310,26 @@ function display_stash_versions() {
           read -rsn 1 -t 1 arrow
           case "$arrow" in
             $UP)
-              ${CLEAR}
+              clear
               display_versions_with_selected "$(prev_version_installed)"
               ;;
             $DOWN)
-              ${CLEAR}
+              clear
               display_versions_with_selected "$(next_version_installed)"
               ;;
           esac
         fi
         ;;
       "k")
-        ${CLEAR}
+        clear
         display_versions_with_selected "$(prev_version_installed)"
         ;;
       "j")
-        ${CLEAR}
+        clear
         display_versions_with_selected "$(next_version_installed)"
         ;;
       "q")
-        ${CLEAR}
+        clear
         leave_fullscreen
         exit
         ;;
