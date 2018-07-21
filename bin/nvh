@@ -461,7 +461,7 @@ function activate() {
 
 function install() {
   local resolved_version=$(display_latest_resolved_version "$1")
-  [[ -z "${resolved_version}" ]] && abort "did not find remote version for $1"
+  [[ -z "${resolved_version}" ]] && abort "did not find remote version for '$1'"
   update_settings_from_version "$1"
 
   local dir="${STASH_DIR}/${g_custom_folder_name}/${resolved_version}"
@@ -477,7 +477,7 @@ function install() {
   log "installing" "${g_custom_folder_name}/${resolved_version}"
 
   local url="$(tarball_url "${resolved_version}")"
-  is_ok "${url}" || abort "download preflight failed for $resolved_version"
+  is_ok "${url}" || abort "download preflight failed for '$resolved_version'"
 
   log "mkdir" "${dir}"
   mkdir -p "${dir}"
@@ -566,14 +566,14 @@ function prune_versions() {
 function display_bin_path_for_version() {
   [[ -z "$1" ]] && abort "version required"
   local version="$(display_latest_resolved_version "$1")"
-  [[ -z "${version}" ]] && abort "invalid version $1"
+  [[ -z "${version}" ]] && abort "invalid version '$1'"
 
   update_settings_from_version "$1"
   local bin="${STASH_DIR}/${g_custom_folder_name}/${version}/bin/node"
   if [[ -f "${bin}" ]]; then
     printf "${bin}\n"
   else
-    abort "$1 (${version}) not in downloads stash"
+    abort "'$1' (${version}) not in downloads stash"
   fi
 }
 
@@ -584,7 +584,7 @@ function display_bin_path_for_version() {
 function execute_with_version() {
   [[ -z "$1" ]] && abort "version required"
   local version="$(display_latest_resolved_version "$1")"
-  [[ -z "$version" ]] && abort "invalid version $1"
+  [[ -z "$version" ]] && abort "invalid version '$1'"
 
   update_settings_from_version "$1"
   local bin="${STASH_DIR}/${g_custom_folder_name}/${version}/bin/node"
@@ -593,7 +593,7 @@ function execute_with_version() {
     shift # remove version from parameters
     exec "${bin}" "$@"
   else
-    abort "$1 (${version}) not in downloads stash"
+    abort "'$1' (${version}) not in downloads stash"
   fi
 }
 
@@ -851,7 +851,7 @@ while [[ $# -ne 0 ]]; do
       ;;
     ls|list) versions_paths; exit ;;
     doctor) show_diagnostics; exit ;;
-    -*) abort "Unrecognised option: $1"; exit 1 ;;
+    -*) abort "Unrecognised option '$1'"; exit 1 ;;
     *) install "$1"; exit ;;
   esac
   shift

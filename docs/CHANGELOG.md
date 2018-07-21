@@ -16,10 +16,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 - adopting suggestions of `shellcheck` (ongoing work-in-progress)
-    - [inspired by upstream PR #465](https://github.com/tj/n/pull/465)
+    - inspired by [upstream PR #465](https://github.com/tj/n/pull/465)
 - preflight test before download to remove broken code and reduce calls for mirrors using redirects
-    - [inspired by upstream PR #479](https://github.com/tj/n/pull/479)
+    - inspired by [upstream PR #479](https://github.com/tj/n/pull/479)
 - `--preserve` now works with interactive version selection too
+- put single speech mark around supplied argument in error messages
+    - inspired by [upstream PR #485](https://github.com/tj/n/pull/485)
 
 ### Removed
 
