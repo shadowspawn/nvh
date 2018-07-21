@@ -190,7 +190,7 @@ EOF
 }
 
 function err_no_installed_print_help() {
-  printf "\n  \033[31mError: no downloaded versions\033[0m\n"
+  printf "\n  \033[31mNo downloaded versions yet, displaying help\033[0m\n"
   display_help
   exit 1
 }
@@ -832,31 +832,30 @@ done
 # Handle arguments.
 #
 
-if [[ $# -eq 0 ]]; then
-  [[ -z "$(versions_paths)" ]] && err_no_installed_print_help
-  display_stash_versions
-else
-  while [[ $# -ne 0 ]]; do
-    case $1 in
-      -V|--version) display_nvh_version ;;
-      -h|--help|help) display_help; exit ;;
-      -q|--quiet) set_quiet_progress ;;
-      -p|--preserve) PRESERVE_NPM="true" ;;
-      --all) set_show_all_remote_matches ;;
-      which) shift; display_bin_path_for_version "$1"; exit ;;
-      run) shift; execute_with_version "$@"; exit ;;
-      rm|remove) shift; remove_versions "$@"; exit ;;
-      prune) prune_versions; exit ;;
-      lsr|ls-remote|list-remote)
-        shift
-        [[ "$1" = "--all" ]] && set_show_all_remote_matches && shift
-        display_remote_versions "$1"
-        exit
-        ;;
-      ls|list) versions_paths; exit ;;
-      doctor) show_diagnostics; exit ;;
-      *) install "$1"; exit ;;
-    esac
-    shift
-  done
-fi
+while [[ $# -ne 0 ]]; do
+  case $1 in
+    -V|--version) display_nvh_version ;;
+    -h|--help|help) display_help; exit ;;
+    -q|--quiet) set_quiet_progress ;;
+    -p|--preserve) PRESERVE_NPM="true" ;;
+    --all) set_show_all_remote_matches ;;
+    which) shift; display_bin_path_for_version "$1"; exit ;;
+    run) shift; execute_with_version "$@"; exit ;;
+    rm|remove) shift; remove_versions "$@"; exit ;;
+    prune) prune_versions; exit ;;
+    lsr|ls-remote|list-remote)
+      shift
+      [[ "$1" = "--all" ]] && set_show_all_remote_matches && shift
+      display_remote_versions "$1"
+      exit
+      ;;
+    ls|list) versions_paths; exit ;;
+    doctor) show_diagnostics; exit ;;
+    *) install "$1"; exit ;;
+  esac
+  shift
+done
+
+# Test after parsing so can use options like --preserve with version selecton
+[[ -z "$(versions_paths)" ]] && err_no_installed_print_help
+display_stash_versions
