@@ -851,6 +851,7 @@ while [[ $# -ne 0 ]]; do
       ;;
     ls|list) versions_paths; exit ;;
     doctor) show_diagnostics; exit ;;
+    -*) abort "Unrecognised option: $1"; exit 1 ;;
     *) install "$1"; exit ;;
   esac
   shift
