@@ -1,5 +1,12 @@
 version: '3'
 services:
+  ubuntu:
+    build:
+      context: .
+      dockerfile: Dockerfile-ubuntu
+    volumes:
+      - ../bin/nvh:/usr/local/bin/nvh
+      - ../../n/bin/n:/usr/local/bin/n
   ubuntu-old:
     build:
       context: .
