@@ -68,7 +68,7 @@ function log() {
 #
 
 function abort() {
-  >&2 printf "\n  \033[31mError: $*\033[0m\n\n" && exit 1
+  >&2 printf "\n  \033[31mError: %s\033[0m\n\n" "$*" && exit 1
 }
 
 #
@@ -76,7 +76,7 @@ function abort() {
 #
 
 function trace() {
-  >&2 printf "trace: $*\n"
+  >&2 printf "trace: %s\n" "$*"
 }
 
 #
@@ -275,9 +275,9 @@ function display_versions_with_selected() {
   echo
   for folder_and_version in $(versions_paths); do
     if [[ "${folder_and_version}" = "${selected}" ]]; then
-      printf "  \033[36mο\033[0m ${folder_and_version}\033[0m\n"
+      printf "  \033[36mο\033[0m %s\033[0m\n" "${folder_and_version}"
     else
-      printf "    \e[2m${folder_and_version}\e[22m\n"
+      printf "    \e[2m%s\e[22m\n" "${folder_and_version}"
     fi
   done
   echo
@@ -609,7 +609,7 @@ function display_bin_path_for_version() {
   update_download_settings_from_version "$1"
   local bin="${STASH_DIR}/${g_download_folder_name}/${version}/bin/node"
   if [[ -f "${bin}" ]]; then
-    printf "${bin}\n"
+    echo "${bin}"
   else
     abort "'$1' (${version}) not in downloads stash"
   fi
