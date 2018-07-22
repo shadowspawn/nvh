@@ -494,12 +494,8 @@ function install() {
   is_ok "${url}" || abort "download preflight failed for '$resolved_version'"
 
   log "mkdir" "${dir}"
-  mkdir -p "${dir}"
-  if [[ $? -ne 0 ]] ; then
-    abort "sudo required"
-  else
-    touch "${dir}/nvh.lock"
-  fi
+  mkdir -p "${dir}" || abort "sudo required (or change ownership, or define NVH_PREFIX)"
+  touch "${dir}/nvh.lock"
 
   cd "${dir}"
 
@@ -855,12 +851,6 @@ function show_diagnostics() {
 
 assign_get_command
 process_authentication_env
-
-# ToDo: only create when needed?
-# VERSIONS_DIR=("${STASH_DIR}/node")
-# for dir in "${VERSIONS_DIR[@]}"; do
-#   [[ -d "${dir}" ]] || mkdir -p "${dir}"
-# done
 
 #
 # Handle arguments.
