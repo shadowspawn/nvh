@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 REMINDER: experimenting with using rsync for all installs to cope with links better and have consistent behaviour!
 
+- symbolic link below top level [upstream issue #100](https://github.com/tj/n/issues/100)
+- rejected rsync dependency [upstream PR #104](https://github.com/tj/n/pull/104)
+- symbolic link at top level [upstream PR #227](https://github.com/tj/n/pull/227)
+
 ### Added
 
 - instructions at bottom of `nvh` version selection
@@ -87,6 +91,8 @@ Changes from upstream [tj/n](https://github.com/tj/n) 2.1.12
 
 - removed support for deprecated `stable` version
     - [upstream issue #354](https://github.com/tj/n/issues/354)
+    - comments in [upstream PR #322](https://github.com/tj/n/pull/322)
+    - [upstream PR #467](https://github.com/tj/n/pull/467)
 - removed support for `n project` (and `PROJECT_NAME` and `PROJECT_VERSION_CHECK`)
 - `Makefile`
 - `n --latest` replaced by `nvh lsr latest`
