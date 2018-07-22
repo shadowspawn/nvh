@@ -788,7 +788,9 @@ function show_diagnostics() {
 
   printf "\n## node\n"
   if command -v node &> /dev/null; then
-    command -v node && node --version && echo "node engine: $(node -e 'console.log(process.jsEngine)')"
+    command -v node && node --version
+    echo "node engine: $(node -e 'console.log(process.jsEngine)')"
+
     printf "\n## npm\n"
     command -v npm && npm --version
   fi
@@ -796,11 +798,16 @@ function show_diagnostics() {
   printf "\n## tar\n"
   command -v tar && tar --version
 
-  printf "\n## curl\n"
-  command -v curl && curl --version
+  if command -v curl &> /dev/null; then
+    printf "\n## curl\n"
+    command -v curl && curl --version
+  elif command -v wget &> /dev/null; then
+    printf "\n## wget\n"
+    command -v wget && wget --version
+  else
+    printf "\n ## Both curl and wget missing, need one of them\n"
+  fi
 
-  printf "\n## wget\n"
-  command -v wget && wget --version
 
   printf "\n## rsync\n"
   command -v rsync && rsync --version
