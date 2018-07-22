@@ -6,6 +6,7 @@
 #
 
 readonly VERSION="3.0.1-0"
+
 NVH_PREFIX=${NVH_PREFIX=/usr/local}
 NVH_PREFIX=${NVH_PREFIX%/}
 readonly STASH_DIR=$NVH_PREFIX/nvh/versions
@@ -19,13 +20,23 @@ NODE_DOWNLOAD_MIRROR=${NODE_DOWNLOAD_MIRROR%/}
 readonly NODE_DOWNLOAD_MIRROR
 
 # Modified by command options, but otherwise constant
-QUIET="false"
+g_showing_get_progress="true"
 PRESERVE_NPM="false"
 
 g_ls_remote_max_matches=${NVH_MAX_REMOTE_MATCHES=20}
 
+# ToDo: better name than custom
 g_custom_mirror_url=${NODE_MIRROR}
 g_custom_folder_name="node"
+
+# Starting options. May get extended by nvh options like --quiet and environment variables.
+# These get used to define the g_get_command command.
+g_curl_options=( "--location" "--progress-bar" )
+g_wget_options=( "-q" "-O-" )
+g_get_command=
+
+# Set by check_current_version
+g_active_download=
 
 #
 # update_settings_from_version <version>
@@ -221,7 +232,7 @@ function display_nvh_version() {
 }
 
 #
-# Check for installed version, and populate $active
+# Check for installed version, and populate $g_active_download
 #
 
 function check_current_version() {
@@ -234,7 +245,7 @@ function check_current_version() {
       if diff &> /dev/null \
         "${STASH_DIR}/${folder_name}/${current}/bin/node" \
         "${node_path}" ; then
-        active="${folder_name}/${current}"
+        g_active_download="${folder_name}/${current}"
       fi
     done
   fi
@@ -292,7 +303,7 @@ function display_stash_versions() {
   enter_fullscreen
   check_current_version
   clear
-  display_versions_with_selected "${active}"
+  display_versions_with_selected "${g_active_download}"
 
   trap handle_sigint INT
   trap handle_sigtstp SIGTSTP
@@ -359,11 +370,11 @@ function erase_line() {
 function is_ok() {
   # Note: both curl and wget can follow redirects, as present on some mirrors (e.g. https://npm.taobao.org/mirrors/node).
   # The output is complicated with redirects, so keep it simple and use command status rather than parse output.
-  # Reminder, using $GET because may have username/password etc added.
+  # Reminder, using $g_get_command for the extra options.
   if command -v curl &> /dev/null; then
-    ${GET} --fail --head "$1" &> /dev/null || return 1
+    ${g_get_command} --fail --head "$1" &> /dev/null || return 1
   else
-    ${GET} --spider "$1" &> /dev/null || return 1
+    ${g_get_command} --spider "$1" &> /dev/null || return 1
   fi
 }
 
@@ -493,8 +504,8 @@ function install() {
   cd "${dir}"
 
   log "fetch" "${url}"
-  $GET "${url}" | tar -zx --strip-components=1
-  [[ "${QUIET}" = "false" ]] && erase_line
+  ${g_get_command} "${url}" | tar -zx --strip-components=1
+  [[ "${g_showing_get_progress}" = "true" ]] && erase_line
   rm -f "${dir}/nvh.lock"
 
   disable_pax_mprotect bin/node
@@ -504,12 +515,32 @@ function install() {
 }
 
 #
-# Set curl to quiet (silent) mode.
+# Routines for defining and changing global g_get_command and options (e.g. curl)
 #
 
+function assign_get_command() {
+  command -v curl > /dev/null && g_get_command="curl ${g_curl_options[*]}"
+  command -v wget > /dev/null && g_get_command="wget ${g_wget_options[*]}"
+  [[ -z "${g_get_command}" ]] && abort "curl or wget required"
+}
+
 function set_quiet_progress() {
-  QUIET="true"
-  command -v curl > /dev/null && GET="$GET -s"
+  g_curl_options+=( "--silent" )
+  command -v curl > /dev/null && g_showing_get_progress="false"
+  assign_get_command
+}
+
+function process_authentication_env() {
+  if [[ -n "${NVH_NODE_MIRROR_USER}" && -z "${NVH_NODE_MIRROR_PASSWORD}" ]]; then
+    abort "Must specify NVH_NODE_MIRROR_PASSWORD when supplying NVH_NODE_MIRROR_USER"
+  elif [[ -z "${NVH_NODE_MIRROR_USER}" && -n "${NVH_NODE_MIRROR_PASSWORD}" ]]; then
+    abort "Must specify NVH_NODE_MIRROR_USER when supplying NVH_NODE_MIRROR_PASSWORD"
+  elif [[ -n "${NVH_NODE_MIRROR_USER}" && -n "${NVH_NODE_MIRROR_PASSWORD}" ]]; then
+    g_curl_options+=( "-u ${NVH_NODE_MIRROR_USER}:${NVH_NODE_MIRROR_PASSWORD}" )
+    g_wget_options+=( "--http-password=${NVH_NODE_MIRROR_PASSWORD}" "--http-user=${NVH_NODE_MIRROR_USER}" )
+  fi
+
+  assign_get_command
 }
 
 #
@@ -522,7 +553,7 @@ function set_preserve_npm() {
 }
 
 #
-# set number of remote matches
+# set_show_all_remote_matches
 #
 
 function set_show_all_remote_matches() {
@@ -563,7 +594,7 @@ function remove_versions() {
 function prune_versions() {
   check_current_version
   for folder_and_version in $(versions_paths); do
-    if [[ "${folder_and_version}" != "${active}" ]]; then
+    if [[ "${folder_and_version}" != "${g_active_download}" ]]; then
       echo "${folder_and_version}"
       rm -rf "${STASH_DIR}/${folder_and_version}"
       shift
@@ -643,7 +674,7 @@ function display_remote_version_folders() {
   # --> 9.3.1.-nightly2018010930273d400c
   # sort using number . number . number . text . number
   # --> v9.3.1-nightly2018010930273d400c
-  $GET 2> /dev/null "${remote_url}" \
+  ${g_get_command} 2> /dev/null "${remote_url}" \
     | grep -E "</a>" \
     | grep -E -o 'href="[^"]+/"' \
     | grep -E -o 'v[0-9]+\.[0-9]+\.[0-9]+[^/]*' \
@@ -664,7 +695,7 @@ function display_remote_files() {
   local last_lines="$2"
   [[ -z "${last_lines}" ]] && last_lines="${g_ls_remote_max_matches}"
 
-  $GET 2> /dev/null "${remote_url}" \
+  ${g_get_command} 2> /dev/null "${remote_url}" \
     | grep -E "</a>" \
     | grep -E -o 'v[0-9]+\.[0-9]+\.[0-9]+' \
     | sort -u -k 1,1n -k 2,2n -k 3,3n -t . \
@@ -677,7 +708,7 @@ function display_remote_files() {
 
 function display_latest_codename_version() {
   local codename="$1"
-  local folder_name=$($GET 2> /dev/null "${NODE_MIRROR}/" \
+  local folder_name=$(${g_get_command} 2> /dev/null "${NODE_MIRROR}/" \
     | grep -E "</a>" \
     | grep -E -o "latest-$codename" \
     | sort \
@@ -710,7 +741,7 @@ function display_latest_resolved_version() {
 
 function display_latest_lts_version() {
   # Find the alphabetical last codename
-  local folder_name=$($GET 2> /dev/null "${NODE_MIRROR}/" \
+  local folder_name=$(${g_get_command} 2> /dev/null "${NODE_MIRROR}/" \
     | grep -E "</a>" \
     | grep -E -o 'latest-[a-z]{2,}' \
     | sort \
@@ -808,13 +839,13 @@ function show_diagnostics() {
     printf "\n ## Both curl and wget missing, need one of them\n"
   fi
 
-
   printf "\n## rsync\n"
   command -v rsync && rsync --version
 
   printf "\n\n# nvh Setup\n"
   echo "node mirror: ${NODE_MIRROR}"
   echo "node downloads mirror: ${NODE_DOWNLOAD_MIRROR}"
+  [[ -n "${NVH_NODE_MIRROR_USER}" ]] && echo "NVH_NODE_MIRROR_USER is defined"
   echo "install location: $NVH_PREFIX"
   [[ -n "${NVH_PREFIX}" ]] && echo "PATH: $PATH"
   echo "ls-remote max matches: ${g_ls_remote_max_matches}"
@@ -822,42 +853,14 @@ function show_diagnostics() {
 
 #######################################################################################################
 
-#
-# Ensure we have curl or wget support.
-#
-
-# ToDo: rename not-constants
-CURL_PARAMS=( "-L"
-              "-#")
-
-WGET_PARAMS=( "-q"
-              "-O-")
-
-if [[ -n "$NVH_NODE_MIRROR_USER" ]];then
-  if [[ -z "$NVH_NODE_MIRROR_PASSWORD" ]]; then
-    abort "Must specify NVH_NODE_MIRROR_PASSWORD when supplying NVH_NODE_MIRROR_USER"
-  fi
-  CURL_PARAMS+=("-u $NVH_NODE_MIRROR_USER:$NVH_NODE_MIRROR_PASSWORD")
-  WGET_PARAMS+=("--http-password=$NVH_NODE_MIRROR_PASSWORD"
-                "--http-user=$NVH_NODE_MIRROR_USER")
-elif [[ -n "$NVH_NODE_MIRROR_PASSWORD" ]]; then
-  abort "Must specify NVH_NODE_MIRROR_USER when supplying NVH_NODE_MIRROR_PASSWORD"
-fi
-
-GET=
-
-# wget support
-command -v wget > /dev/null && GET="wget ${WGET_PARAMS[@]}"
-
-command -v curl > /dev/null && GET="curl ${CURL_PARAMS[@]}"
-
-[[ -z "$GET" ]] && abort "curl or wget required"
+assign_get_command
+process_authentication_env
 
 # ToDo: only create when needed?
-VERSIONS_DIR=("${STASH_DIR}/node")
-for dir in "${VERSIONS_DIR[@]}"; do
-  [[ -d "${dir}" ]] || mkdir -p "${dir}"
-done
+# VERSIONS_DIR=("${STASH_DIR}/node")
+# for dir in "${VERSIONS_DIR[@]}"; do
+#   [[ -d "${dir}" ]] || mkdir -p "${dir}"
+# done
 
 #
 # Handle arguments.
