@@ -25,9 +25,8 @@ PRESERVE_NPM="false"
 
 g_ls_remote_max_matches=${NVH_MAX_REMOTE_MATCHES=20}
 
-# ToDo: better name than custom
-g_custom_mirror_url=${NODE_MIRROR}
-g_custom_folder_name="node"
+g_download_mirror_url=${NODE_MIRROR}
+g_download_folder_name="node"
 
 # Starting options. May get extended by nvh options like --quiet and environment variables.
 # These get used to define the g_get_command command.
@@ -39,19 +38,19 @@ g_get_command=
 g_active_download=
 
 #
-# update_settings_from_version <version>
-# e.g. <nightly/latest> means using download mirror and custom_name is nightly
+# update_download_settings_from_version <version>
+# e.g. <nightly/latest> means using download mirror and folder is nightly
 #
 
-function update_settings_from_version() {
+function update_download_settings_from_version() {
   if is_download_folder "$1" ; then
-    g_custom_folder_name="$1"
-    g_custom_mirror_url="${NODE_DOWNLOAD_MIRROR}/${g_custom_folder_name}"
+    g_download_folder_name="$1"
+    g_download_mirror_url="${NODE_DOWNLOAD_MIRROR}/${g_download_folder_name}"
   elif is_download_folder "$1" || is_download_version "$1"; then
     [[ "$1" =~ ^([^/]+)/(.*) ]]
     local remote_folder="${BASH_REMATCH[1]}"
-    g_custom_folder_name="${remote_folder}"
-    g_custom_mirror_url="${NODE_DOWNLOAD_MIRROR}/${g_custom_folder_name}"
+    g_download_folder_name="${remote_folder}"
+    g_download_mirror_url="${NODE_DOWNLOAD_MIRROR}/${g_download_folder_name}"
   fi
 }
 
@@ -410,7 +409,7 @@ function tarball_url() {
     [[ $major -eq "" && $minor -lt 12 ]] && arch=arm-pi
   fi
 
-  echo "${g_custom_mirror_url}/${version}/node-${version}-${os}-${arch}.tar.gz"
+  echo "${g_download_mirror_url}/${version}/node-${version}-${os}-${arch}.tar.gz"
 }
 
 #
@@ -476,19 +475,19 @@ function activate() {
 function install() {
   local resolved_version=$(display_latest_resolved_version "$1")
   [[ -z "${resolved_version}" ]] && abort "did not find remote version for '$1'"
-  update_settings_from_version "$1"
+  update_download_settings_from_version "$1"
 
-  local dir="${STASH_DIR}/${g_custom_folder_name}/${resolved_version}"
+  local dir="${STASH_DIR}/${g_download_folder_name}/${resolved_version}"
 
   if [[ -d "${dir}" ]]; then
     if [[ ! -e "${dir}/nvh.lock" ]] ; then
-      activate "${g_custom_folder_name}/${resolved_version}"
+      activate "${g_download_folder_name}/${resolved_version}"
       exit
     fi
   fi
 
   echo
-  log "installing" "${g_custom_folder_name}/${resolved_version}"
+  log "installing" "${g_download_folder_name}/${resolved_version}"
 
   local url="$(tarball_url "${resolved_version}")"
   is_ok "${url}" || abort "download preflight failed for '$resolved_version'"
@@ -506,7 +505,7 @@ function install() {
 
   disable_pax_mprotect bin/node
 
-  activate "${g_custom_folder_name}/${resolved_version}"
+  activate "${g_download_folder_name}/${resolved_version}"
   echo
 }
 
@@ -569,8 +568,8 @@ function remove_versions() {
   while [[ $# -ne 0 ]]; do
     local version="$(display_latest_resolved_version "$1")"
     if [[ -n "${version}" ]]; then
-      update_settings_from_version "$1"
-      local dir="${STASH_DIR}/${g_custom_folder_name}/${version}"
+      update_download_settings_from_version "$1"
+      local dir="${STASH_DIR}/${g_download_folder_name}/${version}"
       if [[ -s "${dir}" ]]; then
         rm -rf "${dir}"
       else
@@ -607,8 +606,8 @@ function display_bin_path_for_version() {
   local version="$(display_latest_resolved_version "$1")"
   [[ -z "${version}" ]] && abort "invalid version '$1'"
 
-  update_settings_from_version "$1"
-  local bin="${STASH_DIR}/${g_custom_folder_name}/${version}/bin/node"
+  update_download_settings_from_version "$1"
+  local bin="${STASH_DIR}/${g_download_folder_name}/${version}/bin/node"
   if [[ -f "${bin}" ]]; then
     printf "${bin}\n"
   else
@@ -625,8 +624,8 @@ function execute_with_version() {
   local version="$(display_latest_resolved_version "$1")"
   [[ -z "$version" ]] && abort "invalid version '$1'"
 
-  update_settings_from_version "$1"
-  local bin="${STASH_DIR}/${g_custom_folder_name}/${version}/bin/node"
+  update_download_settings_from_version "$1"
+  local bin="${STASH_DIR}/${g_download_folder_name}/${version}/bin/node"
 
   if [[ -f "${bin}" ]]; then
     shift # remove version from parameters
