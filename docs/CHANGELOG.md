@@ -11,10 +11,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 REMINDER: experimenting with using rsync for all installs to cope with links better and have consistent behaviour!
 
-- symbolic link below top level [upstream issue #100](https://github.com/tj/n/issues/100)
-- rejected rsync dependency [upstream PR #104](https://github.com/tj/n/pull/104)
-- symbolic link at top level [upstream PR #227](https://github.com/tj/n/pull/227)
-
 ### Added
 
 - instructions at bottom of `nvh` version selection
@@ -23,12 +19,16 @@ REMINDER: experimenting with using rsync for all installs to cope with links bet
 
 - adopting suggestions of `shellcheck` (ongoing work-in-progress)
     - inspired by [upstream PR #465](https://github.com/tj/n/pull/465)
-- preflight test before download to remove broken code and reduce calls for mirrors using redirects
+- changed preflight test before download to remove broken code and reduce calls for mirrors using redirects
     - inspired by [upstream PR #479](https://github.com/tj/n/pull/479)
 - `--preserve` now works with interactive version selection too
 - put single speech mark around supplied argument in error messages
     - inspired by [upstream PR #485](https://github.com/tj/n/pull/485)
-- switched `--preserve` implementation from `tar` to `rsync`
+- switched install implementation from `tar` to `rsync`. This is a significant change and a new dependency for minimal installs, but allows improving some behaviours in a consistent way.
+    - fix `--preserve` when there are links in destination (#1)
+    - symbolic link below top level [upstream issue #100](https://github.com/tj/n/issues/100)
+    - symbolic link at top level [upstream PR #227](https://github.com/tj/n/pull/227)
+    - rejected rsync dependency [upstream PR #104](https://github.com/tj/n/pull/104)
 
 ### Removed
 
