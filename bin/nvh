@@ -169,7 +169,7 @@ function display_help() {
     -h, --help          Display help information
     -p, --preserve      Preserve npm and npx during install of node
     -q, --quiet         Disable download progress (for curl)
-    -V, --version       Output version of n
+    -V, --version       Output version of nvh
 
   Aliases:
 
@@ -225,7 +225,7 @@ function prev_version_installed() {
 }
 
 #
-# Output n version.
+# Output nvh version.
 #
 
 function display_nvh_version() {
