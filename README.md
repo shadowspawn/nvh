@@ -4,7 +4,7 @@ Easily install Node.js versions. No profile setup required for default install l
 
 Requires `bash` (and does not require a working node install).
 
-Forked from [tj/n](https://github.com/tj/n) with changes to command syntax, bug fixes, and feature additions.
+Forked from [tj/n](https://github.com/tj/n) with changes to command syntax, bug fixes, and new features.
 
 ## Installation
 
@@ -18,23 +18,27 @@ If you already have `node`, the easiest way to install `nvh` is through `npm`:
 One way to bootstrap an install if `npm` is not yet available:
 
     git clone git@github.com:JohnRGee/nvh.git
-    ./nvh/bin/nvh lts
+    ./nvh/bin/nvh install lts
     # Now node and npm are available
 
 ## Installing Node Versions
 
-Simply execute `nvh <version>` to download and install a version of `node`. If `<version>` has already been downloaded, `nvh` will install from its stash.
+Execute `nvh install <version>` to download and install a version of `node`. If `<version>` has already been downloaded, `nvh` will install from its stash.
 
-    nvh 4.9.1
-    nvh lts
+    nvh install 4.9.1
+    nvh i lts
 
-Execute `nvh` on its own to view your downloaded versions. Use the up and down arrow keys to select a version, and press enter key to install the selected version. Use `q` to exit the selection screen without installing. If you like vim key bindings, you can also use `j` and `k` to navigate up or down without using arrows.
+Execute `nvh` on its own to view your downloaded versions, and install the selected version. 
 
     $ nvh
 
       node/v4.9.1
     ο node/v6.14.3
       node/v8.11.3
+
+    Use up/down arrow keys to select a version, return key to install, q to quit
+
+(You can also use `j` and `k` to navigate up or down without using arrows.)
 
 ## Specifying Node Versions
 
@@ -80,16 +84,14 @@ Or run a downloaded `node` version with the `nvh run` command:
 
 A `node` install normally includes `npm` as well, but you may wish to preserve an updated `npm` and `npx` leaving them out of the install:
 
-    $ nvh latest
+    $ nvh install latest
     installed : v10.6.0
     $ npm --version
     6.1.0
-    $ nvh --preserve lts
-    installed : v8.11.3
+    $ nvh install --preserve v8.0.0
+    installed : v8.0.0
     $ npm --version
     6.1.0
-
-Note: `--preserve` requires the `rsync` command.
 
 ## Miscellaneous
 
@@ -128,6 +130,7 @@ There are a lot of minor changes! Taking advantage of a fresh start.
 - `n <version>` --> `nvh i[nstall] version`
 - always install, even if installed version appears to match
 - allow removing installed version
+- using `rsync` rather than `cp` for installs
 
 ### Removed
 
