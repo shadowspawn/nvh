@@ -125,7 +125,7 @@ There are a lot of minor changes! Taking advantage of a fresh start.
 - `n use` and `n as` --> `nvh run`
 - `n --lts` --> `nvh lsr lts`
 - `n --latest` --> `nvh lsr latest`
-- environment variable names and download location
+- `n <version>` --> `nvh i[nstall] version`
 - always install, even if installed version appears to match
 - allow removing installed version
 

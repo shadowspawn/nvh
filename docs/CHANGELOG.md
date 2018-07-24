@@ -14,6 +14,7 @@ REMINDER: experimenting with using rsync for all installs to cope with links bet
 ### Added
 
 - instructions at bottom of `nvh` version selection
+- allow options after command, as well as before
 
 ### Changed
 
@@ -29,6 +30,7 @@ REMINDER: experimenting with using rsync for all installs to cope with links bet
     - symbolic link below top level [upstream issue #100](https://github.com/tj/n/issues/100)
     - symbolic link at top level [upstream PR #227](https://github.com/tj/n/pull/227)
     - rejected rsync dependency [upstream PR #104](https://github.com/tj/n/pull/104)
+- requiring explicit `nvh install <version>` command, rather than implicit `nvh <version>`
 
 ### Removed
 

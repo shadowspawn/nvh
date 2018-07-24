@@ -153,15 +153,15 @@ function display_help() {
   Commands:
 
     nvh                             Display downloaded node versions and install selection
-    nvh <version>                   Install node <version> (downloading if necessary)
-    nvh run <version> [args ...]    Execute downloaded node <version> with [args ...]
-    nvh which <version>             Output path for downloaded node <version>
-    nvh rm <version ...>            Remove the given downloaded version(s)
-    nvh prune                       Remove all downloaded versions except the active version
+    nvh install <version>           Install node <version> (downloading if necessary)
     nvh ls                          Output downloaded versions
     nvh ls-remote [version]         Output matching versions available for download
-    nvh help                        Display help information
+    nvh run <version> [args ...]    Execute downloaded node <version> with [args ...]
+    nvh which <version>             Output path for downloaded node <version>
+    nvh prune                       Remove all downloaded versions except the active version
+    nvh rm <version ...>            Remove the given downloaded version(s)
     nvh doctor                      Output diagnostics to help solve issues
+    nvh help                        Display help information
 
   Options:
 
@@ -172,6 +172,7 @@ function display_help() {
 
   Aliases:
 
+    install: i
     ls: list
     ls-remote: lsr, list-remote
     rm: remove
@@ -473,6 +474,7 @@ function activate() {
 #
 
 function install() {
+  [[ -z "$1" ]] && abort "version required"
   local resolved_version=$(display_latest_resolved_version "$1")
   [[ -z "${resolved_version}" ]] && abort "did not find remote version for '$1'"
   update_download_settings_from_version "$1"
@@ -855,31 +857,44 @@ process_authentication_env
 # Handle arguments.
 #
 
+# First pass. Process the options so they can come before or after commands,
+# particularly for `nvh lsr --all` and `nvh install --preserve foo`
+# which feel pretty natural.
+
+unprocessed_args=()
+
 while [[ $# -ne 0 ]]; do
   case $1 in
-    -V|--version) display_nvh_version ;;
-    -h|--help|help) display_help; exit ;;
-    -q|--quiet) set_quiet_progress ;;
-    -p|--preserve) set_preserve_npm ;;
     --all) set_show_all_remote_matches ;;
-    which) shift; display_bin_path_for_version "$1"; exit ;;
-    run) shift; execute_with_version "$@"; exit ;;
-    rm|remove) shift; remove_versions "$@"; exit ;;
-    prune) prune_versions; exit ;;
-    lsr|ls-remote|list-remote)
-      shift
-      [[ "$1" = "--all" ]] && set_show_all_remote_matches && shift
-      display_remote_versions "$1"
-      exit
-      ;;
-    ls|list) versions_paths; exit ;;
-    doctor) show_diagnostics; exit ;;
+    -h|--help|help) display_help; exit ;;
+    -p|--preserve) set_preserve_npm ;;
+    -q|--quiet) set_quiet_progress ;;
+    -V|--version) display_nvh_version ;;
     -*) abort "Unrecognised option '$1'"; exit 1 ;;
-    *) install "$1"; exit ;;
+    run) unprocessed_args=("$@"); break ;;
+    *) unprocessed_args+=( "$1" ) ;;
   esac
   shift
 done
 
-# Test after parsing so can use options like --preserve with version selecton
-[[ -z "$(versions_paths)" ]] && err_no_installed_print_help
-display_stash_versions
+set -- "${unprocessed_args[@]}"
+
+# Second pass. Commands.
+
+if [[ $# -eq 0 ]]; then
+  [[ -z "$(versions_paths)" ]] && err_no_installed_print_help
+  display_stash_versions
+else
+  case $1 in
+    doctor) show_diagnostics ;;
+    install|i) shift; install "$1" ;;
+    ls|list) versions_paths ;;
+    lsr|ls-remote|list-remote) shift; display_remote_versions "$1" ;;
+    prune) prune_versions ;;
+    rm|remove) shift; remove_versions "$@" ;;
+    run) shift; execute_with_version "$@" ;;
+    which) shift; display_bin_path_for_version "$1" ;;
+    *) abort "Unrecognised command '$1' (perhaps you want 'install $1'?)" ;;
+  esac
+fi
+
