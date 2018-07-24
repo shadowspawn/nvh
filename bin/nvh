@@ -165,10 +165,11 @@ function display_help() {
 
   Options:
 
-    -V, --version       Output version of n
+    --all               ls-remote displays all matches instead of last 20
     -h, --help          Display help information
-    -q, --quiet         Disable download progress (for curl)
     -p, --preserve      Preserve npm and npx during install of node
+    -q, --quiet         Disable download progress (for curl)
+    -V, --version       Output version of n
 
   Aliases:
 
