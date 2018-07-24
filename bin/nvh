@@ -239,7 +239,7 @@ function check_current_version() {
   local node_path="$(command -v node)"
   if [[ -x "${node_path}" ]]; then
     local current=$(node --version)
-    for dir in ${STASH_DIR}/*/ ; do
+    for dir in "${STASH_DIR}"/*/ ; do
       local folder_name="${dir%/}"
       folder_name="${folder_name##*/}"
       if diff &> /dev/null \
@@ -447,9 +447,9 @@ function activate() {
   local path_from_prefix=$1
   local dir="${STASH_DIR}/${path_from_prefix}"
   # Remove old npm to avoid potential issues with simple overwrite.
-  if [[ "${PRESERVE_NPM}" = "false" && -d "$dir/lib/node_modules/npm" ]]; then
-    if [[ -d "$NVH_PREFIX/lib/node_modules/npm" ]]; then
-      rm -rf "$NVH_PREFIX/lib/node_modules/npm"
+  if [[ "${PRESERVE_NPM}" = "false" && -d "${dir}/lib/node_modules/npm" ]]; then
+    if [[ -d "${NVH_PREFIX}/lib/node_modules/npm" ]]; then
+      rm -rf "${NVH_PREFIX}/lib/node_modules/npm"
     fi
   fi
   # Copy (lib before bin to avoid error messages on Darwin when cp over dangling link)
@@ -593,7 +593,7 @@ function prune_versions() {
   for folder_and_version in $(versions_paths); do
     if [[ "${folder_and_version}" != "${g_active_download}" ]]; then
       echo "${folder_and_version}"
-      rm -rf "${STASH_DIR}/${folder_and_version}"
+      rm -rf "${STASH_DIR:?}/${folder_and_version}"
       shift
     fi
   done
