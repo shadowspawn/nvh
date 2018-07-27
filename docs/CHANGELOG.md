@@ -15,6 +15,9 @@ REMINDER: experimenting with using rsync for all installs to cope with links bet
 
 - instructions at bottom of `nvh` version selection
 - allow options after command, as well as before
+- `current` as alias for `latest`
+    - issue #2
+    - inspired by tj/n#522)
 
 ### Changed
 
