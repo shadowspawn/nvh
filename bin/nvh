@@ -158,7 +158,7 @@ function display_help() {
     nvh ls-remote [version]         Output matching versions available for download
     nvh run <version> [args ...]    Execute downloaded node <version> with [args ...]
     nvh which <version>             Output path for downloaded node <version>
-    nvh prune                       Remove all downloaded versions except the active version
+    nvh prune                       Remove all downloaded versions except the installed version
     nvh rm <version ...>            Remove the given downloaded version(s)
     nvh doctor                      Output diagnostics to help solve issues
     nvh help                        Display help information
