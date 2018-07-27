@@ -28,7 +28,7 @@ Execute `nvh install <version>` to download and install a version of `node`. If 
     nvh install 4.9.1
     nvh i lts
 
-Execute `nvh` on its own to view your downloaded versions, and install the selected version. 
+Execute `nvh` on its own to view your downloaded versions, and install the selected version.
 
     $ nvh
 
@@ -110,7 +110,7 @@ Remove some downloaded versions:
 
     nvh rm 0.9.4 v0.10.0
 
-Remove all downloaded versions except the current installed version:
+Remove all downloaded versions except the installed version:
 
     nvh prune
 

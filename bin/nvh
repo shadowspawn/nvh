@@ -34,7 +34,7 @@ g_curl_options=( "--location" "--progress-bar" )
 g_wget_options=( "-q" "-O-" )
 g_get_command=
 
-# Set by check_current_version
+# Set by check_installed_version
 g_active_download=
 
 #
@@ -173,10 +173,11 @@ function display_help() {
 
   Aliases:
 
-    install: i
-    ls: list
-    ls-remote: lsr, list-remote
-    rm: remove
+    i: install
+    current: latest (version)
+    list: ls
+    lsr, list-remote: ls-remote
+    remove: rm
 
   Versions:
 
@@ -185,16 +186,16 @@ function display_help() {
     or other downloadable releases by <remote-folder>/<version>
 
       4.9.1, 8, v6.1    Numeric versions
-      lts               Latest Long Term Support official release
-      latest            Latest official release
+      lts               Newest Long Term Support official release
+      latest            Newest official release
       boron, v7.x       Release streams
       nightly/latest, chakracore-release/10, rc/v9.4.0-rc.1
 
   Examples:
 
-    nvh latest      Install the latest node release
-    nvh lsr lts     Output latest lts version
-    nvh -p lts      Install latest LTS version, preserving installed npm and npx
+    nvh latest      Install the newest node release
+    nvh lsr lts     Output newest lts version
+    nvh -p lts      Install newest LTS version, preserving installed npm and npx
     nvh             Display downloaded node versions and install selection
 
   See also https://github.com/JohnRGee/nvh.git for further information.
@@ -236,17 +237,17 @@ function display_nvh_version() {
 # Check for installed version, and populate $g_active_download
 #
 
-function check_current_version() {
+function check_installed_version() {
   local node_path="$(command -v node)"
   if [[ -x "${node_path}" ]]; then
-    local current=$(node --version)
+    local installed_version=$(node --version)
     for dir in "${STASH_DIR}"/*/ ; do
       local folder_name="${dir%/}"
       folder_name="${folder_name##*/}"
       if diff &> /dev/null \
-        "${STASH_DIR}/${folder_name}/${current}/bin/node" \
+        "${STASH_DIR}/${folder_name}/${installed_version}/bin/node" \
         "${node_path}" ; then
-        g_active_download="${folder_name}/${current}"
+        g_active_download="${folder_name}/${installed_version}"
       fi
     done
   fi
@@ -297,12 +298,13 @@ function list_stash_versions() {
 }
 
 #
-# Display current node --version and others installed.
+# Display downloaded versions in stash. and mark the installed version.
 #
 
 function display_stash_versions() {
   enter_fullscreen
-  check_current_version
+  check_installed_version
+
   clear
   display_versions_with_selected "${g_active_download}"
 
@@ -590,7 +592,8 @@ function remove_versions() {
 #
 
 function prune_versions() {
-  check_current_version
+  check_installed_version
+
   for folder_and_version in $(versions_paths); do
     if [[ "${folder_and_version}" != "${g_active_download}" ]]; then
       echo "${folder_and_version}"
@@ -734,7 +737,7 @@ function display_latest_resolved_version() {
 }
 
 #
-# Display the latest lts release version.
+# Display the newest lts release version.
 #
 
 function display_latest_lts_version() {
@@ -770,7 +773,7 @@ function display_remote_versions() {
     display_remote_version_folders "${NODE_MIRROR}/"
   elif [[ "${version}" = "lts" ]]; then
     display_latest_lts_version
-  elif [[ "${version}" = "latest" ]]; then
+  elif [[ "${version}" = "latest" || "${version}" = "current" ]]; then
     display_remote_version_folders "${NODE_MIRROR}/" "" 1
   elif is_download_folder "${version}"; then
     display_match_limit
@@ -779,7 +782,7 @@ function display_remote_versions() {
     [[ "${version}" =~ ^([^/]+)/(.*) ]]
     local remote_folder="${BASH_REMATCH[1]}"
     version="${BASH_REMATCH[2]}"
-    if [[ "${version}" = "latest" ]]; then
+    if [[ "${version}" = "latest" || "${version}" = "current" ]]; then
       display_remote_version_folders "${NODE_DOWNLOAD_MIRROR}/${remote_folder}/" "" 1
     else
       display_match_limit
@@ -895,7 +898,7 @@ else
     rm|remove) shift; remove_versions "$@" ;;
     run) shift; execute_with_version "$@" ;;
     which) shift; display_bin_path_for_version "$1" ;;
-    *) abort "Unrecognised command '$1' (perhaps you want 'install $1'?)" ;;
+    *) abort "Unrecognised command '$1' (perhaps you want 'nvh install $1'?)" ;;
   esac
 fi
 
