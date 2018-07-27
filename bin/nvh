@@ -182,21 +182,21 @@ function display_help() {
   Versions:
 
     Numeric version numbers can be complete or incomplete, with an optional leading 'v'.
-    Versions can also be specified by lts or latest, by release stream,
-    or other downloadable releases by <remote-folder>/<version>
+    Versions can also be specified by labels, by release stream,
+    and other downloadable releases by <remote-folder>/<version>
 
       4.9.1, 8, v6.1    Numeric versions
       lts               Newest Long Term Support official release
-      latest            Newest official release
+      latest, current   Newest official release
       boron, v7.x       Release streams
       nightly/latest, chakracore-release/10, rc/v9.4.0-rc.1
 
   Examples:
 
-    nvh latest      Install the newest node release
-    nvh lsr lts     Output newest lts version
-    nvh -p lts      Install newest LTS version, preserving installed npm and npx
-    nvh             Display downloaded node versions and install selection
+    nvh install latest  Install the newest node release
+    nvh lsr lts         Output newest LTS version
+    nvh i -p lts        Install newest LTS release, preserving installed npm and npx
+    nvh                 Display downloaded node versions and install selection
 
   See also https://github.com/JohnRGee/nvh.git for further information.
 
