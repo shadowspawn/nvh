@@ -162,16 +162,7 @@ To change the location to say `$HOME/.nvh`, add lines like the following to your
     export NVH_PREFIX=$HOME/.nvh
     export PATH=$NVH_PREFIX/bin:$PATH
 
-Specifying custom node mirror:
-
-- `NVH_NODE_MIRROR`: override default <https://nodejs.org/dist/>
-- `NVH_NODE_DOWNLOAD_MIRROR`: override default <https://nodejs.org/download> for nightly et al
-- `NVH_NODE_MIRROR_USER`: if custom mirror uses basic authentication
-- `NVH_NODE_MIRROR_PASSWORD`: if custom mirror uses basic authentication
-
-Customising behaviour:
-
-- `NVH_MAX_REMOTE_MATCHES`: override default of 20 for number of lines to show for ls-remote
+See more [Environment Variables](./docs/env.md) for specifying a custom node mirror, working through a proxy, and other settings.
 
 ## Alternatives to `nvh`
 

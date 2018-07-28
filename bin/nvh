@@ -28,16 +28,43 @@ g_ls_remote_max_matches=${NVH_MAX_REMOTE_MATCHES=20}
 g_download_mirror_url=${NODE_MIRROR}
 g_download_folder_name="node"
 
-# Starting options. May get extended by nvh options like --quiet and environment variables.
-# These get used to define the g_get_command command.
+# Starting options. May get added to from environment variables et al.
+# Defining commands in variables is fraught (http://mywiki.wooledge.org/BashFAQ/050)
+# but we can follow the simple case and store arguments in an array.
 g_curl_options=( "--location" )
 [[ -t 1 ]] && g_curl_options+=( "--progress-bar" ) && g_showing_get_progress="true"
 [[ -t 1 ]] || g_curl_options+=( "--silent" )
 g_wget_options=( "-q" "-O-" )
-g_get_command=
 
 # Set by check_installed_version
 g_active_download=
+
+#
+# get <args...>
+# Call curl or wget with combination of global and passed arguments.
+#
+
+function do_get() {
+  if command -v curl > /dev/null; then
+    curl "${g_curl_options[@]}" "$@"
+  elif command -v wget > /dev/null; then
+    wget "${g_wget_options[@]}" "$@"
+  else
+    abort "curl or wget command required"
+  fi
+}
+
+function process_authentication_env() {
+  if [[ -n "${NVH_USER}" || -n "${NVH_PASSWORD}" ]]; then
+    g_curl_options+=( "--user" "${NVH_USER}:${NVH_PASSWORD}" )
+    g_wget_options+=( "--http-user=${NVH_USER}" "--http-password=${NVH_PASSWORD}" )
+  fi
+  if [[ -n "${NVH_PROXY_USER}" || -n "${NVH_PROXY_PASSWORD}" ]]; then
+     g_curl_options+=( "--proxy-user"  "${NVH_PROXY_USER}:${NVH_PROXY_PASSWORD}" )
+     [[ -n "${NVH_PROXY_USER}" ]] && g_wget_options+=( "--proxy-user=${NVH_PROXY_USER}" )
+     [[ -n "${NVH_PROXY_PASSWORD}" ]] && g_wget_options+=( "--proxy-password=${NVH_PROXY_PASSWORD}" )
+  fi
+}
 
 #
 # update_download_settings_from_version <version>
@@ -374,11 +401,10 @@ function erase_line() {
 function is_ok() {
   # Note: both curl and wget can follow redirects, as present on some mirrors (e.g. https://npm.taobao.org/mirrors/node).
   # The output is complicated with redirects, so keep it simple and use command status rather than parse output.
-  # Reminder, using $g_get_command for the extra options.
   if command -v curl &> /dev/null; then
-    ${g_get_command} --fail --head "$1" &> /dev/null || return 1
+    do_get --fail --head "$1" &> /dev/null || return 1
   else
-    ${g_get_command} --spider "$1" &> /dev/null || return 1
+    do_get --spider "$1" &> /dev/null || return 1
   fi
 }
 
@@ -505,7 +531,7 @@ function install() {
   cd "${dir}"
 
   log "fetch" "${url}"
-  ${g_get_command} "${url}" | tar -zx --strip-components=1
+  do_get "${url}" | tar -zx --strip-components=1
   [[ "${g_showing_get_progress}" = "true" ]] && erase_line
   rm -f "${dir}/nvh.lock"
 
@@ -513,29 +539,6 @@ function install() {
 
   activate "${g_download_folder_name}/${resolved_version}"
   echo
-}
-
-#
-# Routines for defining and changing global g_get_command and options (e.g. curl)
-#
-
-function assign_get_command() {
-  command -v curl > /dev/null && g_get_command="curl ${g_curl_options[*]}"
-  command -v wget > /dev/null && g_get_command="wget ${g_wget_options[*]}"
-  [[ -z "${g_get_command}" ]] && abort "curl or wget required"
-}
-
-function process_authentication_env() {
-  if [[ -n "${NVH_NODE_MIRROR_USER}" && -z "${NVH_NODE_MIRROR_PASSWORD}" ]]; then
-    abort "Must specify NVH_NODE_MIRROR_PASSWORD when supplying NVH_NODE_MIRROR_USER"
-  elif [[ -z "${NVH_NODE_MIRROR_USER}" && -n "${NVH_NODE_MIRROR_PASSWORD}" ]]; then
-    abort "Must specify NVH_NODE_MIRROR_USER when supplying NVH_NODE_MIRROR_PASSWORD"
-  elif [[ -n "${NVH_NODE_MIRROR_USER}" && -n "${NVH_NODE_MIRROR_PASSWORD}" ]]; then
-    g_curl_options+=( "-u ${NVH_NODE_MIRROR_USER}:${NVH_NODE_MIRROR_PASSWORD}" )
-    g_wget_options+=( "--http-password=${NVH_NODE_MIRROR_PASSWORD}" "--http-user=${NVH_NODE_MIRROR_USER}" )
-  fi
-
-  assign_get_command
 }
 
 #
@@ -670,7 +673,8 @@ function display_remote_version_folders() {
   # --> 9.3.1.-nightly2018010930273d400c
   # sort using number . number . number . text . number
   # --> v9.3.1-nightly2018010930273d400c
-  ${g_get_command} 2> /dev/null "${remote_url}" \
+
+  do_get "${remote_url}" 2> /dev/null \
     | grep -E "</a>" \
     | grep -E -o 'href="[^"]+/"' \
     | grep -E -o 'v[0-9]+\.[0-9]+\.[0-9]+[^/]*' \
@@ -691,7 +695,7 @@ function display_remote_files() {
   local last_lines="$2"
   [[ -z "${last_lines}" ]] && last_lines="${g_ls_remote_max_matches}"
 
-  ${g_get_command} 2> /dev/null "${remote_url}" \
+  do_get "${remote_url}" 2> /dev/null \
     | grep -E "</a>" \
     | grep -E -o 'v[0-9]+\.[0-9]+\.[0-9]+' \
     | sort -u -k 1,1n -k 2,2n -k 3,3n -t . \
@@ -704,7 +708,7 @@ function display_remote_files() {
 
 function display_latest_codename_version() {
   local codename="$1"
-  local folder_name=$(${g_get_command} 2> /dev/null "${NODE_MIRROR}/" \
+  local folder_name=$(do_get "${NODE_MIRROR}/" 2> /dev/null \
     | grep -E "</a>" \
     | grep -E -o "latest-$codename" \
     | sort \
@@ -737,7 +741,7 @@ function display_latest_resolved_version() {
 
 function display_latest_lts_version() {
   # Find the alphabetical last codename
-  local folder_name=$(${g_get_command} 2> /dev/null "${NODE_MIRROR}/" \
+  local folder_name=$(do_get "${NODE_MIRROR}/" 2> /dev/null \
     | grep -E "</a>" \
     | grep -E -o 'latest-[a-z]{2,}' \
     | sort \
@@ -839,9 +843,15 @@ function show_diagnostics() {
   command -v rsync && rsync --version
 
   printf "\n\n# nvh Setup\n"
+  echo "NB: may contain secrets, take care when copying."
   echo "node mirror: ${NODE_MIRROR}"
   echo "node downloads mirror: ${NODE_DOWNLOAD_MIRROR}"
-  [[ -n "${NVH_NODE_MIRROR_USER}" ]] && echo "NVH_NODE_MIRROR_USER is defined"
+  [[ -n "${NVH_USER}" ]] && echo "NVH_USER: ${NVH_USER}"
+  [[ -n "${NVH_PASSWORD}" ]] && echo "NVH_PASSWORD: ${NVH_PASSWORD}"
+  [[ -n "${http_proxy}" ]] && echo "http_proxy: ${http_proxy}"
+  [[ -n "${https_proxy}" ]] && echo "https_proxy: ${https_proxy}"
+  [[ -n "${NVH_PROXY_USER}" ]] && echo "NVH_PROXY_USER: ${NVH_PROXY_USER}"
+  [[ -n "${NVH_PROXY_PASSWORD}" ]] && echo "NVH_PROXY_PASSWORD: ${NVH_PROXY_PASSWORD}"
   echo "install location: $NVH_PREFIX"
   [[ -n "${NVH_PREFIX}" ]] && echo "PATH: $PATH"
   echo "ls-remote max matches: ${g_ls_remote_max_matches}"
@@ -849,7 +859,6 @@ function show_diagnostics() {
 
 #######################################################################################################
 
-assign_get_command
 process_authentication_env
 
 #

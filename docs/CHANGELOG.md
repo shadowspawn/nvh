@@ -18,6 +18,9 @@ REMINDER: experimenting with using rsync for all installs to cope with links bet
 - `current` as alias for `latest`
     - [issue #2](https://github.com/JohnRGee/nvh/issues/2)
     - inspired by [upstream issue #522](https://github.com/tj/n/issues/522)
+- docs for using proxy
+- environment variables for proxy username and password
+    - inspired by [upstream issue #503](https://github.com/tj/n/pull/503)
 
 ### Changed
 
@@ -34,6 +37,7 @@ REMINDER: experimenting with using rsync for all installs to cope with links bet
     - symbolic link at top level [upstream PR #227](https://github.com/tj/n/pull/227)
     - rejected rsync dependency [upstream PR #104](https://github.com/tj/n/pull/104)
 - requiring explicit `nvh install <version>` command, rather than implicit `nvh <version>`
+- reworked implementation of `curl` and `wget` commands
 
 ### Removed
 
