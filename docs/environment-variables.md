@@ -14,7 +14,7 @@ If the custom mirror requires basic authentication, you can url-encode the usern
     NVH_NODE_MIRROR='https://user:password@host/path'
 
  or if you prefer, and no need to url-encode special characters:
- 
+
     NVH_NODE_MIRROR='https://host/path'
     NVH_USER='user'
     NVH_PASSWORD='password'
@@ -44,4 +44,3 @@ Note: in the second case, the username and password will be visible to anyone wh
 `nvh ls-remote` defaults to a showing a maximum of 20 matching versions, but you can change this. e.g.
 
     NVH_MAX_REMOTE_MATCHES=3
-
