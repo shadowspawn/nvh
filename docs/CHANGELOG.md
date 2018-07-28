@@ -38,9 +38,10 @@ REMINDER: experimenting with using rsync for all installs to cope with links bet
 ### Removed
 
 - unimplemented right-arrow from README instructions for interactive version selection
-- remove `--no-check-certificate` for wget, secure by default, matching curl treatment
+- `--no-check-certificate` for wget, secure by default, matching curl treatment
     - [upstream PR #509](https://github.com/tj/n/pull/509)
     - [upstream PR #475](https://github.com/tj/n/pull/475)
+- `--quiet` option, instead autodetect whether to show progress based on whether displaying to a terminal
 
 ## [3.0.0] (2018-07-15)
 

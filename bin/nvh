@@ -30,7 +30,9 @@ g_download_folder_name="node"
 
 # Starting options. May get extended by nvh options like --quiet and environment variables.
 # These get used to define the g_get_command command.
-g_curl_options=( "--location" "--progress-bar" )
+g_curl_options=( "--location" )
+[[ -t 1 ]] && g_curl_options+=( "--progress-bar" ) && g_showing_get_progress="true"
+[[ -t 1 ]] || g_curl_options+=( "--silent" )
 g_wget_options=( "-q" "-O-" )
 g_get_command=
 
@@ -168,7 +170,6 @@ function display_help() {
     --all               ls-remote displays all matches instead of last 20
     -h, --help          Display help information
     -p, --preserve      Preserve npm and npx during install of node
-    -q, --quiet         Disable download progress (for curl)
     -V, --version       Output version of nvh
 
   Aliases:
@@ -524,12 +525,6 @@ function assign_get_command() {
   [[ -z "${g_get_command}" ]] && abort "curl or wget required"
 }
 
-function set_quiet_progress() {
-  g_curl_options+=( "--silent" )
-  command -v curl > /dev/null && g_showing_get_progress="false"
-  assign_get_command
-}
-
 function process_authentication_env() {
   if [[ -n "${NVH_NODE_MIRROR_USER}" && -z "${NVH_NODE_MIRROR_PASSWORD}" ]]; then
     abort "Must specify NVH_NODE_MIRROR_PASSWORD when supplying NVH_NODE_MIRROR_USER"
@@ -872,7 +867,6 @@ while [[ $# -ne 0 ]]; do
     --all) set_show_all_remote_matches ;;
     -h|--help|help) display_help; exit ;;
     -p|--preserve) set_preserve_npm ;;
-    -q|--quiet) set_quiet_progress ;;
     -V|--version) display_nvh_version ;;
     -*) abort "Unrecognised option '$1'"; exit 1 ;;
     run) unprocessed_args=("$@"); break ;;
