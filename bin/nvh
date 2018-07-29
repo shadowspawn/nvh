@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1117,SC2155
+# https://github.com/koalaman/shellcheck/wiki
 
 #
 # Setup.
@@ -258,6 +259,7 @@ EOF
 }
 
 function err_no_installed_print_help() {
+  # shellcheck disable=SC2059
   printf "\n  ${SGR_RED}No downloaded versions yet, displaying help${SGR_RESET}\n"
   display_help
   exit 1
@@ -883,9 +885,9 @@ function show_diagnostics() {
   echo "node downloads mirror: ${NODE_DOWNLOAD_MIRROR}"
   [[ -n "${NVH_USER}" ]] && echo "NVH_USER: ${NVH_USER}"
   [[ -n "${NVH_PASSWORD}" ]] && echo "NVH_PASSWORD: ${NVH_PASSWORD}"
-  # shellcheck disable=2154
+  # shellcheck disable=SC2154
   [[ -n "${http_proxy}" ]] && echo "http_proxy: ${http_proxy}"
-  # shellcheck disable=2154
+  # shellcheck disable=SC2154
   [[ -n "${https_proxy}" ]] && echo "https_proxy: ${https_proxy}"
   [[ -n "${NVH_PROXY_USER}" ]] && echo "NVH_PROXY_USER: ${NVH_PROXY_USER}"
   [[ -n "${NVH_PROXY_PASSWORD}" ]] && echo "NVH_PROXY_PASSWORD: ${NVH_PROXY_PASSWORD}"
