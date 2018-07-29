@@ -20,7 +20,7 @@ NODE_DOWNLOAD_MIRROR=${NODE_DOWNLOAD_MIRROR%/}
 readonly NODE_DOWNLOAD_MIRROR
 
 # Modified by command options, but otherwise constant
-g_showing_get_progress="true"
+g_showing_get_progress="false"
 PRESERVE_NPM="false"
 
 g_ls_remote_max_matches=${NVH_MAX_REMOTE_MATCHES=20}
@@ -32,8 +32,12 @@ g_download_folder_name="node"
 # Defining commands in variables is fraught (http://mywiki.wooledge.org/BashFAQ/050)
 # but we can follow the simple case and store arguments in an array.
 g_curl_options=( "--location" )
-[[ -t 1 ]] && g_curl_options+=( "--progress-bar" ) && g_showing_get_progress="true"
-[[ -t 1 ]] || g_curl_options+=( "--silent" )
+if [[ -t 1 ]]; then
+  g_curl_options+=( "--progress-bar" )
+  command -v curl > /dev/null && g_showing_get_progress="true"
+else
+  g_curl_options+=( "--silent" )
+fi
 g_wget_options=( "-q" "-O-" )
 
 # Set by check_installed_version
@@ -146,7 +150,7 @@ function enter_fullscreen() {
   # Set cursor to be invisible
   tput civis 2> /dev/null
   # Save screen contents
-  tput smcup
+  tput smcup 2> /dev/null
   stty -echo
 }
 
@@ -154,7 +158,7 @@ function leave_fullscreen() {
   # Set cursor to normal
   tput cnorm 2> /dev/null
   # Restore screen contentsq
-  tput rmcup
+  tput rmcup 2> /dev/null
   stty echo
 }
 
@@ -258,7 +262,7 @@ function prev_version_installed() {
 #
 
 function display_nvh_version() {
-  echo $VERSION && exit 0
+  echo $VERSION
 }
 
 #
@@ -809,7 +813,9 @@ function display_remote_versions() {
 #
 
 function show_diagnostics() {
-  printf "# Commands\n"
+  printf "This information might help you diagnose issues, or be useful when reporting an issue.\n"
+
+  printf "\n\n# Command Locations and Versions\n"
 
   printf "\n## bash\n"
   bash --version
@@ -827,20 +833,27 @@ function show_diagnostics() {
   fi
 
   printf "\n## tar\n"
-  command -v tar && tar --version
+  if command -v tar &> /dev/null; then
+    command -v tar && tar --version
+  else
+    printf "tar not found. Needed for extracting downloads.\n"
+  fi
 
+  printf "\n## curl or wget\n"
   if command -v curl &> /dev/null; then
-    printf "\n## curl\n"
     command -v curl && curl --version
   elif command -v wget &> /dev/null; then
-    printf "\n## wget\n"
     command -v wget && wget --version
   else
-    printf "\n ## Both curl and wget missing, need one of them\n"
+    printf "Neither curl nor wget found. Need one of them for downloads.\n"
   fi
 
   printf "\n## rsync\n"
-  command -v rsync && rsync --version
+  if command -v rsync &> /dev/null; then
+    command -v rsync && rsync --version
+  else
+    printf "rsync not found. Needed for installs.\n"
+  fi
 
   printf "\n\n# nvh Setup\n"
   echo "NB: may contain secrets, take care when copying."
@@ -878,7 +891,7 @@ while [[ $# -ne 0 ]]; do
     --all) set_show_all_remote_matches ;;
     -h|--help|help) display_help; exit ;;
     -p|--preserve) set_preserve_npm ;;
-    -V|--version) display_nvh_version ;;
+    -V|--version) display_nvh_version; exit ;;
     -*) abort "Unrecognised option '$1'"; exit 1 ;;
     run) unprocessed_args=("$@"); break ;;
     *) unprocessed_args+=( "$1" ) ;;
