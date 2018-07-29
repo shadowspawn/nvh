@@ -35,7 +35,7 @@ g_download_folder_name="node"
 g_curl_options=( "--location" )
 if [[ -t 1 ]]; then
   g_curl_options+=( "--progress-bar" )
-  command -v curl > /dev/null && g_showing_get_progress="true"
+  command -v curl &> /dev/null && g_showing_get_progress="true"
 else
   g_curl_options+=( "--silent" )
 fi
@@ -72,9 +72,9 @@ fi
 #
 
 function do_get() {
-  if command -v curl > /dev/null; then
+  if command -v curl &> /dev/null; then
     curl "${g_curl_options[@]}" "$@"
-  elif command -v wget > /dev/null; then
+  elif command -v wget &> /dev/null; then
     wget "${g_wget_options[@]}" "$@"
   else
     abort "curl or wget command required"
@@ -480,7 +480,7 @@ function disable_pax_mprotect() {
   local binary=$1
 
   # try to disable mprotect via XATTR_PAX header
-  local PAXCTL=$(PATH="/sbin:/usr/sbin:$PATH" which paxctl-ng 2>&1)
+  local PAXCTL=$(PATH="/sbin:/usr/sbin:$PATH" command -v paxctl-ng 2>&1)
   local PAXCTL_ERROR=1
   if [[ -x "$PAXCTL" ]]; then
     $PAXCTL -l && $PAXCTL -m "$binary" >/dev/null 2>&1
@@ -489,7 +489,7 @@ function disable_pax_mprotect() {
 
   # try to disable mprotect via PT_PAX header
   if [[ $PAXCTL_ERROR != 0 ]]; then
-    PAXCTL=$(PATH="/sbin:/usr/sbin:$PATH" which paxctl 2>&1)
+    PAXCTL=$(PATH="/sbin:/usr/sbin:$PATH" command -v paxctl 2>&1)
     if [[ -x "$PAXCTL" ]]; then
       $PAXCTL -Cm "$binary" >/dev/null 2>&1
     fi
@@ -556,6 +556,7 @@ function install() {
   mkdir -p "${dir}" || abort "sudo required (or change ownership, or define NVH_PREFIX)"
   touch "${dir}/nvh.lock"
 
+  # shellcheck disable=SC2164
   cd "${dir}"
 
   install_log "fetch" "${url}"
