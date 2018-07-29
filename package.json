@@ -1,7 +1,7 @@
 {
   "name": "@shadowspawn/nvh",
   "description": "Easily install Node.js versions",
-  "version": "3.0.1-0",
+  "version": "4.0.0",
   "author": "John Gee",
   "homepage": "https://github.com/JohnRGee/nvh",
   "bugs": "https://github.com/JohnRGee/nvh/issues",
