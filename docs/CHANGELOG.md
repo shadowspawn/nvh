@@ -7,9 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
-## [Unreleased]
+## [4.0.0] (2018-07-29)
 
-REMINDER: experimenting with using rsync for all installs to cope with links better and have consistent behaviour!
+Major changes to install:
+
+- now requiring explicit `install` command like `nvh install lts`
+- install implementation is now using `rsync`
 
 ### Added
 
@@ -21,9 +24,16 @@ REMINDER: experimenting with using rsync for all installs to cope with links bet
 - docs for using proxy
 - environment variables for proxy username and password
     - inspired by [upstream issue #503](https://github.com/tj/n/pull/503)
+- autodetect whether to show progress based on whether displaying to a terminal
 
 ### Changed
 
+- requiring explicit `nvh install <version>` command, rather than implicit `nvh <version>`
+- switched install implementation to `rsync`. This is a significant change and a new dependency for minimal installs, but allows improving some behaviours in a consistent way.
+    - fix `--preserve` when there are links in destination (#1)
+    - symbolic link below top level [upstream issue #100](https://github.com/tj/n/issues/100)
+    - symbolic link at top level [upstream PR #227](https://github.com/tj/n/pull/227)
+    - rejected rsync dependency [upstream PR #104](https://github.com/tj/n/pull/104)
 - adopting suggestions of `shellcheck` (ongoing work-in-progress)
     - inspired by [upstream PR #465](https://github.com/tj/n/pull/465)
 - changed preflight test before download to remove broken code and reduce calls for mirrors using redirects
@@ -31,12 +41,6 @@ REMINDER: experimenting with using rsync for all installs to cope with links bet
 - `--preserve` now works with interactive version selection too
 - put single speech mark around supplied argument in error messages
     - inspired by [upstream PR #485](https://github.com/tj/n/pull/485)
-- switched install implementation from `tar` to `rsync`. This is a significant change and a new dependency for minimal installs, but allows improving some behaviours in a consistent way.
-    - fix `--preserve` when there are links in destination (#1)
-    - symbolic link below top level [upstream issue #100](https://github.com/tj/n/issues/100)
-    - symbolic link at top level [upstream PR #227](https://github.com/tj/n/pull/227)
-    - rejected rsync dependency [upstream PR #104](https://github.com/tj/n/pull/104)
-- requiring explicit `nvh install <version>` command, rather than implicit `nvh <version>`
 - reworked implementation of `curl` and `wget` commands
 
 ### Removed
@@ -45,7 +49,7 @@ REMINDER: experimenting with using rsync for all installs to cope with links bet
 - `--no-check-certificate` for wget, secure by default, matching curl treatment
     - [upstream PR #509](https://github.com/tj/n/pull/509)
     - [upstream PR #475](https://github.com/tj/n/pull/475)
-- `--quiet` option, instead autodetect whether to show progress based on whether displaying to a terminal
+- `--quiet` option
 
 ## [3.0.0] (2018-07-15)
 
@@ -113,4 +117,5 @@ Changes from upstream [tj/n](https://github.com/tj/n) 2.1.12
 - `--arch` option
 
 [Unreleased]: https://github.com/JohnRGee/nvh/compare/master...develop
+[4.0.0]: https://github.com/JohnRGee/nvh/compare/v4.0.0...JohnRGee:v3.0.0
 [3.0.0]: https://github.com/tj/n/compare/8ad6cd3bc76fc674f7faf3d8cf2f4d6e7d1849c3...JohnRGee:v3.0.0

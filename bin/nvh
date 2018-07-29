@@ -5,7 +5,7 @@
 # Setup.
 #
 
-readonly VERSION="3.0.1-0"
+readonly VERSION="4.0.0"
 
 NVH_PREFIX=${NVH_PREFIX=/usr/local}
 NVH_PREFIX=${NVH_PREFIX%/}
@@ -262,7 +262,7 @@ function prev_version_installed() {
 #
 
 function display_nvh_version() {
-  echo $VERSION
+  echo "${VERSION}"
 }
 
 #
