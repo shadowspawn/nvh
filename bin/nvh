@@ -7,15 +7,15 @@
 
 readonly VERSION="4.0.1-0"
 
-NVH_PREFIX=${NVH_PREFIX=/usr/local}
+NVH_PREFIX=${NVH_PREFIX:-/usr/local}
 NVH_PREFIX=${NVH_PREFIX%/}
 readonly STASH_DIR=$NVH_PREFIX/nvh/versions
 
-NODE_MIRROR=${NVH_NODE_MIRROR=https://nodejs.org/dist}
+NODE_MIRROR=${NVH_NODE_MIRROR:-https://nodejs.org/dist}
 NODE_MIRROR=${NODE_MIRROR%/}
 readonly NODE_MIRROR
 
-NODE_DOWNLOAD_MIRROR=${NVH_NODE_DOWNLOAD_MIRROR=https://nodejs.org/download}
+NODE_DOWNLOAD_MIRROR=${NVH_NODE_DOWNLOAD_MIRROR:-https://nodejs.org/download}
 NODE_DOWNLOAD_MIRROR=${NODE_DOWNLOAD_MIRROR%/}
 readonly NODE_DOWNLOAD_MIRROR
 
@@ -23,7 +23,7 @@ readonly NODE_DOWNLOAD_MIRROR
 g_showing_get_progress="false"
 PRESERVE_NPM="false"
 
-g_ls_remote_max_matches=${NVH_MAX_REMOTE_MATCHES=20}
+g_ls_remote_max_matches=${NVH_MAX_REMOTE_MATCHES:-20}
 
 g_download_mirror_url=${NODE_MIRROR}
 g_download_folder_name="node"
