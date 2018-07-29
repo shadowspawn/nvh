@@ -1,5 +1,7 @@
 # Node Version Helper
 
+[![npm version](https://img.shields.io/npm/v/@shadowspawn/nvh.svg)](https://www.npmjs.com/package/@shadowspawn/nvh)
+
 Easily install Node.js versions. No profile setup required for default install location.
 
 Requires `bash` (and does not require a working node install).
