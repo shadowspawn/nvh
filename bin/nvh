@@ -43,6 +43,29 @@ g_wget_options=( "-q" "-O-" )
 # Set by check_installed_version
 g_active_download=
 
+# ANSI escape codes
+# https://en.wikipedia.org/wiki/ANSI_escape_code
+g_use_color="true"
+if [[ -n "${CLICOLOR_FORCE+defined}" && "${CLICOLOR_FORCE}" != "0" ]]; then
+  g_use_color="true"
+elif [[ -n "${NO_COLOR+defined}" || "${CLICOLOR}" = "0" || ! -t 1 ]]; then
+  g_use_color="false"
+fi
+exit
+# Select Graphic Rendition codes
+if [[ "${g_use_color}" = "true" ]]; then
+  # KISS and use codes rather than tput, avoid dealing with missing tput or TERM.
+  readonly SGR_RESET="\033[0m"
+  readonly SGR_FAINT="\033[2m"
+  readonly SGR_RED="\033[31m"
+  readonly SGR_CYAN="\033[36m"
+else
+  readonly SGR_RESET=
+  readonly SGR_FAINT=
+  readonly SGR_RED=
+  readonly SGR_CYAN=
+fi
+
 #
 # get <args...>
 # Call curl or wget with combination of global and passed arguments.
@@ -88,11 +111,11 @@ function update_download_settings_from_version() {
 }
 
 #
-# log <action> <msg>
+# install_log <action> <msg>
 #
 
-function log() {
-  printf "  \033[36m%10s\033[0m : \e[2m%s\e[22m\033[0m\n" "$1" "$2"
+function install_log() {
+  printf "  ${SGR_CYAN}%10s${SGR_RESET} : ${SGR_FAINT}%s${SGR_RESET}\n" "$1" "$2"
 }
 
 #
@@ -101,7 +124,7 @@ function log() {
 #
 
 function abort() {
-  >&2 printf "\n  \033[31mError: %s\033[0m\n\n" "$*" && exit 1
+  >&2 printf "\n  ${SGR_RED}Error: %s${SGR_RESET}\n\n" "$*" && exit 1
 }
 
 #
@@ -236,7 +259,7 @@ EOF
 }
 
 function err_no_installed_print_help() {
-  printf "\n  \033[31mNo downloaded versions yet, displaying help\033[0m\n"
+  printf "\n  ${SGR_RED}No downloaded versions yet, displaying help${SGR_RESET}\n"
   display_help
   exit 1
 }
@@ -310,9 +333,9 @@ function display_versions_with_selected() {
   echo
   for folder_and_version in $(versions_paths); do
     if [[ "${folder_and_version}" = "${selected}" ]]; then
-      printf "  \033[36mο\033[0m %s\033[0m\n" "${folder_and_version}"
+      printf "  ${SGR_CYAN}ο${SGR_RESET} %s\n" "${folder_and_version}"
     else
-      printf "    \e[2m%s\e[22m\n" "${folder_and_version}"
+      printf "    ${SGR_FAINT}%s${SGR_RESET}\n" "${folder_and_version}"
     fi
   done
   echo
@@ -500,7 +523,7 @@ function activate() {
     fi
   done
   disable_pax_mprotect "$NVH_PREFIX/bin/node"
-  log "installed" "$(node --version)"
+  install_log "installed" "$(node --version)"
 }
 
 #
@@ -523,18 +546,18 @@ function install() {
   fi
 
   echo
-  log "installing" "${g_download_folder_name}/${resolved_version}"
+  install_log "installing" "${g_download_folder_name}/${resolved_version}"
 
   local url="$(tarball_url "${resolved_version}")"
   is_ok "${url}" || abort "download preflight failed for '$resolved_version'"
 
-  log "mkdir" "${dir}"
+  install_log "mkdir" "${dir}"
   mkdir -p "${dir}" || abort "sudo required (or change ownership, or define NVH_PREFIX)"
   touch "${dir}/nvh.lock"
 
   cd "${dir}"
 
-  log "fetch" "${url}"
+  install_log "fetch" "${url}"
   do_get "${url}" | tar -zx --strip-components=1
   [[ "${g_showing_get_progress}" = "true" ]] && erase_line
   rm -f "${dir}/nvh.lock"

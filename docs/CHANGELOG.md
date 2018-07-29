@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- suppress ansi colours when stdout is not a terminal, or [NO_COLOR](http://no-color.org) is defined, or [CLICOLOR=0](https://bixense.com/clicolors)
+
 ### Changed
 
 ### Removed
