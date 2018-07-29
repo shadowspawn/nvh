@@ -128,11 +128,15 @@ function abort() {
 }
 
 #
-# trace <messages...>
+# More assorted logging functions
 #
 
 function trace() {
   >&2 printf "trace: %s\n" "$*"
+}
+
+function warn() {
+  printf "${SGR_RED}%s${SGR_RESET}\n" "$*"
 }
 
 #
@@ -259,10 +263,8 @@ EOF
 }
 
 function err_no_installed_print_help() {
-  # shellcheck disable=SC2059
-  printf "\n  ${SGR_RED}No downloaded versions yet, displaying help${SGR_RESET}\n"
   display_help
-  exit 1
+  abort "No downloaded versions yet, see above help for commands"
 }
 
 #
@@ -870,14 +872,14 @@ function show_diagnostics() {
   elif command -v wget &> /dev/null; then
     command -v wget && wget --version
   else
-    printf "Neither curl nor wget found. Need one of them for downloads.\n"
+    warn "Neither curl nor wget found. Need one of them for downloads."
   fi
 
   printf "\n## rsync\n"
   if command -v rsync &> /dev/null; then
     command -v rsync && rsync --version
   else
-    printf "rsync not found. Needed for installs.\n"
+    warn "rsync not found. Needed for installs."
   fi
 
   printf "\n\n# nvh Setup\n"
@@ -890,11 +892,36 @@ function show_diagnostics() {
   [[ -n "${http_proxy}" ]] && echo "http_proxy: ${http_proxy}"
   # shellcheck disable=SC2154
   [[ -n "${https_proxy}" ]] && echo "https_proxy: ${https_proxy}"
+  # curl also looks for uppercase, although wget may not
+  [[ -n "${HTTPS_PROXY}" ]] && echo "HTTPS_PROXY: ${HTTPS_PROXY}"
   [[ -n "${NVH_PROXY_USER}" ]] && echo "NVH_PROXY_USER: ${NVH_PROXY_USER}"
   [[ -n "${NVH_PROXY_PASSWORD}" ]] && echo "NVH_PROXY_PASSWORD: ${NVH_PROXY_PASSWORD}"
-  echo "install location: $NVH_PREFIX"
-  [[ -n "${NVH_PREFIX}" ]] && echo "PATH: $PATH"
+  echo "install destination: ${NVH_PREFIX}"
+  [[ -n "${NVH_PREFIX}" ]] && echo "PATH: ${PATH}"
   echo "ls-remote max matches: ${g_ls_remote_max_matches}"
+
+  printf "\nChecking install destination is in PATH...\n"
+  local install_bin="${NVH_PREFIX}/bin"
+  local path_wth_guards=":${PATH}:"
+  if [[ "${path_wth_guards}" =~ :${install_bin}/?: ]]; then
+    printf "good\n"
+  else
+    warn "possible problem, '${install_bin}' is not in PATH"
+  fi
+
+  printf "\nChecking mirror is reachable...\n"
+  if is_ok "${NODE_MIRROR}/"; then
+    printf "good\n"
+  else
+    warn "mirror not reachable"
+    printf "Showing failing command and output\n"
+    if command -v curl &> /dev/null; then
+      ( set -x; do_get --head "${NODE_MIRROR}/" )
+    else
+      ( set -x; do_get --spider "${NODE_MIRROR}/" )
+    printf "\n"
+   fi
+  fi
 }
 
 #######################################################################################################
