@@ -65,8 +65,8 @@ Numeric version numbers can be complete or incomplete, with an optional leading 
 
 There are labels for two especially useful versions:
 
-- `lts`: latest Long Term Support official release
-- `latest`: latest official release
+- `lts`: newest Long Term Support official release
+- `latest`, `current`: newest official release
 
 There is support for release streams:
 
