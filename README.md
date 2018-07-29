@@ -162,7 +162,7 @@ To change the location to say `$HOME/.nvh`, add lines like the following to your
     export NVH_PREFIX=$HOME/.nvh
     export PATH=$NVH_PREFIX/bin:$PATH
 
-See more [Environment Variables](./docs/env.md) for specifying a custom node mirror, working through a proxy, and other settings.
+See more [Environment Variables](./docs/environment-variables.md) for specifying a custom node mirror, working through a proxy, and other settings.
 
 ## Alternatives to `nvh`
 
