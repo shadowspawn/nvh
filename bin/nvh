@@ -863,7 +863,7 @@ function show_diagnostics() {
   if command -v tar &> /dev/null; then
     command -v tar && tar --version
   else
-    printf "tar not found. Needed for extracting downloads.\n"
+    warn "tar not found. Needed for extracting downloads."
   fi
 
   printf "\n## curl or wget\n"
