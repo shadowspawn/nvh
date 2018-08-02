@@ -11,33 +11,56 @@ If you are using `sudo` for the install, by default the command you run does not
   
 If the custom mirror requires basic authentication, you can url-encode the username and password directly in the URL:
 
-    NVH_NODE_MIRROR='https://user:password@host/path'
+    export NVH_NODE_MIRROR='https://user:password@host/path'
 
  or if you prefer, and no need to url-encode special characters:
 
-    NVH_NODE_MIRROR='https://host/path'
-    NVH_USER='user'
-    NVH_PASSWORD='password'
+    export NVH_NODE_MIRROR='https://host/path'
+    export NVH_USER='user'
+    export NVH_PASSWORD='password'
 
-Note: in both cases, the username and password will be visible to anyone who runs `ps` while a download is running.
+Note: in both cases, the username and password will be visible (via `ps`) to other users on your computer while a download is running.
 
 ## Proxy Server
 
-To keep things simple, this description assumes you are comfortable using plain `http` between your computer and the proxy server, and then `https` between the proxy server and the mode mirror. Using `http` for the local part of the connection implies we trust it and the local network, and avoids complications with the man-in-the-middle certificates offered by the proxy server.
+You need to define the proxy server in an environment variable.
+This is a standard variable name which is read directly by `curl` and `wget`.
+You can url-encode the username and password in the URL. e.g.
 
-The standard environment variable for specifying the proxy for https is  `https_proxy`, and can include the url-encoded username and password:
+    export https_proxy='http://user:password@host:port/path'
 
-     https_proxy=http://user:password@host:port/path
+Or if you prefer you can use separate environment variables for the authentication, and no need to url-encode special characters. Note:  the username and password will be visible (via `ps`) to other users on your computer while a download is running.
 
- or if you prefer, and no need to url-encode special characters:
+    export https_proxy='http://host:port/path'
+    export NVH_PROXY_USER='user'
+    export NVH_PROXY_PASSWORD='password'
 
-    https_proxy=http://host:port/path
-    NVH_PROXY_USER='user'
-    NVH_PROXY_PASSWORD='password'
+If you have defined a custom node mirror which uses http, then you would define `http_proxy` rather than `https_proxy`.
 
-Note: in the second case, the username and password will be visible to anyone who runs `ps` while a download is running.
+### More Proxy Options
 
-(If you have defined a custom node mirror which uses http, then you would define `http_proxy` rather than `https_proxy`.)
+While the above setting are enough for a proxy server that allows an SSL tunnel and does not inspect the traffic,
+you may well need need more configuration for your proxy setup.
+
+To allow the proxy server to supply its own ssl certificates for remote sites (man-in-the-middle), you can turn off certificate checking
+with `--insecure`. e.g.
+
+    nvh --insecure install lts
+
+Another possible work-around for certificate problems is to use plain http by specifying a custom node mirror:
+
+    export NVH_NODE_MIRROR=http://nodejs.org/dist
+    export http_proxy='http://host:port/path'
+
+### Trouble-shooting
+
+To experiment and find what settings you need you can use `curl` (or `wget`) directly and see the error messages. e.g.
+
+    export https_proxy='http://host:port/path'
+    curl --head https://nodejs.org/dist/
+    curl --head --insecure https://nodejs.org/dist/
+    export http_proxy='http://host:port/path'
+    curl --head http://nodejs.org/dist/
 
 ## Other Settings
 

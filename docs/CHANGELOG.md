@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - support for [NO_COLOR](http://no-color.org) and [CLICOLOR=0](https://bixense.com/clicolors)
 - more checks in `nvh doctor`
+- `--insecure` option, sometimes needed for working through proxy servers
 
 ### Changed
 
