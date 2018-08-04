@@ -139,10 +139,10 @@ There are a lot of minor changes! Taking advantage of a fresh start.
 
 ### Changed
 
-- `n use` and `n as` --> `nvh run`
+- `n <version>` --> `nvh i[nstall] <version>`
 - `n --lts` --> `nvh lsr lts`
 - `n --latest` --> `nvh lsr latest`
-- `n <version>` --> `nvh i[nstall] version`
+- `n use` and `n as` --> `nvh run`
 - always install, even if installed version appears to match
 - allow removing installed version
 - using `rsync` rather than `cp` for installs
