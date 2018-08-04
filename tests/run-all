@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+services=( archlinux centos alpine-old ubuntu )
+
+for service in "${services[@]}" ; do
+  echo "${service}"
+  docker-compose run "${service}" "$@"
+  echo ""
+done
+
+echo "macOS"
+"$@"

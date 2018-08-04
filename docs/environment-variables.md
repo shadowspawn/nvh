@@ -49,7 +49,7 @@ with `--insecure`. e.g.
 
 Another possible work-around for certificate problems is to use plain http by specifying a custom node mirror:
 
-    export NVH_NODE_MIRROR=http://nodejs.org/dist
+    export NVH_NODE_MIRROR='http://nodejs.org/dist'
     export http_proxy='http://host:port/path'
 
 ### Trouble-shooting
