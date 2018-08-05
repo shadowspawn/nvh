@@ -32,8 +32,8 @@ If you already have `node`, the easiest way to install `nvh` is through `npm`:
 
 One way to bootstrap an install if `npm` is not yet available:
 
-    git clone git@github.com:JohnRGee/nvh.git
-    ./nvh/bin/nvh install lts
+    curl -L https://github.com/JohnRGee/nvh/raw/master/bin/nvh -o nvh
+    bash nvh install lts
     # Now node and npm are available
 
 ## Installing Node Versions
