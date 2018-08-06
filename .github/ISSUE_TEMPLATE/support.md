@@ -4,18 +4,27 @@ about: Got a problem?
 
 ---
 
-# Problem Template
+# Problem
 
-_The text in italics is instructions you can delete before submitting your issue._
+<!--
+The text in these markdown comments is instructions that will not appear in the displayed issue.
+This is a suggested template, but you don't have to follow it!
+-->
 
 ## Short Version
 
-_Add a clear and concise description of your problem._
+<!--
+Add a clear and concise description of your problem.
+-->
 
 ## Long Version
 
-_Add any other useful information or commentary._
+<!--
+Add more explanation and useful information or commentary as needed.
+-->
 
 ### Doctor
 
-_Paste in the output from `nvh doctor`. Remove any private information, particularly if there are usernames or passwords in proxy information._
+<!--
+Paste in the output from `nvh doctor`. Change any private information, particularly if there are usernames or passwords in proxy information.
+-->
