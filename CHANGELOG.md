@@ -13,7 +13,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-### Removed
+- split up and updated documentation
+
+### Deprecated
+
+- `NVH_USER` and `NVH_PASSWORD`: instead, include in `NVH_NODE_MIRROR`)
+- `NVH_PROXY_USER` and `NVH_PROXY_PASSWORD`: instead, include in proxy url or .curlrc or .wgetrc
 
 ## [4.1.0] (2018-08-04)
 

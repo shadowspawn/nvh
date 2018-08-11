@@ -6,7 +6,7 @@ Easily install Node.js versions. No profile setup required for default install l
 
 Requires `bash` (and does not require a working node install).
 
-Forked from [tj/n](https://github.com/tj/n) with changes to command syntax, bug fixes, and new features.
+Forked from [tj/n](https://github.com/tj/n) with [changes to command syntax](./docs/coming-from-n.md), bug fixes, and new features.
 
 - [Node Version Helper](#node-version-helper)
     - [Installation](#installation)
@@ -15,9 +15,6 @@ Forked from [tj/n](https://github.com/tj/n) with changes to command syntax, bug 
     - [Using Downloaded Node Versions Without Reinstalling](#using-downloaded-node-versions-without-reinstalling)
     - [Preserving npm](#preserving-npm)
     - [Miscellaneous](#miscellaneous)
-    - [Coming from `tj/n`](#coming-from-tjn)
-        - [Changed](#changed)
-        - [Removed](#removed)
     - [Optional Environment Variables](#optional-environment-variables)
     - [Alternatives to `nvh`](#alternatives-to-nvh)
 
@@ -133,29 +130,6 @@ Display diagnostics to help resolve problems:
 
     nvh doctor
 
-## Coming from `tj/n`
-
-There are a lot of minor changes! Taking advantage of a fresh start.
-
-### Changed
-
-- `n <version>` --> `nvh i[nstall] <version>`
-- `n --lts` --> `nvh lsr lts`
-- `n --latest` --> `nvh lsr latest`
-- `n use` and `n as` --> `nvh run`
-- always install, even if installed version appears to match
-- allow removing installed version
-- using `rsync` rather than `cp` for installs
-
-### Removed
-
-- `n bin` alias
-- `n -` alias
-- `stable` version label
-- explicit iojs support
-- `--download` option
-- `--arch` option
-
 ## Optional Environment Variables
 
 The `nvh` command downloads and installs to `/usr/local` by default, but you may override this location by defining `NVH_PREFIX`.
@@ -164,7 +138,15 @@ To change the location to say `$HOME/.nvh`, add lines like the following to your
     export NVH_PREFIX=$HOME/.nvh
     export PATH=$NVH_PREFIX/bin:$PATH
 
-See more [Environment Variables](./docs/environment-variables.md) for specifying a custom node mirror, working through a proxy, and other settings.
+See [Environment Variables](./docs/environment-variables.md) for more about these settings:
+
+    NVH_NODE_MIRROR
+    NVH_NODE_DOWNLOAD_MIRROR
+    NVH_MAX_REMOTE_MATCHES
+
+See [Proxy Server](./docs/proxy-server.md) for variables and advice for using a proxy server.
+
+    https_proxy
 
 ## Alternatives to `nvh`
 
