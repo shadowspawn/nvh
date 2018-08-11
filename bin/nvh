@@ -81,18 +81,6 @@ function do_get() {
   fi
 }
 
-function process_authentication_env() {
-  if [[ -n "${NVH_USER}" || -n "${NVH_PASSWORD}" ]]; then
-    g_curl_options+=( "--user" "${NVH_USER}:${NVH_PASSWORD}" )
-    g_wget_options+=( "--http-user=${NVH_USER}" "--http-password=${NVH_PASSWORD}" )
-  fi
-  if [[ -n "${NVH_PROXY_USER}" || -n "${NVH_PROXY_PASSWORD}" ]]; then
-     g_curl_options+=( "--proxy-user"  "${NVH_PROXY_USER}:${NVH_PROXY_PASSWORD}" )
-     [[ -n "${NVH_PROXY_USER}" ]] && g_wget_options+=( "--proxy-user=${NVH_PROXY_USER}" )
-     [[ -n "${NVH_PROXY_PASSWORD}" ]] && g_wget_options+=( "--proxy-password=${NVH_PROXY_PASSWORD}" )
-  fi
-}
-
 function set_insecure() {
   g_curl_options+=( "--insecure" )
   g_wget_options+=( "--no-check-certificate" )
@@ -895,10 +883,6 @@ function show_diagnostics() {
   printf "\n\n## nvh\n"
   echo "node mirror: ${NODE_MIRROR}"
   echo "node downloads mirror: ${NODE_DOWNLOAD_MIRROR}"
-  [[ -n "${NVH_USER}" ]] && echo "NVH_USER: ${NVH_USER}"
-  [[ -n "${NVH_PASSWORD}" ]] && echo "NVH_PASSWORD: ${NVH_PASSWORD}"
-  [[ -n "${NVH_PROXY_USER}" ]] && echo "NVH_PROXY_USER: ${NVH_PROXY_USER}"
-  [[ -n "${NVH_PROXY_PASSWORD}" ]] && echo "NVH_PROXY_PASSWORD: ${NVH_PROXY_PASSWORD}"
   echo "install destination: ${NVH_PREFIX}"
   [[ -n "${NVH_PREFIX}" ]] && echo "PATH: ${PATH}"
   echo "ls-remote max matches: ${g_ls_remote_max_matches}"
@@ -942,8 +926,6 @@ function show_diagnostics() {
 }
 
 #######################################################################################################
-
-process_authentication_env
 
 #
 # Handle arguments.
