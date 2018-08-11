@@ -847,12 +847,13 @@ function display_remote_versions() {
 #
 
 function show_diagnostics() {
-  printf "This information might help you diagnose issues, or be useful when reporting an issue.\n"
+  echo "This information is to help you diagnose issues, and useful when reporting an issue."
+  echo "Note: some output may contain passwords. Redact before sharing."
 
   printf "\n\n# Command Locations and Versions\n"
 
   printf "\n## bash\n"
-  bash --version
+  command -v bash && bash --version
 
   printf "\n## nvh\n"
   command -v nvh && nvh --version
@@ -889,23 +890,32 @@ function show_diagnostics() {
     warn "rsync not found. Needed for installs."
   fi
 
-  printf "\n\n# nvh Setup\n"
-  echo "NB: may contain secrets, take care when copying."
+  printf "\n\n# Settings\n"
+
+  printf "\n\n## nvh\n"
   echo "node mirror: ${NODE_MIRROR}"
   echo "node downloads mirror: ${NODE_DOWNLOAD_MIRROR}"
   [[ -n "${NVH_USER}" ]] && echo "NVH_USER: ${NVH_USER}"
   [[ -n "${NVH_PASSWORD}" ]] && echo "NVH_PASSWORD: ${NVH_PASSWORD}"
-  # shellcheck disable=SC2154
-  [[ -n "${http_proxy}" ]] && echo "http_proxy: ${http_proxy}"
-  # shellcheck disable=SC2154
-  [[ -n "${https_proxy}" ]] && echo "https_proxy: ${https_proxy}"
-  # curl also looks for uppercase, although wget may not
-  [[ -n "${HTTPS_PROXY}" ]] && echo "HTTPS_PROXY: ${HTTPS_PROXY}"
   [[ -n "${NVH_PROXY_USER}" ]] && echo "NVH_PROXY_USER: ${NVH_PROXY_USER}"
   [[ -n "${NVH_PROXY_PASSWORD}" ]] && echo "NVH_PROXY_PASSWORD: ${NVH_PROXY_PASSWORD}"
   echo "install destination: ${NVH_PREFIX}"
   [[ -n "${NVH_PREFIX}" ]] && echo "PATH: ${PATH}"
   echo "ls-remote max matches: ${g_ls_remote_max_matches}"
+
+  printf "\n\n## Proxy\n"
+  # shellcheck disable=SC2154
+  [[ -n "${http_proxy}" ]] && echo "http_proxy: ${http_proxy}"
+  # shellcheck disable=SC2154
+  [[ -n "${https_proxy}" ]] && echo "https_proxy: ${https_proxy}"
+  if command -v curl &> /dev/null; then
+    [[ -e "${HOME}/.curlrc" ]] && echo "have .curlrc"
+    [[ -n "${HTTPS_PROXY}" ]] && echo "HTTPS_PROXY: ${HTTPS_PROXY}"
+  elif command -v wget &> /dev/null; then
+    [[ -e "${HOME}/.wgetrc" ]] && echo "have .wgetrc"
+  fi
+
+  printf "\n\n# Checks\n"
 
   printf "\nChecking install destination is in PATH...\n"
   local install_bin="${NVH_PREFIX}/bin"
