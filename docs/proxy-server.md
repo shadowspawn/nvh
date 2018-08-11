@@ -46,13 +46,43 @@ Example `~/.wgetrc` ([documentation](https://www.gnu.org/software/wget/manual/ht
 
 ## Troubleshooting
 
-To experiment and find what settings you need you can use `curl` (or `wget`) directly with the node mirror and check the error messages.
+To experiment and find what settings you need, use `curl` (or `wget`) directly with the node mirror and check the error messages.
 
-    export https_proxy='http://host:port/path'
-    curl --head https://nodejs.org/dist/
-    curl --head --insecure --verbose https://nodejs.org/dist/
-    export http_proxy='http://host:port/path'
-    curl --head http://nodejs.org/dist/
+For these examples there is a proxy running on localhost:8080 which does not require authentication, but the certificates it offers
+are not trusted.
+
+First try fails because of the certificates and `curl` helpfully explains:
+
+    $ curl --proxy localhost:8080 https://nodejs.org/dist/
+    curl: (60) SSL certificate problem: self signed certificate in certificate chain
+    ...
+    If you'd like to turn off curl's verification of the certificate, use
+     the -k (or --insecure) option.
+    HTTPS-proxy has similar options --proxy-cacert and --proxy-insecure.
+
+Once you get the command to work with settings appropriate for your setup, like:
+
+    $ curl --insecure --proxy localhost:8080 https://nodejs.org/dist/
+    <html>
+    <head><title>Index of /dist/</title></head>
+    ...
+
+then you can try moving the proxy out of the command:
+
+    $ https_proxy=localhost:8080 curl --insecure https://nodejs.org/dist/
+    <html>
+    <head><title>Index of /dist/</title></head>
+    ...
+
+and then `nvh` should work the same way:
+
+    $ https_proxy=localhost:8080 nvh --insecure ls-remote lts
+    v8.11.3
+
+To make it permanent either add settings to the `curl` (or `wget`) startup file, or add the
+environment variable to your shell initialization file . e.g.
+
+    export https_proxy=localhost:8080
 
 For curl, two options of note for debugging are:
 
