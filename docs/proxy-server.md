@@ -8,7 +8,7 @@ You can define the proxy server using an environment variable, which is read by 
 
     export https_proxy='http://host:port/path'
 
-If your proxy requires authentication you can url-encode the username and password in the URL. e.g.
+If your proxy requires authentication you can [url-encode](https://urlencode.org) the username and password in the URL. e.g.
 
     export https_proxy='http://user:password@host:port/path'
 

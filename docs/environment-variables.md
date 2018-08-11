@@ -9,7 +9,7 @@ If you are using `sudo` for the install, by default the command you run does not
 - `NVH_NODE_MIRROR`: overrides default <https://nodejs.org/dist/>
 - `NVH_NODE_DOWNLOAD_MIRROR`: overrides default <https://nodejs.org/download>
   
-If the custom mirror requires basic authentication, you can url-encode the username and password directly in the URL:
+If the custom mirror requires basic authentication, you can [url-encode](https://urlencode.org) the username and password directly in the URL:
 
     export NVH_NODE_MIRROR='https://user:password@host/path'
 
