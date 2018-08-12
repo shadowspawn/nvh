@@ -834,6 +834,12 @@ function display_remote_versions() {
 # Show useful diagnostics
 #
 
+function show_permission_suggestions() {
+  echo "Suggestions:"
+  echo "- run nvh with sudo, or"
+  echo "- define NVH_PREFIX to a writeable location, or"
+}
+
 function show_diagnostics() {
   echo "This information is to help you diagnose issues, and useful when reporting an issue."
   echo "Note: some output may contain passwords. Redact before sharing."
@@ -908,6 +914,52 @@ function show_diagnostics() {
     printf "good\n"
   else
     warn "possible problem, '${install_bin}' is not in PATH"
+  fi
+
+  printf "\nChecking permissions for stash folder...\n"
+  # Most likely problem is ownership rather than than permissions as such.
+  local stash_root="${NVH_PREFIX}/nvh"
+  if [[ -e "${NVH_PREFIX}" && ! -w "${NVH_PREFIX}" && ! -e "${stash_root}" ]]; then
+    warn "You do not have write permission to create: ${stash_root}"
+    show_permission_suggestions
+    echo "- make a folder you own:"
+    echo "      sudo mkdir -p \"${stash_root}\""
+    echo "      sudo chown $(whoami) \"${stash_root}\""
+  elif [[ -e "${stash_root}" && ! -w "${stash_root}" ]]; then
+    warn "You do not have write permission to: ${stash_root}"
+    show_permission_suggestions
+    echo "- change folder ownership to yourself:"
+    echo "      sudo chown -R $(whoami) \"${stash_root}\""
+  elif [[ ! -e "${stash_root}" ]]; then
+    echo "Stash folder does not exist: ${stash_root}"
+    echo "This is normal if you have not done an install yet, as stash is only created when needed."
+  elif [[ -e "${STASH_DIR}" && ! -w "${STASH_DIR}" ]]; then
+    warn "You do not have write permission to: ${STASH_DIR}"
+    show_permission_suggestions
+    echo "- change folder ownership to yourself:"
+    echo "      sudo chown -R $(whoami) \"${STASH_DIR}\""
+  else
+    echo "good"
+  fi
+
+  if [[ -e "${NVH_PREFIX}" ]]; then
+    # Most likely problem is ownership rather than than permissions as such.
+    printf "\nChecking permissions for install folders...\n"
+    local install_writeable="true"
+    for subdir in bin lib include share; do
+      if [[ -e "${NVH_PREFIX}/${subdir}" && ! -w "${NVH_PREFIX}/${subdir}" ]]; then
+        install_writeable="false"
+        warn "You do not have write permission to: ${NVH_PREFIX}/${subdir}"
+        break
+      fi
+    done
+    if [[ "${install_writeable}" = "true" ]]; then
+      echo "good"
+    else
+      show_permission_suggestions
+      echo "- change folder ownerships to yourself:"
+      echo "      (cd \"${NVH_PREFIX}\" && sudo chown -R $(whoami) bin lib include share)"
+    fi
   fi
 
   printf "\nChecking mirror is reachable...\n"
