@@ -907,13 +907,34 @@ function show_diagnostics() {
 
   printf "\n\n# Checks\n"
 
-  printf "\nChecking install destination is in PATH...\n"
+  printf "\nChecking nvh install destination is in PATH...\n"
   local install_bin="${NVH_PREFIX}/bin"
   local path_wth_guards=":${PATH}:"
   if [[ "${path_wth_guards}" =~ :${install_bin}/?: ]]; then
     printf "good\n"
   else
     warn "possible problem, '${install_bin}' is not in PATH"
+  fi
+  if command -v node &> /dev/null; then
+    printf "\nChecking nvh install destination priority in PATH...\n"
+    local node_dir="$(dirname "$(command -v node)")"
+
+    local index=0
+    local path_entry
+    local path_entries
+    local install_bin_index=0
+    local node_index=999
+    IFS=':' read -ra path_entries <<< "${PATH}"
+    for path_entry in "${path_entries[@]}"; do
+      (( index++ ))
+      [[ "${path_entry}" =~ ^${node_dir}/?$ ]] && node_index="${index}"
+      [[ "${path_entry}" =~ ^${install_bin}/?$ ]] && install_bin_index="${index}"
+    done
+    if [[ "${node_index}" -lt "${install_bin_index}" ]]; then
+      warn "There is a version of node installed which will be found in PATH before the nvh installed version."
+    else
+      printf "good\n"
+    fi
   fi
 
   printf "\nChecking permissions for stash folder...\n"
