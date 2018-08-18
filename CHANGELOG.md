@@ -7,18 +7,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
-## [4.2.1]
+## [Unreleased]
 
-### Fixed
+## [4.2.1] (2018-08-18) [YANKED]
 
-- relative links in README hopefully work now on npmjs
+(These changes should be in a major version change, will be published on npm in 5.0.0)
 
 ### Removed
 
 - `NVH_USER` and `NVH_PASSWORD`: instead, include in `NVH_NODE_MIRROR`)
 - `NVH_PROXY_USER` and `NVH_PROXY_PASSWORD`: instead, include in proxy url or `.curlrc` or `.wgetrc`
 
-## [4.2.0]
+## [4.2.0] (2018-08-11)
 
 ### Changed
 
