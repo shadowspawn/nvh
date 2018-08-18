@@ -6,7 +6,7 @@
 # Setup.
 #
 
-readonly VERSION="5.0.0-0"
+readonly VERSION="5.0.0"
 
 NVH_PREFIX=${NVH_PREFIX:-/usr/local}
 NVH_PREFIX=${NVH_PREFIX%/}

@@ -7,7 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
-## [Unreleased]
+## [5.0.0] (2018-08-19)
+
+### Removed
+
+- `NVH_USER` and `NVH_PASSWORD`: instead, include in `NVH_NODE_MIRROR`)
+- `NVH_PROXY_USER` and `NVH_PROXY_PASSWORD`: instead, include in proxy url or `.curlrc` or `.wgetrc`
 
 ## [4.2.1] (2018-08-18) [YANKED]
 
@@ -151,6 +156,7 @@ Changes from upstream [tj/n](https://github.com/tj/n) 2.1.12
 - `--arch` option
 
 [Unreleased]: https://github.com/JohnRGee/nvh/compare/master...develop
+[5.0.0]: https://github.com/JohnRGee/nvh/compare/v4.2.0...JohnRGee:v5.0.0
 [4.2.1]: https://github.com/JohnRGee/nvh/compare/v4.2.0...JohnRGee:v4.2.1
 [4.2.0]: https://github.com/JohnRGee/nvh/compare/v4.1.0...JohnRGee:v4.2.0
 [4.1.0]: https://github.com/JohnRGee/nvh/compare/v4.0.0...JohnRGee:v4.1.0
