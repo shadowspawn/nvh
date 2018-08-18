@@ -23,4 +23,4 @@ Note: the username and password will be visible (via `ps`) to other users on you
 
 ## Proxy Server
 
-See also `https_proxy` in [Proxy Server](./proxy-server).
+See also `https_proxy` in [Proxy Server](proxy-server.md).
