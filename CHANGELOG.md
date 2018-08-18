@@ -7,7 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
-## [Unreleased]
+## [4.2.1]
+
+### Fixed
+
+- relative links in README hopefully work now on npmjs
 
 ### Removed
 
@@ -147,6 +151,7 @@ Changes from upstream [tj/n](https://github.com/tj/n) 2.1.12
 - `--arch` option
 
 [Unreleased]: https://github.com/JohnRGee/nvh/compare/master...develop
+[4.2.1]: https://github.com/JohnRGee/nvh/compare/v4.2.0...JohnRGee:v4.2.1
 [4.2.0]: https://github.com/JohnRGee/nvh/compare/v4.1.0...JohnRGee:v4.2.0
 [4.1.0]: https://github.com/JohnRGee/nvh/compare/v4.0.0...JohnRGee:v4.1.0
 [4.0.0]: https://github.com/JohnRGee/nvh/compare/v3.0.0...JohnRGee:v4.0.0
