@@ -2,16 +2,18 @@
 
 ## Issues
 
-New bug reports and feature requests are welcome. You are also welcome to contribute by adding helpful comments on an existing issue.
+New issues are welcome, whether questions or suggestions or reporting bugs.
+You are also welcome to contribute by adding helpful comments on an existing issue.
 
 I maintain the project in my own time, but you can expect a response within 7 days.
 
 ## Pull Requests
 
-Before contributing large or high impact changes, open an issue for discussion with a project maintainer before submitting a pull request. This saves you from doing extra work that may or may not be merged.
+To be clear: I may not accept your pull request. I may change it significantly. If that is a problem,
+then open an issue to discuss your idea first!
 
 Follow the existing code-style, which is influenced by Google's [Shell Style Guide](https://google.github.io/styleguide/shell.xml).
 
-Please submit pull requests against the `develop` branch. This allows convenient testing and tweaks before eventual release to `master`.
+Please submit pull requests against the `develop` branch.
 
 I maintain the project in my own time, but you can expect a response within 7 days.
