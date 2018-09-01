@@ -25,7 +25,7 @@ If you already have `node`, the easiest way to install `nvh` is through `npm`:
     npm install -g @shadowspawn/nvh
     nvh help
 
-`nvh` installs node to `/usr/local` by default, but you may change this location by defining `NVH_PREFIX` (see [environment variables](#optional-environment-variables)). The downloads are written to a stash in subdirectory `nvh/versions`.
+`nvh` installs node to `/usr/local` by default, but you may change this location by defining `NVH_PREFIX` (see [environment variables](#optional-environment-variables)). The downloads are written to a cache in subdirectory `nvh/versions`.
 
 One way to bootstrap an install if `npm` is not yet available:
 
@@ -35,7 +35,7 @@ One way to bootstrap an install if `npm` is not yet available:
 
 ## Installing Node Versions
 
-Execute `nvh install <version>` to download and install a version of `node`. If `<version>` has already been downloaded, `nvh` will install from its stash.
+Execute `nvh install <version>` to download and install a version of `node`. If `<version>` has already been downloaded, `nvh` will install from its cache.
 
     nvh install 4.9.1
     nvh i lts
@@ -114,7 +114,7 @@ List matching remote versions available for download:
     nvh lsr 6
     nvh lsr --all
 
-List downloaded versions in stash:
+List downloaded versions in cache:
 
     nvh ls
 

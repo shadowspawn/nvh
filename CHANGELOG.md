@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+
+- change terminology from "stash" to "cache"
+
 ## [5.0.0] (2018-08-19)
 
 ### Removed
@@ -134,7 +138,7 @@ Changes from upstream [tj/n](https://github.com/tj/n) 2.1.12
     - `NODE_MIRROR` changed to `NVH_NODE_MIRROR`
     - `HTTP_USER` changed to `NVH_NODE_MIRROR_USER`
     - `HTTP_PASSWORD` changed to `NVH_NODE_MIRROR_PASSWORD`
-- changed stash versions directory from `n/versions` to `nvh/versions`
+- changed cache versions directory from `n/versions` to `nvh/versions`
 - `n use` and `n as` changed to `nvh run` (as per `nvm` and `nvs`)
 - `nvh ls` lists downloaded versions
 - `nvh ls-remote` replaces `n ls`
