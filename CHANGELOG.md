@@ -9,9 +9,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+Reminder: minor version because deprecation
+
+### Added
+
+- `nvh cache clear` remove all downloaded versions
+- `nvh cache prune` remove all downloaded versions except the installed version (replacing `nvh prune`)
+
 ### Changed
 
 - change terminology from "stash" to "cache"
+
+### Deprecated
+
+- `nvh prune` (replaced by `nvh cache prune`)
 
 ## [5.0.0] (2018-08-19)
 

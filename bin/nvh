@@ -212,7 +212,8 @@ function display_help() {
     nvh ls-remote [version]         Output matching versions available for download
     nvh run <version> [args ...]    Execute downloaded node <version> with [args ...]
     nvh which <version>             Output path for downloaded node <version>
-    nvh prune                       Remove all downloaded versions except the installed version
+    nvh cache clear                 Remove all downloaded versions
+    nvh cache prune                 Remove all downloaded versions except the installed version
     nvh rm <version ...>            Remove the given downloaded version(s)
     nvh doctor                      Output diagnostics to help solve issues
     nvh help                        Display help information
@@ -287,10 +288,11 @@ function display_nvh_version() {
 }
 
 #
-# Check for installed version, and populate $g_active_download
+# Check for installed version and return as $g_active_download
 #
 
 function check_installed_version() {
+  g_active_download=
   local node_path="$(command -v node)"
   if [[ -x "${node_path}" ]]; then
     local installed_version=$(node --version)
@@ -301,6 +303,7 @@ function check_installed_version() {
         "${CACHE_DIR}/${folder_name}/${installed_version}/bin/node" \
         "${node_path}" ; then
         g_active_download="${folder_name}/${installed_version}"
+        break
       fi
     done
   fi
@@ -612,18 +615,24 @@ function remove_versions() {
 }
 
 #
-# Prune non-active versions
+# Prune/clear versions
 #
 
-function prune_versions() {
+function prune_cache() {
   check_installed_version
 
   for folder_and_version in $(versions_paths); do
     if [[ "${folder_and_version}" != "${g_active_download}" ]]; then
       echo "${folder_and_version}"
       rm -rf "${CACHE_DIR:?}/${folder_and_version}"
-      shift
     fi
+  done
+}
+
+function clear_cache() {
+  for folder_and_version in $(versions_paths); do
+    echo "${folder_and_version}"
+    rm -rf "${CACHE_DIR:?}/${folder_and_version}"
   done
 }
 
@@ -831,6 +840,23 @@ function display_remote_versions() {
 }
 
 #
+# Parse cache sub-commands
+#
+
+cache_subcommand() {
+  local subcommand="$1"
+  # Supporting list and remove as reasonable, although undocumented in main help.
+  [[ -z "${subcommand}" ]] && printf "\n  Usage: nvh cache clear|list|prune|remove\n\n" && exit
+  case "${subcommand}" in
+    clear) clear_cache ;;
+    ls|list) versions_paths ;;
+    prune) prune_cache ;;
+    rm|remove) shift; remove_versions "$@" ;;
+    *) abort "Unrecognised cache command '$1'" ;;
+  esac
+}
+
+#
 # Show useful diagnostics
 #
 
@@ -1011,7 +1037,7 @@ function show_diagnostics() {
 unprocessed_args=()
 
 while [[ $# -ne 0 ]]; do
-  case $1 in
+  case "$1" in
     --all) set_show_all_remote_matches ;;
     -h|--help|help) display_help; exit ;;
     --insecure) set_insecure ;;
@@ -1032,12 +1058,13 @@ if [[ $# -eq 0 ]]; then
   [[ -z "$(versions_paths)" ]] && err_no_installed_print_help
   display_cache_versions
 else
-  case $1 in
+  case "$1" in
     doctor) show_diagnostics ;;
     install|i) shift; install "$1" ;;
     ls|list) versions_paths ;;
     lsr|ls-remote|list-remote) shift; display_remote_versions "$1" ;;
-    prune) prune_versions ;;
+    cache) shift; cache_subcommand "$@" ;;
+    prune) prune_cache ;;
     rm|remove) shift; remove_versions "$@" ;;
     run) shift; execute_with_version "$@" ;;
     which) shift; display_bin_path_for_version "$1" ;;
