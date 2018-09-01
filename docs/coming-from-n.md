@@ -13,6 +13,7 @@ Some tips on the things that are gone.
 - always install, even if installed version appears to match
 - allow removing installed version
 - using `rsync` rather than `cp` for installs
+- `n prune` --> `nvh cache prune`
 
 ## Removed
 
