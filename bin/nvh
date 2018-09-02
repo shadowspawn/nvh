@@ -738,22 +738,6 @@ function display_remote_files() {
 }
 
 #
-# Display codename version.
-#
-
-function display_latest_codename_version() {
-  local codename="$1"
-  local folder_name=$(do_get "${NODE_MIRROR}/" 2> /dev/null \
-    | grep -E "</a>" \
-    | grep -E -o "latest-$codename" \
-    | sort \
-    | tail -n1)
-  [[ -z "${folder_name}" ]] && return 0
-
-  display_remote_files "${NODE_MIRROR}/${folder_name}/" 1
-}
-
-#
 # Display resolved version.
 #
 
