@@ -617,7 +617,6 @@ function install() {
 
 function set_preserve_npm() {
   PRESERVE_NPM="true"
-  command -v rsync > /dev/null || abort "rsync command missing and is required for --preserve"
 }
 
 #
