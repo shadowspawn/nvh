@@ -67,13 +67,26 @@ else
 fi
 
 #
-# get <args...>
+# do_get <args...>
 # Call curl or wget with combination of global and passed arguments.
 #
 
 function do_get() {
   if command -v curl &> /dev/null; then
     curl "${g_curl_options[@]}" "$@"
+  elif command -v wget &> /dev/null; then
+    wget "${g_wget_options[@]}" "$@"
+  else
+    abort "curl or wget command required"
+  fi
+}
+
+function do_get_index() {
+  if command -v curl &> /dev/null; then
+    # --silent to suppress progress et al
+    # --fail to avoid happily download error page from web server for 404 et al
+    # --show-error to show why failed
+    curl "${g_curl_options[@]}" --fail --silent --show-error "$@"
   elif command -v wget &> /dev/null; then
     wget "${g_wget_options[@]}" "$@"
   else
@@ -143,24 +156,29 @@ function is_lts_codename() {
   [[ "$1" =~ ^([Aa]rgon|[Bb]oron)|[Cc]arbon|[Dd]ubnium|[Ee]rbium|[Ff]ermium|[Gg]allium|[Hh]ydrogen|[Ii]ron$ ]]
 }
 
-function is_release_branch() {
-  # e.g. 8.x, v9.x
-  [[ "$1" =~ ^[v]{0,1}[0-9]+\.x$ ]]
-}
-
 function is_download_folder() {
-  # exact match for name
+  # e.g. nightly
   [[ "$1" =~ ^(chakracore-nightly|chakracore-rc|chakracore-release|next-nightly|nightly|rc|release|test|v8-canary)$ ]]
 }
 
 function is_download_version() {
-  # e.g. nightly/latest
-  [[ "$1" =~ ^[^/]+/ ]]
+  # e.g. nightly/, nightly/latest, nightly/v11
+  if [[ "$1" =~ ^([^/]+)/(.*) ]]; then
+    local remote_folder="${BASH_REMATCH[1]}"
+    is_download_folder "${remote_folder}"
+    return
+  fi
+  return 2
 }
 
 function is_numeric_version() {
   # e.g. 6, v7.1, 8.11.3
   [[ "$1" =~ ^[v]{0,1}[0-9]+(\.[0-9]+){0,2}$ ]]
+}
+
+function is_exact_numeric_version() {
+  # e.g. 6, v7.1, 8.11.3
+  [[ "$1" =~ ^[v]{0,1}[0-9]+\.[0-9]+\.[0-9]+$ ]]
 }
 
 #
@@ -675,75 +693,12 @@ function execute_with_version() {
 }
 
 #
-# Access remote, filter folders, sort by numeric version
-# display_remote_version_folders <remote> <version_prefix?> <last_lines? = g_ls_remote_max_matches>
-#
-
-function display_remote_version_folders() {
-  # Ensure trailing slash
-  local remote_url=${1%/}/
-
-  # Version could be empty, 1, v1.2, 1.2.3, 10.0.0-nightly201711117b3446e7bb
-  local version_prefix=$2
-  [[ -z "$version_prefix" ]] && version_prefix='[0-9]+'
-  version_prefix="v${version_prefix#v}" # Ensure leading v
-  # Make numeric version terminated, so 1.1 does not match 1.11 et al
-  is_numeric_version "${version_prefix}" && version_prefix="${version_prefix}([.-].+){0,1}$"
-  # Quote the dots so they are literal and not special in expression
-  version_prefix=${version_prefix//\./\.}
-
-  local last_lines="$3"
-  [[ -z "${last_lines}" ]] && last_lines="${g_ls_remote_max_matches}"
-
-  # filenames
-  # dist:     v8.11.3/
-  # nightly:  v10.0.0-nightly201711117b3446e7bb/
-  # rc:       v10.1.0-rc.0/
-  # test:     v10.0.0-test20180410edd9cc466a/
-
-  # <a href="v9.3.1-nightly2018010930273d400c/">v9.3.1-nightly2018010930273d400c/</a>
-  # --> "v9.3.1-nightly2018010930273d400c/"
-  # --> v9.3.1-nightly2018010930273d400c
-  # search for version_prefix
-  # --> 9.3.1.-nightly2018010930273d400c
-  # sort using number . number . number . text . number
-  # --> v9.3.1-nightly2018010930273d400c
-
-  do_get "${remote_url}" 2> /dev/null \
-    | grep -E "</a>" \
-    | grep -E -o 'href="[^"]+/"' \
-    | grep -E -o 'v[0-9]+\.[0-9]+\.[0-9]+[^/]*' \
-    | grep -E "^${version_prefix}" \
-    | sed 's|v\(.*\)|\1|; s|-|.-|' \
-    | sort -u -k 1,1n -k 2,2n -k 3,3n -k 4,4 -k 5,5n -t . \
-    | sed 's|\.-|-|; s|.*|v&|' \
-    | tail -n "${last_lines}"
-}
-
-#
-# Access remote, filter files, sort by numeric version.
-# display_remote_version_folders <remote> <last_lines? = g_ls_remote_max_matches>
-#
-
-function display_remote_files() {
-  local remote_url=${1%/}/
-  local last_lines="$2"
-  [[ -z "${last_lines}" ]] && last_lines="${g_ls_remote_max_matches}"
-
-  do_get "${remote_url}" 2> /dev/null \
-    | grep -E "</a>" \
-    | grep -E -o 'v[0-9]+\.[0-9]+\.[0-9]+' \
-    | sort -u -k 1,1n -k 2,2n -k 3,3n -t . \
-    | tail -n "${last_lines}"
-}
-
-#
 # Display resolved version.
 #
 
 function display_latest_resolved_version() {
   local version=${1#node/}
-  if [[ "${version}" =~ ^[v]{0,1}[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+  if is_exact_numeric_version "${version}"; then
     # Just numbers, already resolved, no need to lookup first.
     version="v${version#v}"
     echo "${version}"
@@ -755,18 +710,15 @@ function display_latest_resolved_version() {
 }
 
 #
-# Display the newest lts release version.
+# Display index.tab from remote url
+# https://github.com/nodejs/nodejs-dist-indexer
+# Index fields are: version	date	files	npm	v8	uv	zlib	openssl	modules	lts
 #
 
-function display_latest_lts_version() {
-  # Find the alphabetical last codename
-  local folder_name=$(do_get "${NODE_MIRROR}/" 2> /dev/null \
-    | grep -E "</a>" \
-    | grep -E -o 'latest-[a-z]{2,}' \
-    | sort \
-    | tail -n1)
-
-  display_remote_files "${NODE_MIRROR}/${folder_name}/" 1
+display_remote_index() {
+  # tail to remove header line
+  do_get_index "${g_download_mirror_url}/index.tab" | tail -n +2
+  return "${PIPESTATUS[0]}"
 }
 
 #
@@ -774,11 +726,10 @@ function display_latest_lts_version() {
 #
 
 function display_match_limit(){
-  if [[ "${g_ls_remote_max_matches}" -gt 1 && "${g_ls_remote_max_matches}" -lt 32000 ]]; then
-    echo "Listing remote... Displaying last ${g_ls_remote_max_matches} matches (use --all to see all)."
+  if [[ "$1" -gt 1 && "$1" -lt 32000 ]]; then
+    echo "Listing remote... Displaying $1 matches (use --all to see all)."
   fi
 }
-
 
 #
 # display_remote_versions <version>
@@ -786,45 +737,59 @@ function display_match_limit(){
 
 function display_remote_versions() {
   local version="$1"
+  update_download_settings_from_version "${version}"
+  local match
+  local match_count="${g_ls_remote_max_matches}"
   if [[ -z "${version}" ]]; then
-    display_match_limit
-    display_remote_version_folders "${NODE_MIRROR}/"
+    match='.'
   elif [[ "${version}" = "lts" ]]; then
-    display_latest_lts_version
+    match_count=1
+    # Codename is last field, first one with a name is newest lts
+    match='\t[a-zA-Z]+$'
   elif [[ "${version}" = "latest" || "${version}" = "current" ]]; then
-    display_remote_version_folders "${NODE_MIRROR}/" "" 1
-  elif is_download_folder "${version}"; then
-    display_match_limit
-    display_remote_version_folders "${NODE_DOWNLOAD_MIRROR}/${version}/"
-  elif is_download_version "${version}"; then
-    [[ "${version}" =~ ^([^/]+)/(.*) ]]
-    local remote_folder="${BASH_REMATCH[1]}"
-    version="${BASH_REMATCH[2]}"
-    if [[ "${version}" = "latest" || "${version}" = "current" ]]; then
-      display_remote_version_folders "${NODE_DOWNLOAD_MIRROR}/${remote_folder}/" "" 1
-    else
-      display_match_limit
-      display_remote_version_folders "${NODE_DOWNLOAD_MIRROR}/${remote_folder}/" "${version}"
-    fi
-  elif is_lts_codename "${version}"; then
-    # Only one version on nodejs/dist, so skip display_match_limit
-    display_remote_files "${NODE_MIRROR}/latest-${version}/"
-  elif is_release_branch "${version}"; then
-    # Only one version on nodejs/dist, so skip display_match_limit
+    match_count=1
+    match='.'
+  elif is_numeric_version "${version}"; then
     version="v${version#v}"
-    display_remote_files "${NODE_MIRROR}/latest-${version}/"
-  else
-    if [[ "${version}" =~ ^[v]{0,1}[0-9]+(\.[0-9]+){0,1}$ ]]; then
-      # 8, v8.1: partial match so warn.
-      display_match_limit
+    # Avoid restriction message if exact version
+    is_exact_numeric_version "${version}" && match_count=1
+    # Quote any dots in version so they are literal for expression
+    match="${version//\./\.}"
+    # Avoid 1.2 matching 1.23
+    match="^${match}[^0-9]"
+  elif is_lts_codename "${version}"; then
+    # Capitalise (could alternatively make grep case insensitive)
+    codename="$(echo "${version:0:1}" | tr '[:lower:]' '[:upper:]')${version:1}"
+    # Codename is last field
+    match="\\t${codename}$"
+  elif is_download_folder "${version}"; then
+    match='.'
+  elif is_download_version "${version}"; then
+    version="${version#${g_download_folder_name}/}"
+    if [[ "${version}" = "latest" || "${version}" = "current" ]]; then
+      match_count=1
+      match='.'
+    else
+      version="v${version#v}"
+      match="${version//\./\.}"
+      match="^${match}"
+      if is_numeric_version "${version}"; then
+        match="${match}[^0-9]"
+      fi
     fi
-    display_remote_version_folders "${NODE_MIRROR}/" "${version}"
+  else
+    abort "invalid version '$1'"
   fi
-
+  display_match_limit "${match_count}"
+  # Using temporary variable as curl complains if pipe closes early (e.g. head).
+  local versions
+  versions="$(display_remote_index "${g_download_mirror_url}" | grep -E "${match}" | cut -f -1; return "${PIPESTATUS[0]}")" || return $?
+  echo "${versions}" | head -n "${match_count}"
 }
 
 #
 # Parse cache sub-commands
+# cache_subcommand [arguments]
 #
 
 cache_subcommand() {
