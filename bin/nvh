@@ -7,6 +7,7 @@
 #
 
 readonly VERSION="5.0.1-0"
+readonly TAB_CHAR=$'\t'
 
 NVH_PREFIX=${NVH_PREFIX:-/usr/local}
 NVH_PREFIX=${NVH_PREFIX%/}
@@ -98,7 +99,6 @@ function set_insecure() {
   g_curl_options+=( "--insecure" )
   g_wget_options+=( "--no-check-certificate" )
 }
-
 
 #
 # update_download_settings_from_version <version>
@@ -455,16 +455,15 @@ function is_ok() {
 }
 
 #
-# Determine tarball url for <version>
+# display_tarball_platform <version>
 #
 
-function tarball_url() {
-  local version=$1
+function display_tarball_platform() {
+  local version="${1#v}"
   local uname="$(uname -a)"
   local arch=x86
   local os=
 
-  # from nave(1)
   case "$uname" in
     Linux*) os=linux ;;
     Darwin*) os=darwin ;;
@@ -486,7 +485,31 @@ function tarball_url() {
     [[ $major -eq "" && $minor -lt 12 ]] && arch=arm-pi
   fi
 
-  echo "${g_download_mirror_url}/${version}/node-${version}-${os}-${arch}.tar.gz"
+  echo "${os}-${arch}"
+}
+
+#
+# display <file> as per field in index.tab
+# display_index_file <version>
+#
+
+function display_index_file_field {
+  local version="$1"
+
+  local index_file="$(display_tarball_platform $"{version}")"
+  if [[ "${index_file}" =~ darwin-(.*) ]]; then
+    index_file="osx-${BASH_REMATCH[1]}-tar"
+  fi
+  echo "${index_file}"
+}
+
+#
+# tarball_url <version>
+#
+
+function tarball_url() {
+  local version="$1"
+  echo "${g_download_mirror_url}/${version}/node-${version}-$(display_tarball_platform "${version}").tar.gz"
 }
 
 #
@@ -551,8 +574,8 @@ function activate() {
 
 function install() {
   [[ -z "$1" ]] && abort "version required"
-  local resolved_version=$(display_latest_resolved_version "$1")
-  [[ -z "${resolved_version}" ]] && abort "did not find remote version for '$1'"
+  local resolved_version
+  resolved_version=$(display_latest_resolved_version "$1") || return 2
   update_download_settings_from_version "$1"
 
   local dir="${CACHE_DIR}/${g_download_folder_name}/${resolved_version}"
@@ -660,8 +683,8 @@ function clear_cache() {
 
 function display_bin_path_for_version() {
   [[ -z "$1" ]] && abort "version required"
-  local version="$(display_latest_resolved_version "$1")"
-  [[ -z "${version}" ]] && abort "invalid version '$1'"
+  local version
+  version="$(display_latest_resolved_version "$1")" || return 2
 
   update_download_settings_from_version "$1"
   local bin="${CACHE_DIR}/${g_download_folder_name}/${version}/bin/node"
@@ -678,8 +701,8 @@ function display_bin_path_for_version() {
 
 function execute_with_version() {
   [[ -z "$1" ]] && abort "version required"
-  local version="$(display_latest_resolved_version "$1")"
-  [[ -z "$version" ]] && abort "invalid version '$1'"
+  local version
+  version="$(display_latest_resolved_version "$1")" || return 2
 
   update_download_settings_from_version "$1"
   local bin="${CACHE_DIR}/${g_download_folder_name}/${version}/bin/node"
@@ -738,14 +761,14 @@ function display_match_limit(){
 function display_remote_versions() {
   local version="$1"
   update_download_settings_from_version "${version}"
-  local match
+  local match='.'
   local match_count="${g_ls_remote_max_matches}"
   if [[ -z "${version}" ]]; then
     match='.'
   elif [[ "${version}" = "lts" ]]; then
     match_count=1
     # Codename is last field, first one with a name is newest lts
-    match='\t[a-zA-Z]+$'
+    match="${TAB_CHAR}[a-zA-Z]+\$"
   elif [[ "${version}" = "latest" || "${version}" = "current" ]]; then
     match_count=1
     match='.'
@@ -761,7 +784,7 @@ function display_remote_versions() {
     # Capitalise (could alternatively make grep case insensitive)
     codename="$(echo "${version:0:1}" | tr '[:lower:]' '[:upper:]')${version:1}"
     # Codename is last field
-    match="\\t${codename}$"
+    match="${TAB_CHAR}${codename}\$"
   elif is_download_folder "${version}"; then
     match='.'
   elif is_download_version "${version}"; then
@@ -772,8 +795,9 @@ function display_remote_versions() {
     else
       version="v${version#v}"
       match="${version//\./\.}"
-      match="^${match}"
+      match="^${match}" # prefix
       if is_numeric_version "${version}"; then
+        # Exact numeric match
         match="${match}[^0-9]"
       fi
     fi
@@ -783,7 +807,8 @@ function display_remote_versions() {
   display_match_limit "${match_count}"
   # Using temporary variable as curl complains if pipe closes early (e.g. head).
   local versions
-  versions="$(display_remote_index "${g_download_mirror_url}" | grep -E "${match}" | cut -f -1; return "${PIPESTATUS[0]}")" || return $?
+  # Restrict search to platform as not always available, especially initially with slow builds coming later.
+  versions="$(display_remote_index | grep -E "$(display_index_file_field "${version}")" |  grep -E "${match}" | cut -f -1; return "${PIPESTATUS[0]}")" || return $?
   echo "${versions}" | head -n "${match_count}"
 }
 
