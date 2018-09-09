@@ -33,7 +33,11 @@ g_download_folder_name="node"
 # Starting options. May get added to from environment variables et al.
 # Defining commands in variables is fraught (http://mywiki.wooledge.org/BashFAQ/050)
 # but we can follow the simple case and store arguments in an array.
-g_curl_options=( "--location" )
+
+# --location to follow redirects
+# --fail to avoid happily downloading error page from web server for 404 et al
+# --show-error to show why failed (on stderr)
+g_curl_options=( "--location" "--fail" "--show-error" )
 if [[ -t 1 ]]; then
   g_curl_options+=( "--progress-bar" )
   command -v curl &> /dev/null && g_showing_get_progress="true"
@@ -85,9 +89,7 @@ function do_get() {
 function do_get_index() {
   if command -v curl &> /dev/null; then
     # --silent to suppress progress et al
-    # --fail to avoid happily download error page from web server for 404 et al
-    # --show-error to show why failed
-    curl "${g_curl_options[@]}" --fail --silent --show-error "$@"
+    curl "${g_curl_options[@]}" --silent "$@"
   elif command -v wget &> /dev/null; then
     wget "${g_wget_options[@]}" "$@"
   else
@@ -448,7 +450,7 @@ function is_ok() {
   # Note: both curl and wget can follow redirects, as present on some mirrors (e.g. https://npm.taobao.org/mirrors/node).
   # The output is complicated with redirects, so keep it simple and use command status rather than parse output.
   if command -v curl &> /dev/null; then
-    do_get --fail --head "$1" &> /dev/null || return 1
+    do_get --silent --head "$1" > /dev/null || return 1
   else
     do_get --spider "$1" &> /dev/null || return 1
   fi
