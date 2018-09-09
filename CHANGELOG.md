@@ -9,16 +9,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-Reminder: minor version because deprecation
+Reminder: at least minor version because deprecation
 
 ### Added
 
 - `nvh cache clear` remove all downloaded versions
 - `nvh cache prune` remove all downloaded versions except the installed version (replacing `nvh prune`)
+- show errors during `curl` operations
 
 ### Changed
 
 - change terminology from "stash" to "cache"
+- using `index.tab` on mirror rather than scraping html page
+- narrowing candidate versions to ones matching platform
+    - inspired by [upstream issue #463](https://github.com/tj/n/issues/463), and problems with nightly
 
 ### Deprecated
 
