@@ -89,7 +89,7 @@ function do_get() {
 function do_get_index() {
   if command -v curl &> /dev/null; then
     # --silent to suppress progress et al
-    curl "${g_curl_options[@]}" --silent "$@"
+    curl --silent "${g_curl_options[@]}" "$@"
   elif command -v wget &> /dev/null; then
     wget "${g_wget_options[@]}" "$@"
   else
