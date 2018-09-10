@@ -280,7 +280,7 @@ EOF
 
 function err_no_installed_print_help() {
   display_help
-  abort "No downloaded versions yet, see above help for commands"
+  abort "no downloaded versions yet, see above help for commands"
 }
 
 #
@@ -735,14 +735,18 @@ function display_latest_resolved_version() {
 
 #
 # Display index.tab from remote url
-# https://github.com/nodejs/nodejs-dist-indexer
+# Reference: https://github.com/nodejs/nodejs-dist-indexer
 # Index fields are: version	date	files	npm	v8	uv	zlib	openssl	modules	lts
 #
 
 display_remote_index() {
+  local index_url="${g_download_mirror_url}/index.tab"
   # tail to remove header line
-  do_get_index "${g_download_mirror_url}/index.tab" | tail -n +2
-  return "${PIPESTATUS[0]}"
+  do_get_index "${index_url}" | tail -n +2
+  if [[ "${PIPESTATUS[0]}" -ne 0 ]]; then
+    # Reminder: abort will only exit subshell, but consistent error display
+    abort "failed to download version index ${index_url}"
+  fi
 }
 
 #
@@ -827,7 +831,7 @@ cache_subcommand() {
     ls|list) versions_paths ;;
     prune) prune_cache ;;
     rm|remove) shift; remove_versions "$@" ;;
-    *) abort "Unrecognised cache command '$1'" ;;
+    *) abort "unrecognised cache command '$1'" ;;
   esac
 }
 
@@ -1018,7 +1022,7 @@ while [[ $# -ne 0 ]]; do
     --insecure) set_insecure ;;
     -p|--preserve) set_preserve_npm ;;
     -V|--version) display_nvh_version; exit ;;
-    -*) abort "Unrecognised option '$1'"; exit 1 ;;
+    -*) abort "unrecognised option '$1'"; exit 1 ;;
     run) unprocessed_args=("$@"); break ;;
     *) unprocessed_args+=( "$1" ) ;;
   esac
@@ -1043,7 +1047,7 @@ else
     rm|remove) shift; remove_versions "$@" ;;
     run) shift; execute_with_version "$@" ;;
     which) shift; display_bin_path_for_version "$1" ;;
-    *) abort "Unrecognised command '$1' (perhaps you want 'nvh install $1'?)" ;;
+    *) abort "unrecognised command '$1' (perhaps you want 'nvh install $1'?)" ;;
   esac
 fi
 

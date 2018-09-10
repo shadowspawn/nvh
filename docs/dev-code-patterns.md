@@ -3,6 +3,7 @@
 `bash` is not a programming language!
 
 - calling a function does not return a value, it sets status code
+    - <https://mywiki.wooledge.org/BashFAQ/084>
 - piping and error handling is tricky
 
 ## Returning Value from Function
