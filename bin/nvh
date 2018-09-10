@@ -577,7 +577,8 @@ function activate() {
 function install() {
   [[ -z "$1" ]] && abort "version required"
   local resolved_version
-  resolved_version=$(display_latest_resolved_version "$1") || return 2
+  resolved_version="$(display_latest_resolved_version "$1")" || return 2
+  [[ -n "${resolved_version}" ]] || abort "no version found for '$1'"
   update_download_settings_from_version "$1"
 
   local dir="${CACHE_DIR}/${g_download_folder_name}/${resolved_version}"
@@ -640,7 +641,8 @@ function set_show_single_remote_match() {
 function remove_versions() {
   [[ -z "$1" ]] && abort "version(s) required"
   while [[ $# -ne 0 ]]; do
-    local version="$(display_latest_resolved_version "$1")"
+    local version
+    version="$(display_latest_resolved_version "$1")" || break
     if [[ -n "${version}" ]]; then
       update_download_settings_from_version "$1"
       local dir="${CACHE_DIR}/${g_download_folder_name}/${version}"
@@ -650,7 +652,7 @@ function remove_versions() {
         echo "$1 (${version}) not in downloads cache"
       fi
     else
-      echo "invalid version $1"
+      echo "No version found for '$1'"
     fi
     shift
   done
@@ -686,6 +688,7 @@ function display_bin_path_for_version() {
   [[ -z "$1" ]] && abort "version required"
   local version
   version="$(display_latest_resolved_version "$1")" || return 2
+  [[ -n "${resolved_version}" ]] || abort "no version found for '$1'"
 
   update_download_settings_from_version "$1"
   local bin="${CACHE_DIR}/${g_download_folder_name}/${version}/bin/node"
@@ -704,6 +707,7 @@ function execute_with_version() {
   [[ -z "$1" ]] && abort "version required"
   local version
   version="$(display_latest_resolved_version "$1")" || return 2
+  [[ -n "${resolved_version}" ]] || abort "no version found for '$1'"
 
   update_download_settings_from_version "$1"
   local bin="${CACHE_DIR}/${g_download_folder_name}/${version}/bin/node"
