@@ -221,60 +221,58 @@ function handle_sigtstp() {
 
 function display_help() {
   cat <<-EOF
+Usage: nvh [options] [COMMAND] [args]
 
-  Usage: nvh [options] [COMMAND] [args]
+Commands:
 
-  Commands:
+  nvh                             Display downloaded node versions and install selection
+  nvh install <version>           Install node <version> (downloading if necessary)
+  nvh ls                          Output downloaded versions
+  nvh ls-remote [version]         Output matching versions available for download
+  nvh run <version> [args ...]    Execute downloaded node <version> with [args ...]
+  nvh which <version>             Output path for downloaded node <version>
+  nvh cache clear                 Remove all downloaded versions
+  nvh cache prune                 Remove all downloaded versions except the installed version
+  nvh rm <version ...>            Remove the given downloaded version(s)
+  nvh doctor                      Output diagnostics to help solve issues
+  nvh help                        Display help information
 
-    nvh                             Display downloaded node versions and install selection
-    nvh install <version>           Install node <version> (downloading if necessary)
-    nvh ls                          Output downloaded versions
-    nvh ls-remote [version]         Output matching versions available for download
-    nvh run <version> [args ...]    Execute downloaded node <version> with [args ...]
-    nvh which <version>             Output path for downloaded node <version>
-    nvh cache clear                 Remove all downloaded versions
-    nvh cache prune                 Remove all downloaded versions except the installed version
-    nvh rm <version ...>            Remove the given downloaded version(s)
-    nvh doctor                      Output diagnostics to help solve issues
-    nvh help                        Display help information
+Options:
 
-  Options:
+  --all               ls-remote displays all matches instead of last 20
+  -h, --help          Display help information
+  --insecure          Turn off certificate checking for https requests (may be needed from behind a proxy server)
+  -p, --preserve      Preserve npm and npx during install of node
+  -V, --version       Output version of nvh
 
-    --all               ls-remote displays all matches instead of last 20
-    -h, --help          Display help information
-    --insecure          Turn off certificate checking for https requests (may be needed from behind a proxy server)
-    -p, --preserve      Preserve npm and npx during install of node
-    -V, --version       Output version of nvh
+Aliases:
 
-  Aliases:
+  i: install
+  current: latest (version)
+  list: ls
+  lsr, list-remote: ls-remote
+  remove: rm
 
-    i: install
-    current: latest (version)
-    list: ls
-    lsr, list-remote: ls-remote
-    remove: rm
+Versions:
 
-  Versions:
+  Numeric version numbers can be complete or incomplete, with an optional leading 'v'.
+  Versions can also be specified by labels, by release stream,
+  and other downloadable releases by <remote-folder>/<version>
 
-    Numeric version numbers can be complete or incomplete, with an optional leading 'v'.
-    Versions can also be specified by labels, by release stream,
-    and other downloadable releases by <remote-folder>/<version>
+    4.9.1, 8, v6.1    Numeric versions
+    lts               Newest Long Term Support official release
+    latest, current   Newest official release
+    boron, v7.x       Release streams
+    nightly/latest, chakracore-release/10, rc/v9.4.0-rc.1
 
-      4.9.1, 8, v6.1    Numeric versions
-      lts               Newest Long Term Support official release
-      latest, current   Newest official release
-      boron, v7.x       Release streams
-      nightly/latest, chakracore-release/10, rc/v9.4.0-rc.1
+Examples:
 
-  Examples:
+  nvh install latest  Install the newest node release
+  nvh lsr lts         Output newest LTS version
+  nvh i -p lts        Install newest LTS release, preserving installed npm and npx
+  nvh                 Display downloaded node versions and install selection
 
-    nvh install latest  Install the newest node release
-    nvh lsr lts         Output newest LTS version
-    nvh i -p lts        Install newest LTS release, preserving installed npm and npx
-    nvh                 Display downloaded node versions and install selection
-
-  See also https://github.com/JohnRGee/nvh.git for further information.
-
+See also https://github.com/JohnRGee/nvh.git for further information.
 EOF
 }
 
