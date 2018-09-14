@@ -492,18 +492,18 @@ function display_tarball_platform() {
 }
 
 #
-# display <file> as per field in index.tab
-# display_index_file <version>
+# display <file> for current platform, as per <file> field in index.tab, which is different than actual download
+# display_compatible_file_field <version>
 #
 
-function display_index_file_field {
+function display_compatible_file_field {
   local version="$1"
 
-  local index_file="$(display_tarball_platform $"{version}")"
-  if [[ "${index_file}" =~ darwin-(.*) ]]; then
-    index_file="osx-${BASH_REMATCH[1]}-tar"
+  local compatible_file_field="$(display_tarball_platform $"{version}")"
+  if [[ "${compatible_file_field}" =~ darwin-(.*) ]]; then
+    compatible_file_field="osx-${BASH_REMATCH[1]}-tar"
   fi
-  echo "${index_file}"
+  echo "${compatible_file_field}"
 }
 
 #
@@ -818,7 +818,7 @@ function display_remote_versions() {
   # Using temporary variable as curl complains if pipe closes early (e.g. head).
   local versions
   # Restrict search to platform as not always available, especially initially with slow builds coming later.
-  versions="$(display_remote_index | grep -E "$(display_index_file_field "${version}")" |  grep -E "${match}" | cut -f -1; return "${PIPESTATUS[0]}")" || return $?
+  versions="$(display_remote_index | grep -E "$(display_compatible_file_field "${version}")" |  grep -E "${match}" | cut -f -1; return "${PIPESTATUS[0]}")" || return $?
   echo "${versions}" | head -n "${match_count}"
 }
 
