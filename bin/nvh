@@ -51,6 +51,9 @@ g_active_download=
 
 # ANSI escape codes
 # https://en.wikipedia.org/wiki/ANSI_escape_code
+# http://no-color.org
+# https://bixense.com/clicolors
+
 g_use_color="true"
 if [[ -n "${CLICOLOR_FORCE+defined}" && "${CLICOLOR_FORCE}" != "0" ]]; then
   g_use_color="true"
