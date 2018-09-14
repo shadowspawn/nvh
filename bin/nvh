@@ -592,7 +592,7 @@ function install() {
   install_log "installing" "${g_download_folder_name}/${resolved_version}"
 
   local url="$(tarball_url "${resolved_version}")"
-  is_ok "${url}" || abort "download preflight failed for '$resolved_version'"
+  is_ok "${url}" || abort "download preflight failed for '$resolved_version' (${url})"
 
   install_log "mkdir" "${dir}"
   mkdir -p "${dir}" || abort "sudo required (or change ownership, or define NVH_PREFIX)"
@@ -747,7 +747,7 @@ display_remote_index() {
   do_get_index "${index_url}" | tail -n +2
   if [[ "${PIPESTATUS[0]}" -ne 0 ]]; then
     # Reminder: abort will only exit subshell, but consistent error display
-    abort "failed to download version index ${index_url}"
+    abort "failed to download version index (${index_url})"
   fi
 }
 
