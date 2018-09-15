@@ -35,10 +35,24 @@ services:
     volumes:
       - ../bin/nvh:/usr/local/bin/nvh
       - ../../n/bin/n:/usr/local/bin/n
+  ubuntu-wget:
+    build:
+      context: .
+      dockerfile: Dockerfile-ubuntu-wget
+    volumes:
+      - ../bin/nvh:/usr/local/bin/nvh
+      - ../../n/bin/n:/usr/local/bin/n
   ubuntu-old:
     build:
       context: .
       dockerfile: Dockerfile-ubuntu-old
+    volumes:
+      - ../bin/nvh:/usr/local/bin/nvh
+      - ../../n/bin/n:/usr/local/bin/n
+  ubuntu-old-wget:
+    build:
+      context: .
+      dockerfile: Dockerfile-ubuntu-old-wget
     volumes:
       - ../bin/nvh:/usr/local/bin/nvh
       - ../../n/bin/n:/usr/local/bin/n
