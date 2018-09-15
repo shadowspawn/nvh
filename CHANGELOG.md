@@ -13,19 +13,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - `nvh cache clear` remove all downloaded versions
 - `nvh cache prune` remove all downloaded versions except the installed version (replacing `nvh prune`)
-- show `curl` errors
-- show remote url for failed `curl`/`wget` operations
 
 ### Changed
 
-- change terminology from "stash" to "cache"
 - using `index.tab` on mirror rather than scraping html page to find remote versions
+- more accurate and informative error messages for failed `curl`/`wget` operations, including
+    - show `curl` errors
+    - show remote url for failed `curl`/`wget` operations
 - narrowing candidate versions to ones matching platform
     - inspired by [upstream issue #463](https://github.com/tj/n/issues/463), and problems with nightly
+- change terminology from "stash" to "cache"
 
 ### Deprecated
 
 - `nvh prune` (replaced by `nvh cache prune`)
+
+### Removed
+
+- numbered release streams like 'v8.x': instead, use incomplete version like '8'
 
 ## [5.0.0] (2018-08-19)
 
