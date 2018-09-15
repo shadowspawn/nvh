@@ -689,7 +689,7 @@ function display_bin_path_for_version() {
   [[ -z "$1" ]] && abort "version required"
   local version
   version="$(display_latest_resolved_version "$1")" || return 2
-  [[ -n "${resolved_version}" ]] || abort "no version found for '$1'"
+  [[ -n "${version}" ]] || abort "no version found for '$1'"
 
   update_download_settings_from_version "$1"
   local bin="${CACHE_DIR}/${g_download_folder_name}/${version}/bin/node"
@@ -708,7 +708,7 @@ function execute_with_version() {
   [[ -z "$1" ]] && abort "version required"
   local version
   version="$(display_latest_resolved_version "$1")" || return 2
-  [[ -n "${resolved_version}" ]] || abort "no version found for '$1'"
+  [[ -n "${version}" ]] || abort "no version found for '$1'"
 
   update_download_settings_from_version "$1"
   local bin="${CACHE_DIR}/${g_download_folder_name}/${version}/bin/node"
