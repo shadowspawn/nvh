@@ -57,13 +57,21 @@ load ../export_test_versions
   [ "${output}" = "${CARBON_VERSION}" ]
 }
 
-@test "nvh lsr 6.2 # multiple matches" {
+@test "nvh lsr 6.2 # multiple matches with header" {
   run nvh --insecure lsr 6.2
   [ "${status}" -eq "0" ]
   [ "${lines[0]}" = "Listing remote... Displaying 20 matches (use --all to see all)." ]
   [ "${lines[1]}" = "v6.2.2" ]
   [ "${lines[2]}" = "v6.2.1" ]
   [ "${lines[3]}" = "v6.2.0" ]
+}
+
+@test "n=1 nvh lsr --all 6.2 # --all, multiple matches with no header" {
+  NVH_MAX_REMOTE_MATCHES=1 run nvh --insecure lsr --all 6.2
+  [ "${status}" -eq "0" ]
+  [ "${lines[0]}" = "v6.2.2" ]
+  [ "${lines[1]}" = "v6.2.1" ]
+  [ "${lines[2]}" = "v6.2.0" ]
 }
 
 # Checking does not match 8.11
