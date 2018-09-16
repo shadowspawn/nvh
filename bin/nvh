@@ -46,8 +46,8 @@ else
 fi
 g_wget_options=( "-q" "-O-" )
 
-# Set by check_installed_version
-g_active_download=
+# Set by set_active_node
+g_active_node=
 
 # ANSI escape codes
 # https://en.wikipedia.org/wiki/ANSI_escape_code
@@ -309,11 +309,11 @@ function display_nvh_version() {
 }
 
 #
-# Check for installed version and return as $g_active_download
+# Check for active version and return as $g_active_node
 #
 
-function check_installed_version() {
-  g_active_download=
+function set_active_node() {
+  g_active_node=
   local node_path="$(command -v node)"
   if [[ -x "${node_path}" ]]; then
     local installed_version=$(node --version)
@@ -323,7 +323,7 @@ function check_installed_version() {
       if diff &> /dev/null \
         "${CACHE_DIR}/${folder_name}/${installed_version}/bin/node" \
         "${node_path}" ; then
-        g_active_download="${folder_name}/${installed_version}"
+        g_active_node="${folder_name}/${installed_version}"
         break
       fi
     done
@@ -380,10 +380,10 @@ function list_cache_versions() {
 
 function display_cache_versions() {
   enter_fullscreen
-  check_installed_version
+  set_active_node
 
   clear
-  display_versions_with_selected "${g_active_download}"
+  display_versions_with_selected "${g_active_node}"
 
   trap handle_sigint INT
   trap handle_sigtstp SIGTSTP
@@ -664,10 +664,10 @@ function remove_versions() {
 #
 
 function prune_cache() {
-  check_installed_version
+  set_active_node
 
   for folder_and_version in $(versions_paths); do
-    if [[ "${folder_and_version}" != "${g_active_download}" ]]; then
+    if [[ "${folder_and_version}" != "${g_active_node}" ]]; then
       echo "${folder_and_version}"
       rm -rf "${CACHE_DIR:?}/${folder_and_version}"
     fi
