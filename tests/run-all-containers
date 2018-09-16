@@ -5,7 +5,7 @@ services=( archlinux centos centos-old ubuntu ubuntu-old ubuntu-wget ubuntu-old-
 for service in "${services[@]}" ; do
   echo "${service}"
   # export env might be using for tests
-  docker-compose run -e NVH_NODE_MIRROR -e https_proxy "${service}" "$@"
+  docker-compose run -e NVH_NODE_MIRROR -e https_proxy -e NODE_MIRROR -e NODE_DOWNLOAD_MIRROR -e NVH_MAX_REMOTE_MATCHES "${service}" "$@"
   echo ""
 done
 
