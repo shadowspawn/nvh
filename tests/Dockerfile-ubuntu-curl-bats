@@ -1,0 +1,10 @@
+FROM ubuntu:latest
+
+RUN apt-get update \
+&& apt-get install -y git curl wget rsync \
+&& rm -rf /var/lib/apt/lists/*
+
+run git clone https://github.com/bats-core/bats-core.git \
+&& bats-core/install.sh /usr/local
+
+CMD ["/bin/bash"]

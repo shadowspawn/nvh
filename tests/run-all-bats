@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+services=( ubuntu-curl-bats ubuntu-wget-bats )
+
+for service in "${services[@]}" ; do
+  echo "${service}"
+  # export env might be using for tests
+  docker-compose run "${service}" "bats" "/usr/local/nvh_tests/bats"
+  echo ""
+done
+
+echo "macOS"
+bats bats

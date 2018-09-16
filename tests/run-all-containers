@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
 
-services=( archlinux centos centos-old ubuntu ubuntu-old ubuntu-wget ubuntu-old-wget )
+services=( archlinux centos centos-old ubuntu-curl ubuntu-old-curl ubuntu-wget ubuntu-old-wget )
 
 for service in "${services[@]}" ; do
   echo "${service}"
-  # export env might be using for tests
-  docker-compose run -e NVH_NODE_MIRROR -e https_proxy -e NODE_MIRROR -e NODE_DOWNLOAD_MIRROR -e NVH_MAX_REMOTE_MATCHES "${service}" "$@"
+  docker-compose run "${service}" "$@"
   echo ""
 done
 

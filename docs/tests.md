@@ -1,7 +1,5 @@
 # Tests
 
-Work in progress.
-
 ## Unit Tests
 
 First spin up caching proxy server to speed up tests and avoid hammering server:
@@ -17,15 +15,23 @@ Create file with values for cached versions of labels and codenames:
 
 Run all tests using caching proxy:
 
-    cd tests/bats
+    cd tests
     export https_proxy=localhost:8080
-    bats .
+    # just native
+    bats bats
+    # containers and native
+    ./run-all-bats
 
-## Docker Containers
+## Manual Tests
 
-Run a command across multiple containers with different versions of Linux including some with `wget` rather than `curl`.
-Environment variables used by nvh are passed through, such as NVH_NODE_MIRROR and https_proxy.
+`nvh` and `tests/` are mounted in all containers. Exported environment variables are passed through: `https_proxy` `NVH_NODE_MIRROR` `NVH_NODE_DOWNLOAD_MIRROR` `NVH_MAX_REMOTE_MATCHES`. This makes it straight forward to try something locally and try same thing across other environments.
 
     cd tests
-    # export any env to be used by docker containers
-    ./run-all-containers <command>
+    # bash for manual testing
+    docker-compose run ubuntu-curl
+    # run command on plain containers and native
+    export NVH_MAX_REMOTE_MATCHES=3
+    nvh lsr rc
+    ./run-all-containers nvh lsr rc
+    # run tests on bats containers and native (as above)
+    ./run-all-bats
