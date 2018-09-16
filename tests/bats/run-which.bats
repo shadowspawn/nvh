@@ -9,9 +9,17 @@ load ../export_test_versions
   run nvh --insecure i argon
   [ "$status" -eq 0 ]
 
-  [[ "$(nvh --insecure run argon --version)" = "${ARGON_VERSION}" ]]
-  [[ "$(nvh --insecure run ${ARGON_VERSION} --version)" = "${ARGON_VERSION}" ]]
-  [[ "$(nvh --insecure run 4 --version)" = "${ARGON_VERSION}" ]]
+  run nvh --insecure run argon --version
+  [ "$status" -eq 0 ]
+  [ "$output" = "${ARGON_VERSION}" ]
+
+  run nvh --insecure run "${ARGON_VERSION}" --version
+  [ "$status" -eq 0 ]
+  [ "$output" = "${ARGON_VERSION}" ]
+
+  run nvh --insecure run 4 --version
+  [ "$status" -eq 0 ]
+  [ "$output" = "${ARGON_VERSION}" ]
 
   rm -rf "${TMP_PREFIX}"
 }
@@ -23,8 +31,13 @@ load ../export_test_versions
   run nvh --insecure i lts
   [ "$status" -eq 0 ]
 
-  [[ "$(nvh --insecure which lts)" = "${TMP_PREFIX}/nvh/versions/node/bin/${LTS_VERSION}" ]]
-  [[ "$(nvh --insecure which ${LTS_VERSION})" = "${TMP_PREFIX}/nvh/versions/node/bin/${LTS_VERSION}" ]]
+  run nvh --insecure which lts
+  [ "$status" -eq 0 ]
+  [ "$output" = "${NVH_PREFIX}/nvh/versions/node/${LTS_VERSION}/bin/node" ]
+
+  run nvh --insecure which "${LTS_VERSION}"
+  [ "$status" -eq 0 ]
+  [ "$output" = "${NVH_PREFIX}/nvh/versions/node/${LTS_VERSION}/bin/node" ]
 
   rm -rf "${TMP_PREFIX}"
 }
