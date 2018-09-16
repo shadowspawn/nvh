@@ -1,2 +1,2 @@
-*.dump
-versions_export.tmp
+*~~.dump
+tests/export_test_versions.bash
