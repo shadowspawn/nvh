@@ -16,8 +16,8 @@ export NVH_PREFIX
 export https_proxy="localhost:8080"
 set -x
 nvh --insecure install argon
+nvh --insecure install nightly/latest
 nvh --insecure install lts
-nvh --insecure lsr nightly/latest
 set +x
 
 rm -rf "${NVH_PREFIX}"

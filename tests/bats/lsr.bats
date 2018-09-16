@@ -31,8 +31,8 @@ load ../export_test_versions
   [ "${output}" = "${ARGON_VERSION}" ]
 }
 
-@test "n=1 nvh lsr boron" {
-  NVH_MAX_REMOTE_MATCHES=1 run nvh --insecure lsr boron
+@test "n=1 nvh lsr Boron # case" {
+  NVH_MAX_REMOTE_MATCHES=1 run nvh --insecure lsr Boron
   [ "${status}" -eq "0" ]
   [ "${output}" = "${BORON_VERSION}" ]
 }
@@ -64,6 +64,7 @@ load ../export_test_versions
   [ "${lines[1]}" = "v6.2.2" ]
   [ "${lines[2]}" = "v6.2.1" ]
   [ "${lines[3]}" = "v6.2.0" ]
+  [ "${lines[4]}" = "" ]
 }
 
 @test "n=1 nvh lsr --all 6.2 # --all, multiple matches with no header" {
@@ -72,6 +73,7 @@ load ../export_test_versions
   [ "${lines[0]}" = "v6.2.2" ]
   [ "${lines[1]}" = "v6.2.1" ]
   [ "${lines[2]}" = "v6.2.0" ]
+  [ "${lines[3]}" = "" ]
 }
 
 # Checking does not match 8.11

@@ -43,3 +43,19 @@ load ../export_test_versions
 
   rm -rf "${TMP_PREFIX}"
 }
+
+@test "nvh install nightly" {
+  readonly TMP_PREFIX="$(mktemp -d)"
+
+  NVH_PREFIX="${TMP_PREFIX}" run nvh --insecure install nightly
+  [ "$status" -eq 0 ]
+
+  [ -d "${TMP_PREFIX}/nvh/versions/nightly/${NIGHTLY_LATEST_VERSION}" ]
+  [ -f "${TMP_PREFIX}/bin/node" ]
+
+  run "${TMP_PREFIX}/bin/node" --version
+  [ "$output" = "${NIGHTLY_LATEST_VERSION}" ]
+
+  rm -rf "${TMP_PREFIX}"
+}
+
