@@ -8,9 +8,17 @@ mitmdump -w proxy~~.dump &> /dev/null &
 mitm_process="$!"
 waitproxy
 
-# nvh setuo
+# nvh setup
 readonly NVH_PREFIX="$(mktemp -d)"
 export NVH_PREFIX
+
+# Loading tarballs for  Mac and Linux, so can run tests in containers too.
+
+readonly ARGON_VERSION=$(NVH_MAX_REMOTE_MATCHES=1 nvh lsr argon)
+readonly NIGHTLY_LATEST_VERSION=$(NVH_MAX_REMOTE_MATCHES=1 nvh lsr nightly)
+readonly LTS_VERSION=$(NVH_MAX_REMOTE_MATCHES=1 nvh lsr lts)
+
+echo "Loading up cache..."
 
 # Go through proxy so it can record traffic
 export https_proxy="localhost:8080"
@@ -18,6 +26,9 @@ set -x
 nvh --insecure install argon
 nvh --insecure install nightly/latest
 nvh --insecure install lts
+curl --insecure --progress-bar "https://nodejs.org/dist/${ARGON_VERSION}/node-${ARGON_VERSION}-linux-x64.tar.gz" > /dev/null
+curl --insecure --progress-bar "https://nodejs.org/dist/${LTS_VERSION}/node-${LTS_VERSION}-linux-x64.tar.gz" > /dev/null
+curl --insecure --progress-bar "https://nodejs.org/download/nightly/${NIGHTLY_LATEST_VERSION}/node-${NIGHTLY_LATEST_VERSION}-linux-x64.tar.gz" > /dev/null
 set +x
 
 rm -rf "${NVH_PREFIX}"
