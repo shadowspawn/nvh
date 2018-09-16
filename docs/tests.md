@@ -2,24 +2,32 @@
 
 ## Unit Tests
 
-First spin up caching proxy server to speed up tests and avoid hammering server:
+Unit tests use `mitmproxy` and Bash Automated Testing System (`bats`). The proxy caching is actually optional, but much improves performance and avoids hammering nodejs server.
+
+Setup:
+
+    # can install on Mac using homebrew
+    brew install mitmproxy
+    npm install --global bats
+
+First prepare caching proxy server:
 
     cd test/proxy
     ./proxy-build # first time, then optional
     ./proxy-run
 
-Create file with values for cached versions of labels and codenames:
+Prepare file with expected version values for labels and codenames:
 
     cd tests
     https_proxy=localhost:8080 ./loopup-versions
 
-Run all tests using caching proxy:
+Run tests using caching proxy looking for expected versions from above:
 
     cd tests
-    export https_proxy=localhost:8080
-    # just native
-    bats bats
-    # containers and native
+    export https_proxy="$(hostname):8080"
+    # e.g. run one test natively
+    bats bats/lsr.bats
+    # run all the tests in containers and natively
     ./run-all-bats
 
 ## Manual Tests
