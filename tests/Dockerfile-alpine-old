@@ -1,5 +1,8 @@
 FROM alpine:3.2
 
+# Reminder: Alpine compatible tarball not available on nodejs.org,
+# and hence this image not included in run-all-containers
+
 # Alpine has wget by default, and not curl, but not compatible with n or nvh.
 # alpine 3.2: wget -s
 # alpine latest: wget --spider

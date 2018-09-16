@@ -1,0 +1,6 @@
+export LATEST_VERSION="v10.10.0"
+export LTS_VERSION="v8.12.0"
+export ARGON_VERSION="v4.9.1"
+export BORON_VERSION="v6.14.4"
+export CARBON_VERSION="v8.12.0"
+export NIGHTLY_LATEST_VERSION="v11.0.0-nightly20180915de37ba34c5"
