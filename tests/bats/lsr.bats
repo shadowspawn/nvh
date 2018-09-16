@@ -3,6 +3,11 @@
 # Get the current values for labels and codenames, like LTS_VERSION
 load ../export_test_versions
 
+function setup() {
+  # Get to default setting, in case something has it in their .bashrc
+  unset NVH_MAX_REMOTE_MATCHES
+}
+
 # labels
 
 @test "nvh lsr lts" {
