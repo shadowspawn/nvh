@@ -15,8 +15,8 @@ export NVH_PREFIX
 # Go through proxy so it can record traffic
 export https_proxy="localhost:8080"
 set -x
-# KISS and record nvh to make it easy to get lts and latest
-nvh --insecure lsr latest
+nvh --insecure install argon
+nvh --insecure install lts
 nvh --insecure lsr nightly/latest
 set +x
 
