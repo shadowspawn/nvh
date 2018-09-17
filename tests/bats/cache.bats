@@ -25,8 +25,7 @@ function teardown() {
 }
 
 @test "nvh rm lts" {
-  run nvh --insecure rm lts
-  [ "$status" -eq 0 ]
+  nvh --insecure rm lts
 
   run nvh cache ls
   [ "${lines[0]}" = "nightly/${NIGHTLY_LATEST_VERSION}" ]
@@ -35,8 +34,7 @@ function teardown() {
 }
 
 @test "nvh remove nightly/${NIGHTLY_LATEST_VERSION}" {
-  run nvh --insecure remove "nightly/${NIGHTLY_LATEST_VERSION}"
-  [ "$status" -eq 0 ]
+  nvh --insecure remove "nightly/${NIGHTLY_LATEST_VERSION}"
 
   run nvh cache ls
   [ "${lines[0]}" = "node/${ARGON_VERSION}" ]
@@ -45,8 +43,7 @@ function teardown() {
 }
 
 @test "nvh cache rm 4 # albeit cache rm is undocumented" {
-  run nvh --insecure cache rm 4
-  [ "$status" -eq 0 ]
+  nvh --insecure cache rm 4
 
   run nvh cache ls
   [ "${lines[0]}" = "nightly/${NIGHTLY_LATEST_VERSION}" ]
@@ -55,8 +52,7 @@ function teardown() {
 }
 
 @test "nvh cache clear" {
-  run nvh --insecure cache clear
-  [ "$status" -eq 0 ]
+  nvh --insecure cache clear
 
   run nvh cache ls
   [ "$output" = "" ]
@@ -65,11 +61,9 @@ function teardown() {
 @test "nvh cache prune" {
   # Remove fake directory and install real lts
   nvh rm "${LTS_VERSION}"
-  run nvh --insecure install lts
-  [ "$status" -eq 0 ]
+  nvh --insecure install lts
   # Modify PATH so nvh sees LTS as active version of node
-  PATH="${NVH_PREFIX}/bin:${PATH}" run nvh cache prune
-  [ "$status" -eq 0 ]
+  PATH="${NVH_PREFIX}/bin:${PATH}" nvh cache prune
 
   run nvh cache ls
   [ "${lines[0]}" = "node/${LTS_VERSION}" ]
