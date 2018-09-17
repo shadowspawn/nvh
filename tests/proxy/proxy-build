@@ -17,18 +17,28 @@ export NVH_PREFIX
 readonly ARGON_VERSION=$(NVH_MAX_REMOTE_MATCHES=1 nvh lsr argon)
 readonly NIGHTLY_LATEST_VERSION=$(NVH_MAX_REMOTE_MATCHES=1 nvh lsr nightly)
 readonly LTS_VERSION=$(NVH_MAX_REMOTE_MATCHES=1 nvh lsr lts)
+readonly TAOBAO_LTS_VERSION=$(NVH_MODE_MIRROR=https://npm.taobao.org/mirrors/node NVH_MAX_REMOTE_MATCHES=1 nvh lsr lts)
+
+if [[ "${TAOBAO_LTS_VERSION}" != "${LTS_VERSION}" ]]; then
+  echo "taobao mirror is out of date, and not currently coping with that in tests..."
+  exit 2
+fi
 
 echo "Loading up cache..."
 
 # Go through proxy so it can record traffic
 export https_proxy="localhost:8080"
 set -x
+# native
 nvh --insecure install argon
 nvh --insecure install nightly/latest
 nvh --insecure install lts
-curl --insecure --progress-bar "https://nodejs.org/dist/${ARGON_VERSION}/node-${ARGON_VERSION}-linux-x64.tar.gz" > /dev/null
-curl --insecure --progress-bar "https://nodejs.org/dist/${LTS_VERSION}/node-${LTS_VERSION}-linux-x64.tar.gz" > /dev/null
-curl --insecure --progress-bar "https://nodejs.org/download/nightly/${NIGHTLY_LATEST_VERSION}/node-${NIGHTLY_LATEST_VERSION}-linux-x64.tar.gz" > /dev/null
+NVH_MODE_MIRROR=https://npm.taobao.org/mirrors/node nvh --insecure install lts
+# Linux
+curl --insecure --location --progress-bar "https://nodejs.org/dist/${ARGON_VERSION}/node-${ARGON_VERSION}-linux-x64.tar.gz" > /dev/null
+curl --insecure --location --progress-bar "https://nodejs.org/dist/${LTS_VERSION}/node-${LTS_VERSION}-linux-x64.tar.gz" > /dev/null
+curl --insecure --location --progress-bar "https://nodejs.org/download/nightly/${NIGHTLY_LATEST_VERSION}/node-${NIGHTLY_LATEST_VERSION}-linux-x64.tar.gz" > /dev/null
+curl --insecure --location --progress-bar "https://npm.taobao.org/mirrors/node/${TAOBAO_LTS_VERSION}/node-${TAOBAO_LTS_VERSION}-linux-x64.tar.gz" > /dev/null
 set +x
 
 rm -rf "${NVH_PREFIX}"
