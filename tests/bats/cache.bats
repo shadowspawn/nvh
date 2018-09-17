@@ -2,7 +2,8 @@
 
 load ../export_test_versions
 
-g_tmp=
+g_tmp_prefix=
+
 
 function setup() {
   g_tmp_prefix="$(mktemp -d)"
