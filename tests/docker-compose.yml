@@ -2,12 +2,11 @@ version: '3'
 services:
   archlinux:
     build:
-      context: .
+      context: dockerfiles
       dockerfile: Dockerfile-archlinux
     volumes:
       - ../tests:/usr/local/nvh_tests
       - ../bin/nvh:/usr/local/bin/nvh
-      - ../../n/bin/n:/usr/local/bin/n
     environment:
       - https_proxy
       - NVH_NODE_MIRROR
@@ -15,12 +14,11 @@ services:
       - NVH_MAX_REMOTE_MATCHES
   centos:
     build:
-      context: .
+      context: dockerfiles
       dockerfile: Dockerfile-centos
     volumes:
       - ../tests:/usr/local/nvh_tests
       - ../bin/nvh:/usr/local/bin/nvh
-      - ../../n/bin/n:/usr/local/bin/n
     environment:
       - https_proxy
       - NVH_NODE_MIRROR
@@ -28,12 +26,11 @@ services:
       - NVH_MAX_REMOTE_MATCHES
   centos-old:
     build:
-      context: .
+      context: dockerfiles
       dockerfile: Dockerfile-centos-old
     volumes:
       - ../tests:/usr/local/nvh_tests
       - ../bin/nvh:/usr/local/bin/nvh
-      - ../../n/bin/n:/usr/local/bin/n
     environment:
       - https_proxy
       - NVH_NODE_MIRROR
@@ -41,12 +38,11 @@ services:
       - NVH_MAX_REMOTE_MATCHES
   alpine-old:
     build:
-      context: .
+      context: dockerfiles
       dockerfile: Dockerfile-alpine-old
     volumes:
       - ../tests:/usr/local/nvh_tests
       - ../bin/nvh:/usr/local/bin/nvh
-      - ../../n/bin/n:/usr/local/bin/n
     environment:
       - https_proxy
       - NVH_NODE_MIRROR
@@ -54,12 +50,11 @@ services:
       - NVH_MAX_REMOTE_MATCHES
   ubuntu-curl:
     build:
-      context: .
+      context: dockerfiles
       dockerfile: Dockerfile-ubuntu-curl
     volumes:
       - ../tests:/usr/local/nvh_tests
       - ../bin/nvh:/usr/local/bin/nvh
-      - ../../n/bin/n:/usr/local/bin/n
     environment:
       - https_proxy
       - NVH_NODE_MIRROR
@@ -67,12 +62,11 @@ services:
       - NVH_MAX_REMOTE_MATCHES
   ubuntu-curl-bats:
     build:
-      context: .
+      context: dockerfiles
       dockerfile: Dockerfile-ubuntu-curl-bats
     volumes:
       - ../tests:/usr/local/nvh_tests
       - ../bin/nvh:/usr/local/bin/nvh
-      - ../../n/bin/n:/usr/local/bin/n
     environment:
       - https_proxy
       - NVH_NODE_MIRROR
@@ -80,12 +74,11 @@ services:
       - NVH_MAX_REMOTE_MATCHES
   ubuntu-wget:
     build:
-      context: .
+      context: dockerfiles
       dockerfile: Dockerfile-ubuntu-wget
     volumes:
       - ../tests:/usr/local/nvh_tests
       - ../bin/nvh:/usr/local/bin/nvh
-      - ../../n/bin/n:/usr/local/bin/n
     environment:
       - https_proxy
       - NVH_NODE_MIRROR
@@ -93,12 +86,11 @@ services:
       - NVH_MAX_REMOTE_MATCHES
   ubuntu-wget-bats:
     build:
-      context: .
+      context: dockerfiles
       dockerfile: Dockerfile-ubuntu-wget-bats
     volumes:
       - ../tests:/usr/local/nvh_tests
       - ../bin/nvh:/usr/local/bin/nvh
-      - ../../n/bin/n:/usr/local/bin/n
     environment:
       - https_proxy
       - NVH_NODE_MIRROR
@@ -106,12 +98,11 @@ services:
       - NVH_MAX_REMOTE_MATCHES
   ubuntu-old-curl:
     build:
-      context: .
+      context: dockerfiles
       dockerfile: Dockerfile-ubuntu-old-curl
     volumes:
       - ../tests:/usr/local/nvh_tests
       - ../bin/nvh:/usr/local/bin/nvh
-      - ../../n/bin/n:/usr/local/bin/n
     environment:
       - https_proxy
       - NVH_NODE_MIRROR
@@ -119,12 +110,11 @@ services:
       - NVH_MAX_REMOTE_MATCHES
   ubuntu-old-wget:
     build:
-      context: .
+      context: dockerfiles
       dockerfile: Dockerfile-ubuntu-old-wget
     volumes:
       - ../tests:/usr/local/nvh_tests
       - ../bin/nvh:/usr/local/bin/nvh
-      - ../../n/bin/n:/usr/local/bin/n
     environment:
       - https_proxy
       - NVH_NODE_MIRROR
