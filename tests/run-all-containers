@@ -4,7 +4,7 @@ services=( archlinux centos centos-old ubuntu-curl ubuntu-old-curl ubuntu-wget u
 
 for service in "${services[@]}" ; do
   echo "${service}"
-  docker-compose run "${service}" "$@"
+  docker-compose run --rm "${service}" "$@"
   echo ""
 done
 

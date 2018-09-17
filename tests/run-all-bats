@@ -5,7 +5,7 @@ services=( ubuntu-curl ubuntu-wget )
 for service in "${services[@]}" ; do
   echo "${service}"
   # export env might be using for tests
-  docker-compose run "${service}" "bats" "/usr/local/nvh_tests/bats"
+  docker-compose run --rm "${service}" "bats" "/usr/local/nvh_tests/bats"
   echo ""
 done
 
