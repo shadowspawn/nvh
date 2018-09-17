@@ -12,7 +12,7 @@ Setup:
 
 First prepare caching proxy server:
 
-    cd test/proxy
+    cd tests/proxy
     ./proxy-build # first time, then optional
     ./proxy-run
 
@@ -30,7 +30,7 @@ Run tests using caching proxy looking for expected versions from above:
     # run all the tests in containers and natively
     ./run-all-bats
 
-Tip:
+## BATS Development Tips
 
 There is an [issue](https://github.com/bats-core/bats-core/pull/24) affecting bats with bash 3 as used on Mac, that failing tests using `[[ ]]` are not detected. A work-around if the newer tests form is desired:
 
