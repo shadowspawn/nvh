@@ -1,7 +1,14 @@
 FROM ubuntu:latest
 
+# Add curl and rsync for nvh.
+# Temporarily add git to get bats, then restore as much as possible.
+
 RUN apt-get update \
-&& apt-get install -y curl wget rsync \
+&& apt-get install -y git curl rsync \
+&& git clone https://github.com/bats-core/bats-core.git \
+&& bats-core/install.sh /usr/local \
+&& apt-get -y remove --purge git \
+&& apt -y autoremove \
 && rm -rf /var/lib/apt/lists/*
 
 CMD ["/bin/bash"]

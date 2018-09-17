@@ -60,34 +60,10 @@ services:
       - NVH_NODE_MIRROR
       - NVH_NODE_DOWNLOAD_MIRROR
       - NVH_MAX_REMOTE_MATCHES
-  ubuntu-curl-bats:
-    build:
-      context: dockerfiles
-      dockerfile: Dockerfile-ubuntu-curl-bats
-    volumes:
-      - ../tests:/usr/local/nvh_tests
-      - ../bin/nvh:/usr/local/bin/nvh
-    environment:
-      - https_proxy
-      - NVH_NODE_MIRROR
-      - NVH_NODE_DOWNLOAD_MIRROR
-      - NVH_MAX_REMOTE_MATCHES
   ubuntu-wget:
     build:
       context: dockerfiles
       dockerfile: Dockerfile-ubuntu-wget
-    volumes:
-      - ../tests:/usr/local/nvh_tests
-      - ../bin/nvh:/usr/local/bin/nvh
-    environment:
-      - https_proxy
-      - NVH_NODE_MIRROR
-      - NVH_NODE_DOWNLOAD_MIRROR
-      - NVH_MAX_REMOTE_MATCHES
-  ubuntu-wget-bats:
-    build:
-      context: dockerfiles
-      dockerfile: Dockerfile-ubuntu-wget-bats
     volumes:
       - ../tests:/usr/local/nvh_tests
       - ../bin/nvh:/usr/local/bin/nvh

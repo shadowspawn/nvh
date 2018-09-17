@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-services=( ubuntu-curl-bats ubuntu-wget-bats )
+services=( ubuntu-curl ubuntu-wget )
 
 for service in "${services[@]}" ; do
   echo "${service}"
