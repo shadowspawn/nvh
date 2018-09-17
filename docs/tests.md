@@ -1,8 +1,8 @@
 # Tests
 
-## Unit Tests
+## Automated Tests
 
-Unit tests use `mitmproxy` and Bash Automated Testing System (`bats`). The proxy caching is actually optional, but much improves performance and avoids hammering nodejs server.
+The tests use `mitmproxy` and Bash Automated Testing System (`bats`). The proxy caching is actually optional, but much improves performance and avoids hammering nodejs server.
 
 Setup:
 
@@ -29,6 +29,12 @@ Run tests using caching proxy looking for expected versions from above:
     bats bats/lsr.bats
     # run all the tests in containers and natively
     ./run-all-bats
+
+Tip:
+
+There is an [issue](https://github.com/bats-core/bats-core/pull/24) affecting bats with bash 3 as used on Mac, that failing tests using `[[ ]]` are not detected. A work-around if the newer tests form is desired:
+
+    [[ "a" = "b ]] || return 2
 
 ## Manual Tests
 
