@@ -6,14 +6,16 @@ The tests use `mitmproxy` and Bash Automated Testing System (`bats`). The proxy 
 
 Setup:
 
-    # can install on Mac using homebrew
+    # using homebrew (Mac) to install mitmproxy
     brew install mitmproxy
+    # using npm to install bats
     npm install --global bats
 
 First prepare caching proxy server:
 
     cd tests/proxy
-    ./proxy-build # first time, then optional
+    # create proxy~~.dump, run build again when want fresh cache
+    ./proxy-build 
     ./proxy-run
 
 Prepare file with expected version values for labels and codenames:
@@ -41,11 +43,11 @@ There is an [issue](https://github.com/bats-core/bats-core/pull/24) affecting ba
 `nvh` and `tests/` are mounted in all containers. Exported environment variables are passed through: `https_proxy` `NVH_NODE_MIRROR` `NVH_NODE_DOWNLOAD_MIRROR` `NVH_MAX_REMOTE_MATCHES`. This makes it straight forward to try something locally and try same thing across other environments.
 
     cd tests
-    # bash for manual testing
+    # open bash shell for manual testing
     docker-compose run ubuntu-curl
-    # run command on plain containers and native
+    # run command on containers, and native on host
     export NVH_MAX_REMOTE_MATCHES=3
     nvh lsr rc
     ./run-all-containers nvh lsr rc
-    # run tests on bats containers and native (as above)
+    # run tests on (some) containers, and native on host
     ./run-all-bats

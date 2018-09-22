@@ -47,14 +47,14 @@ Example `~/.wgetrc` ([documentation](https://www.gnu.org/software/wget/manual/ht
 
 ## Troubleshooting
 
-To experiment and find what settings you need, use `curl` (or `wget`) directly with the node mirror and check the error messages.
+To experiment and find what settings you need, it may be easier to use `curl` (or `wget`) directly with the node mirror and check the error messages.
 
 For these examples there is a proxy running on localhost:8080 which does not require authentication, but the certificates it offers
 are not trusted.
 
 First try fails because of the certificates and `curl` helpfully explains:
 
-    $ curl --proxy localhost:8080 https://nodejs.org/dist/
+    $ curl --proxy localhost:8080 https://nodejs.org/dist/index.tab
     curl: (60) SSL certificate problem: self signed certificate in certificate chain
     ...
     If you'd like to turn off curl's verification of the certificate, use
@@ -63,14 +63,14 @@ First try fails because of the certificates and `curl` helpfully explains:
 
 Once you get the command to work with settings appropriate for your setup, like:
 
-    $ curl --insecure --proxy localhost:8080 https://nodejs.org/dist/
+    $ curl --insecure --proxy localhost:8080 https://nodejs.org/dist/index.tab
     <html>
     <head><title>Index of /dist/</title></head>
     ...
 
 then you can try moving the proxy out of the command:
 
-    $ https_proxy=localhost:8080 curl --insecure https://nodejs.org/dist/
+    $ https_proxy=localhost:8080 curl --insecure https://nodejs.org/dist/index.tab
     <html>
     <head><title>Index of /dist/</title></head>
     ...
