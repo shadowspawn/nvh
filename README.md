@@ -70,7 +70,6 @@ There are labels for two especially useful versions:
 There is support for release streams:
 
 - `argon`, `boron`, `carbon`: codenames for LTS release streams
-- `v6.x`, `7.x`: major version number release streams
 
 The last form is for specifying [other releases](https://nodejs.org/download) available using the name of the remote download folder followed by the complete or incomplete version.
 
@@ -122,9 +121,10 @@ Remove some downloaded versions:
 
     nvh rm 0.9.4 v0.10.0
 
-Remove all downloaded versions except the installed version:
+Remove all downloaded versions except the installed version, or all:
 
-    nvh prune
+    nvh cache prune
+    nvh cache clear
 
 Display diagnostics to help resolve problems:
 

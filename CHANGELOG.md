@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
+## [6.0.2] (2018-09-23)
+
+### Added
+
+- automated test coverage
+
+### Fixed
+
+- removed references to numeric release streams (e.g. v7.x) from documentation
+
 ## [6.0.1] (2018-09-15)
 
 ### Fixed
@@ -187,7 +197,8 @@ Changes from upstream [tj/n](https://github.com/tj/n) 2.1.12
 - `--arch` option
 
 [Unreleased]: https://github.com/JohnRGee/nvh/compare/master...develop
-[6.0.0]: https://github.com/JohnRGee/nvh/compare/v6.0.0...JohnRGee:v6.0.1
+[6.0.2]: https://github.com/JohnRGee/nvh/compare/v6.0.1...JohnRGee:v6.0.2
+[6.0.1]: https://github.com/JohnRGee/nvh/compare/v6.0.0...JohnRGee:v6.0.1
 [6.0.0]: https://github.com/JohnRGee/nvh/compare/v5.0.0...JohnRGee:v6.0.0
 [5.0.0]: https://github.com/JohnRGee/nvh/compare/v4.2.0...JohnRGee:v5.0.0
 [4.2.1]: https://github.com/JohnRGee/nvh/compare/v4.2.0...JohnRGee:v4.2.1

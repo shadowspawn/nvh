@@ -6,7 +6,7 @@
 # Setup.
 #
 
-readonly VERSION="6.0.2-0"
+readonly VERSION="6.0.2"
 readonly TAB_CHAR=$'\t'
 
 NVH_PREFIX=${NVH_PREFIX:-/usr/local}
@@ -259,13 +259,13 @@ Aliases:
 Versions:
 
   Numeric version numbers can be complete or incomplete, with an optional leading 'v'.
-  Versions can also be specified by labels, by release stream,
+  Versions can also be specified by label, or codename,
   and other downloadable releases by <remote-folder>/<version>
 
     4.9.1, 8, v6.1    Numeric versions
     lts               Newest Long Term Support official release
     latest, current   Newest official release
-    boron, v7.x       Release streams
+    boron, carbon     Codenames for release streams
     nightly/latest, chakracore-release/10, rc/v9.4.0-rc.1
 
 Examples:
