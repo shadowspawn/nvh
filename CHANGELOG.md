@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
+## [Unreleased] (Date goes here)
+
+### Fixed
+
 ## [6.0.2] (2018-09-23)
 
 ### Added
