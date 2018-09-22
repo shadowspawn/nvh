@@ -25,7 +25,8 @@
     "!win32"
   ],
   "scripts": {
-    "lint": "shellcheck bin/nvh"
+    "lint": "shellcheck bin/nvh",
+    "release": "scripts/release"
   },
   "license": "MIT"
 }
