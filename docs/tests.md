@@ -8,14 +8,14 @@ Setup:
 
     # using homebrew (Mac) to install mitmproxy
     brew install mitmproxy
-    # using npm to install bats
+    # using npm to install bats globally
     npm install --global bats
 
 First prepare caching proxy server:
 
     # create proxy~~.dump, run build again when want fresh cache
-    scripts/proxy-build 
-    scripts/proxy-run
+    ./scripts/proxy-build 
+    ./scripts/proxy-run
 
 Prepare file with expected version values for labels and codenames:
 
