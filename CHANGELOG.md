@@ -9,7 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased] (Date goes here)
 
-### Fixed
+### Changed
+
+- improve display of node JavaScript engine by `nvh doctor`
 
 ## [6.0.2] (2018-09-23)
 

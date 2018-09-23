@@ -865,7 +865,7 @@ function show_diagnostics() {
   printf "\n## node\n"
   if command -v node &> /dev/null; then
     command -v node && node --version
-    echo "node engine: $(node -e 'console.log(process.jsEngine)')"
+    node -e 'if (process.versions.v8) console.log("JavaScript engine: v8"); if (process.versions.chakracore) console.log("JavaScript engine: chakracore")'
 
     printf "\n## npm\n"
     command -v npm && npm --version
