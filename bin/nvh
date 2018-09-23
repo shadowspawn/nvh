@@ -266,7 +266,7 @@ Versions:
     lts               Newest Long Term Support official release
     latest, current   Newest official release
     boron, carbon     Codenames for release streams
-    nightly/latest, chakracore-release/10, rc/v9.4.0-rc.1
+    and nightly, chakracore-release/latest, rc/10 et al
 
 Examples:
 

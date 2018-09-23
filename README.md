@@ -71,12 +71,12 @@ There is support for release streams:
 
 - `argon`, `boron`, `carbon`: codenames for LTS release streams
 
-The last form is for specifying [other releases](https://nodejs.org/download) available using the name of the remote download folder followed by the complete or incomplete version.
+The last form is for specifying [other releases](https://nodejs.org/download) available using the name of the remote download folder optionally followed by the complete or incomplete version.
 
 - `chakracore-release/latest`
-- `nightly/10`
+- `nightly`
 - `test/v11.0.0-test20180528`
-- `rc/v10.0.0-rc.1`
+- `rc/10`
 
 ## Using Downloaded Node Versions Without Reinstalling
 
