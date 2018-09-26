@@ -84,3 +84,7 @@ Pros:
 Cons:
 
 - pervasive changes
+
+## Always Install (even when node version already matches)
+
+## (Add more from CHANGELOG)
