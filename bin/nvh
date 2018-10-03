@@ -1044,7 +1044,7 @@ if [[ $# -eq 0 ]]; then
 else
   case "$1" in
     doctor) show_diagnostics ;;
-    install|i) shift; install "$1" ;;
+    i|install) shift; install "$1" ;;
     ls|list) versions_paths ;;
     lsr|ls-remote|list-remote) shift; display_remote_versions "$1" ;;
     cache) shift; cache_subcommand "$@" ;;
