@@ -208,6 +208,7 @@ Changes from upstream [tj/n](https://github.com/tj/n) 2.1.12
 - `--arch` option
 
 [Unreleased]: https://github.com/JohnRGee/nvh/compare/master...develop
+[6.0.3]: https://github.com/JohnRGee/nvh/compare/v6.0.2...JohnRGee:v6.0.3
 [6.0.2]: https://github.com/JohnRGee/nvh/compare/v6.0.1...JohnRGee:v6.0.2
 [6.0.1]: https://github.com/JohnRGee/nvh/compare/v6.0.0...JohnRGee:v6.0.1
 [6.0.0]: https://github.com/JohnRGee/nvh/compare/v5.0.0...JohnRGee:v6.0.0
