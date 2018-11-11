@@ -20,7 +20,7 @@ First prepare caching proxy server:
 Prepare file with expected version values for labels and codenames:
 
     cd tests
-    https_proxy=localhost:8080 ./loopup-versions
+    https_proxy=localhost:8080 ./lookup-versions
 
 Run tests using caching proxy looking for expected versions from above:
 
