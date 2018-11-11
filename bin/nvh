@@ -894,6 +894,10 @@ function show_diagnostics() {
     warn "rsync not found. Needed for installs."
   fi
 
+  printf "\n## uname\n"
+  uname -a
+
+
   printf "\n\n# Settings\n"
 
   printf "\n\n## nvh\n"
