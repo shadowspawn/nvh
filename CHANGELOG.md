@@ -7,12 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
-## [Unreleased] (Date goes here)
+## [6.0.3] (2018-11-11)
+
+### Added
+
+- show `uname` in `nvh doctor`
 
 ### Changed
 
 - improve display of node JavaScript engine by `nvh doctor`
-- add `uname` to `nvh doctor`
+- tweak relative links in README for compatibility with npmjs.org
 
 ## [6.0.2] (2018-09-23)
 
