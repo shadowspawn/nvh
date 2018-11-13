@@ -7,7 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
-## [Unreleased] (date goes here)
+## [6.0.4] (2018-11-13)
+
+No code changes.
+
+### Changed
+
+- restore relative links in README, now [fixed](https://npm.community/t/relative-links-in-npm-readme-markdown-not-functional/1525/5) on npmjm README with fresh publish (fingers crossed)
+
 
 ## [6.0.3] (2018-11-11)
 
@@ -210,6 +217,7 @@ Changes from upstream [tj/n](https://github.com/tj/n) 2.1.12
 - `--arch` option
 
 [Unreleased]: https://github.com/JohnRGee/nvh/compare/master...develop
+[6.0.3]: https://github.com/JohnRGee/nvh/compare/v6.0.3...JohnRGee:v6.0.4
 [6.0.3]: https://github.com/JohnRGee/nvh/compare/v6.0.2...JohnRGee:v6.0.3
 [6.0.2]: https://github.com/JohnRGee/nvh/compare/v6.0.1...JohnRGee:v6.0.2
 [6.0.1]: https://github.com/JohnRGee/nvh/compare/v6.0.0...JohnRGee:v6.0.1
