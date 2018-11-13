@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
+## [Unreleased] (date goes here)
+
 ## [6.0.4] (2018-11-13)
 
 No code changes.
@@ -14,7 +16,6 @@ No code changes.
 ### Changed
 
 - restore relative links in README, now [fixed](https://npm.community/t/relative-links-in-npm-readme-markdown-not-functional/1525/5) on npmjm README with fresh publish (fingers crossed)
-
 
 ## [6.0.3] (2018-11-11)
 
