@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased] (date goes here)
 
+## Added
+
+- show warning if installed version is not active version. Resolves [#3](https://github.com/JohnRGee/nvh/issues/3)
+ 
 ## [6.0.4] (2018-11-13)
 
 No code changes.

@@ -187,6 +187,16 @@ function is_exact_numeric_version() {
 }
 
 #
+# Compare paths, making some effort to normalise
+#
+
+function paths_match() {
+  path1="$( cd "$1" 2>/dev/null && pwd || echo "$1" )"
+  path2="$( cd "$2" 2>/dev/null && pwd || echo "$2" )"
+  [[ "${path1}" = "${path2}" ]]
+}
+
+#
 # Functions used when showing versions installed
 #
 
@@ -398,7 +408,7 @@ function display_cache_versions() {
       $ESCAPE_SEQ)
         # Handle ESC sequences followed by other characters, i.e. arrow keys
         read -rsn 1 -t 1 tmp
-        if  [[ "$tmp" == "[" ]]; then
+        if  [[ "$tmp" = "[" ]]; then
           read -rsn 1 -t 1 arrow
           case "$arrow" in
             $UP)
@@ -562,8 +572,18 @@ function activate() {
       rsync --recursive --archive --keep-dirlinks "${dir}/${subdir}" "${NVH_PREFIX}"
     fi
   done
-  disable_pax_mprotect "$NVH_PREFIX/bin/node"
-  install_log "installed" "$(node --version)"
+  installed_node="${NVH_PREFIX}/bin/node"
+  disable_pax_mprotect "${installed_node}"
+  install_log "installed" "$("${installed_node}" --version)"
+
+  # Risk false warnings by checking, but very confusing if installed version is not active version.
+  active_node="$(command -v node)"
+  if ! paths_match "${active_node}" "${installed_node}"; then
+    echo ""
+    warn "Installed node to: ${installed_node}"
+    warn "but active node at: ${active_node}"
+    echo "(try running 'nvh doctor')"
+  fi
 }
 
 #
@@ -922,7 +942,7 @@ function show_diagnostics() {
   if [[ "${path_wth_guards}" =~ :${install_bin}/?: ]]; then
     printf "good\n"
   else
-    warn "possible problem, '${install_bin}' is not in PATH"
+    warn "'${install_bin}' is not in PATH"
   fi
   if command -v node &> /dev/null; then
     printf "\nChecking nvh install destination priority in PATH...\n"
