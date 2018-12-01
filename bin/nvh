@@ -187,16 +187,6 @@ function is_exact_numeric_version() {
 }
 
 #
-# Compare paths, making some effort to normalise
-#
-
-function paths_match() {
-  path1="$( cd "$1" 2>/dev/null && pwd || echo "$1" )"
-  path2="$( cd "$2" 2>/dev/null && pwd || echo "$2" )"
-  [[ "${path1}" = "${path2}" ]]
-}
-
-#
 # Functions used when showing versions installed
 #
 
@@ -572,13 +562,13 @@ function activate() {
       rsync --recursive --archive --keep-dirlinks "${dir}/${subdir}" "${NVH_PREFIX}"
     fi
   done
-  installed_node="${NVH_PREFIX}/bin/node"
+  local installed_node="${NVH_PREFIX}/bin/node"
   disable_pax_mprotect "${installed_node}"
   install_log "installed" "$("${installed_node}" --version)"
 
   # Risk false warnings by checking, but very confusing if installed version is not active version.
-  active_node="$(command -v node)"
-  if ! paths_match "${active_node}" "${installed_node}"; then
+  local active_node="$(command -v node)"
+  if [[ -e "${active_node}" && -e "${installed_node}" && "${active_node}" != "${installed_node}" ]]; then
     echo ""
     warn "Installed node to: ${installed_node}"
     warn "but active node at: ${active_node}"
