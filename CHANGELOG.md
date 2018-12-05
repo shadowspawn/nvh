@@ -12,9 +12,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## Added
 
 - `nvh uninstall` to remove installed version of node, npm, et al
-- show warning if installed node version is not active version. Resolves [#3](https://github.com/JohnRGee/nvh/issues/3)
+    - [upstream issue #540](https://github.com/tj/n/issues/540)
+- show warning after install if installed node version is not active version. Resolves [#3](https://github.com/JohnRGee/nvh/issues/3)
 - add (undocumented) `--nowarn` to suppress above warning if necessary!
- 
+
 ## [6.0.4] (2018-11-13)
 
 No code changes.
