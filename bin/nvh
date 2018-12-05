@@ -24,6 +24,7 @@ readonly NODE_DOWNLOAD_MIRROR
 # Modified by command options, but otherwise constant
 g_showing_get_progress="false"
 PRESERVE_NPM="false"
+g_show_warnings="true"
 
 g_ls_remote_max_matches=${NVH_MAX_REMOTE_MATCHES:-20}
 
@@ -567,12 +568,14 @@ function activate() {
   install_log "installed" "$("${installed_node}" --version)"
 
   # Risk false warnings by checking, but very confusing if installed version is not active version.
-  local active_node="$(command -v node)"
-  if [[ -e "${active_node}" && -e "${installed_node}" && "${active_node}" != "${installed_node}" ]]; then
-    echo ""
-    warn "Installed node to: ${installed_node}"
-    warn "but active node at: ${active_node}"
-    echo "(try running 'nvh doctor')"
+  if [[ "${g_show_warnings}" = "true" ]]; then
+    local active_node="$(command -v node)"
+    if [[ -e "${active_node}" && -e "${installed_node}" && "${active_node}" != "${installed_node}" ]]; then
+      echo ""
+      warn "Installed node to: ${installed_node}"
+      warn "but active node at: ${active_node}"
+      echo "(try running 'nvh doctor')"
+    fi
   fi
 }
 
@@ -680,6 +683,7 @@ function prune_cache() {
 }
 
 function clear_cache() {
+  # Side note:tThis will leave behind empty folders, so not a clean uninstall.
   for folder_and_version in $(versions_paths); do
     echo "${folder_and_version}"
     rm -rf "${CACHE_DIR:?}/${folder_and_version}"
@@ -843,6 +847,42 @@ cache_subcommand() {
     rm|remove) shift; remove_versions "$@" ;;
     *) abort "unrecognised cache command '$1'" ;;
   esac
+}
+
+#
+# delete_with_echo <target>
+#
+
+function delete_with_echo() {
+  if [[ -e "$1" ]]; then
+    echo "$1"
+    rm -rf "$1"
+  fi
+}
+
+#
+# uninstall_installed
+# Uninstall the installed node and npm (leaving alone the cache),
+# so undo install, and may expose possible system installed versions.
+#
+
+uninstall_installed() {
+  # npm: https://docs.npmjs.com/misc/removing-npm
+  #   rm -rf /usr/local/{lib/node{,/.npm,_modules},bin,share/man}/npm*
+  # node: https://stackabuse.com/how-to-uninstall-node-js-from-mac-osx/
+  # Doing it by hand rather than scanning cache, so still works if cache deleted first.
+  # This covers tarballs for at least node 4 through 10.
+  echo "Uninstalling node and npm"
+  delete_with_echo "${NVH_PREFIX}/bin/node"
+  delete_with_echo "${NVH_PREFIX}/bin/npm"
+  delete_with_echo "${NVH_PREFIX}/bin/npx"
+  delete_with_echo "${NVH_PREFIX}/include/node"
+  delete_with_echo "${NVH_PREFIX}/lib/dtrace/node.d"
+  delete_with_echo "${NVH_PREFIX}/lib/node_modules/npm"
+  delete_with_echo "${NVH_PREFIX}/share/doc/node"
+  delete_with_echo "${NVH_PREFIX}/share/man/man1/node.1"
+  delete_with_echo "${NVH_PREFIX}/share/systemtap/tapset/node.stp"
+  echo "(To clear cached downloads run 'nvh cache clear')"
 }
 
 #
@@ -1034,6 +1074,7 @@ while [[ $# -ne 0 ]]; do
     --all) set_show_all_remote_matches ;;
     -h|--help|help) display_help; exit ;;
     --insecure) set_insecure ;;
+    --nowarn) g_show_warnings="false" ;;
     -p|--preserve) set_preserve_npm ;;
     -V|--version) display_nvh_version; exit ;;
     -*) abort "unrecognised option '$1'"; exit 1 ;;
@@ -1060,6 +1101,7 @@ else
     prune) prune_cache ;;
     rm|remove) shift; remove_versions "$@" ;;
     run) shift; execute_with_version "$@" ;;
+    uninstall) uninstall_installed ;;
     which) shift; display_bin_path_for_version "$1" ;;
     *) abort "unrecognised command '$1' (perhaps you want 'nvh install $1'?)" ;;
   esac
