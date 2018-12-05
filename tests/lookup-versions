@@ -36,6 +36,10 @@ echo "Getting nightly index..."
 curl "${CURL_OPTIONS[@]}" https://nodejs.org/download/nightly/index.tab -o "${TMP_VERSIONS_DIR}/nightly.tab"
 readonly NIGHTLY_LATEST_VERSION="$(tail -n +2 < "${TMP_VERSIONS_DIR}/nightly.tab" | head -n 1 | cut -f 1)"
 
+echo "Getting taobao index..."
+curl "${CURL_OPTIONS[@]}" https://npm.taobao.org/mirrors/node/index.tab -o "${TMP_VERSIONS_DIR}/taobao.tab"
+readonly TAOBAO_6_VERSION=$(grep -E '^v6' < "${TMP_VERSIONS_DIR}/taobao.tab" | head -n 1 | cut -f 1)
+
 readonly OUTFILE="export_test_versions.bash"
 cat << EOF > "${OUTFILE}"
 export LATEST_VERSION="${LATEST_VERSION}"
@@ -44,6 +48,7 @@ export ARGON_VERSION="${ARGON_VERSION}"
 export BORON_VERSION="${BORON_VERSION}"
 export CARBON_VERSION="${CARBON_VERSION}"
 export NIGHTLY_LATEST_VERSION="${NIGHTLY_LATEST_VERSION}"
+export TAOBAO_6_VERSION="${TAOBAO_6_VERSION}"
 EOF
 
 echo ""
