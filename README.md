@@ -106,6 +106,10 @@ A `node` install normally includes `npm` as well, but you may wish to preserve a
 
 ## Miscellaneous
 
+Remove the installed version:
+
+    nvh uninstall
+
 List matching remote versions available for download:
 
     nvh ls-remote lts
