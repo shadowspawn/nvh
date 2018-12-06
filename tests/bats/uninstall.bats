@@ -3,11 +3,11 @@
 load ../export_test_versions
 
 
-@test "nvh uninstall" {
+@test "nvh uninstall (of lts)" {
   readonly TMP_PREFIX="$(mktemp -d)"
   export NVH_PREFIX="${TMP_PREFIX}"
 
-  nvh --insecure --nowarn install lts
+  nvh --insecure install lts
   [ -d "${TMP_PREFIX}/nvh/versions/node/${LTS_VERSION}" ]
   [ -f "${TMP_PREFIX}/bin/node" ]
 

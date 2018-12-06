@@ -24,7 +24,6 @@ readonly NODE_DOWNLOAD_MIRROR
 # Modified by command options, but otherwise constant
 g_showing_get_progress="false"
 PRESERVE_NPM="false"
-g_show_warnings="true"
 
 g_ls_remote_max_matches=${NVH_MAX_REMOTE_MATCHES:-20}
 
@@ -566,17 +565,13 @@ function activate() {
   done
   local installed_node="${NVH_PREFIX}/bin/node"
   disable_pax_mprotect "${installed_node}"
-  install_log "installed" "$("${installed_node}" --version)"
 
-  # Risk false warnings by checking, but very confusing if installed version is not active version.
-  if [[ "${g_show_warnings}" = "true" ]]; then
-    local active_node="$(command -v node)"
-    if [[ -e "${active_node}" && -e "${installed_node}" && "${active_node}" != "${installed_node}" ]]; then
-      echo ""
-      warn "Installed node to: ${installed_node}"
-      warn "but active node at: ${active_node}"
-      echo "(try running 'nvh doctor')"
-    fi
+  local active_node="$(command -v node)"
+  if [[ -e "${active_node}" && -e "${installed_node}" && "${active_node}" != "${installed_node}" ]]; then
+    install_log "installed" "$("${installed_node}" --version) to ${installed_node}"
+    install_log "active" "$("${active_node}" --version) at ${active_node}"
+  else
+    install_log "installed" "$("${installed_node}" --version)"
   fi
 }
 
@@ -1075,7 +1070,6 @@ while [[ $# -ne 0 ]]; do
     --all) set_show_all_remote_matches ;;
     -h|--help|help) display_help; exit ;;
     --insecure) set_insecure ;;
-    --nowarn) g_show_warnings="false" ;;
     -p|--preserve) set_preserve_npm ;;
     -V|--version) display_nvh_version; exit ;;
     -*) abort "unrecognised option '$1'"; exit 1 ;;

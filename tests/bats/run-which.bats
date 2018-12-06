@@ -7,7 +7,7 @@ load ../export_test_versions
   readonly TMP_PREFIX="$(mktemp -d)"
   export NVH_PREFIX="${TMP_PREFIX}"
 
-  nvh --insecure --nowarn i argon
+  nvh --insecure i argon
 
   run nvh --insecure run argon --version
   [ "$output" = "${ARGON_VERSION}" ]
@@ -25,7 +25,7 @@ load ../export_test_versions
   readonly TMP_PREFIX="$(mktemp -d)"
   export NVH_PREFIX="${TMP_PREFIX}"
 
-  nvh --insecure --nowarn i lts
+  nvh --insecure i lts
 
   run nvh --insecure which lts
   [ "$output" = "${NVH_PREFIX}/nvh/versions/node/${LTS_VERSION}/bin/node" ]

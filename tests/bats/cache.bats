@@ -62,7 +62,7 @@ function teardown() {
 @test "nvh cache prune" {
   # Remove fake directory and install real lts
   nvh rm "${LTS_VERSION}"
-  nvh --insecure --nowarn install lts
+  nvh --insecure install lts
   # Modify PATH so nvh sees LTS as active version of node
   PATH="${NVH_PREFIX}/bin:${PATH}" nvh cache prune
 
