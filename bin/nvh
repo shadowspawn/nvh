@@ -230,7 +230,7 @@ Commands:
 
   nvh                             Display downloaded node versions and install selection
   nvh install <version>           Install node <version> (downloading if necessary)
-  nvh uninstall                   Remove the installed node
+  nvh uninstall                   Remove the installed node and npm
   nvh ls                          Output downloaded versions
   nvh ls-remote [version]         Output matching versions available for download
   nvh run <version> [args ...]    Execute downloaded node <version> with [args ...]

@@ -9,14 +9,14 @@ Requires `bash` (and does not require a working node install).
 Forked from [tj/n](https://github.com/tj/n) with [changes to command syntax](docs/coming-from-n.md), bug fixes, and new features.
 
 - [Node Version Helper](#node-version-helper)
-    - [Installation](#installation)
-    - [Installing Node Versions](#installing-node-versions)
-    - [Specifying Node Versions](#specifying-node-versions)
-    - [Using Downloaded Node Versions Without Reinstalling](#using-downloaded-node-versions-without-reinstalling)
-    - [Preserving npm](#preserving-npm)
-    - [Miscellaneous](#miscellaneous)
-    - [Optional Environment Variables](#optional-environment-variables)
-    - [Alternatives to `nvh`](#alternatives-to-nvh)
+  - [Installation](#installation)
+  - [Installing Node Versions](#installing-node-versions)
+  - [Specifying Node Versions](#specifying-node-versions)
+  - [Using Downloaded Node Versions Without Reinstalling](#using-downloaded-node-versions-without-reinstalling)
+  - [Preserving npm](#preserving-npm)
+  - [Miscellaneous](#miscellaneous)
+  - [Optional Environment Variables](#optional-environment-variables)
+  - [Alternatives to `nvh`](#alternatives-to-nvh)
 
 ## Installation
 
@@ -106,7 +106,7 @@ A `node` install normally includes `npm` as well, but you may wish to preserve a
 
 ## Miscellaneous
 
-Remove the installed version:
+Remove the installed version of node and npm:
 
     nvh uninstall
 
