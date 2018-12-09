@@ -4,6 +4,8 @@
 
 The tests use `mitmproxy` and Bash Automated Testing System (`bats`). The proxy caching is actually optional, but much improves performance and avoids hammering nodejs server.
 
+ToDo: the test setup scripts are currently assuming same versions current for OSX and Linux, which is not always true!
+
 Setup:
 
     # using homebrew (Mac) to install mitmproxy

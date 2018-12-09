@@ -18,6 +18,8 @@ curl "${CURL_OPTIONS[@]}" https://nodejs.org/dist/index.tab -o "${TMP_VERSIONS_D
 # version	date	files	npm	v8	uv	zlib	openssl	modules	lts
 cut -f 1 -f 10 < "${TMP_VERSIONS_DIR}/index.tab" | tail -n +2 > "${TMP_VERSIONS_DIR}/versions.tab"
 
+# ToDo: filter correctly for platform, native/Linux
+
 # Collapse to single entries for each codename, make subsequent lookups easy.
 sort --field-separator=$'\t' --unique -k2 < "${TMP_VERSIONS_DIR}/versions.tab" > "${TMP_VERSIONS_DIR}/lts.tab"
 # v10.9.0	-
