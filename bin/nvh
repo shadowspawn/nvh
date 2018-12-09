@@ -878,7 +878,6 @@ uninstall_installed() {
   delete_with_echo "${NVH_PREFIX}/share/doc/node"
   delete_with_echo "${NVH_PREFIX}/share/man/man1/node.1"
   delete_with_echo "${NVH_PREFIX}/share/systemtap/tapset/node.stp"
-  echo "(To clear cached downloads run 'nvh cache clear')"
 }
 
 #
