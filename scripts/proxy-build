@@ -22,7 +22,8 @@ readonly TAOBAO_6_VERSION=$(NVH_NODE_MIRROR=https://npm.taobao.org/mirrors/node 
 
 echo "Loading up cache..."
 
-# Go through proxy so it can record traffic
+# Go through proxy so it can record traffic, http for taobao redirects
+export http_proxy="localhost:8080"
 export https_proxy="localhost:8080"
 set -x
 # native

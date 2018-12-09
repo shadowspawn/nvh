@@ -8,6 +8,7 @@ services:
       - ../tests:/usr/local/nvh_tests
       - ../bin/nvh:/usr/local/bin/nvh
     environment:
+      - http_proxy
       - https_proxy
       - NVH_NODE_MIRROR
       - NVH_NODE_DOWNLOAD_MIRROR
@@ -20,6 +21,7 @@ services:
       - ../tests:/usr/local/nvh_tests
       - ../bin/nvh:/usr/local/bin/nvh
     environment:
+      - http_proxy
       - https_proxy
       - NVH_NODE_MIRROR
       - NVH_NODE_DOWNLOAD_MIRROR
@@ -32,6 +34,7 @@ services:
       - ../tests:/usr/local/nvh_tests
       - ../bin/nvh:/usr/local/bin/nvh
     environment:
+      - http_proxy
       - https_proxy
       - NVH_NODE_MIRROR
       - NVH_NODE_DOWNLOAD_MIRROR
@@ -44,6 +47,7 @@ services:
       - ../tests:/usr/local/nvh_tests
       - ../bin/nvh:/usr/local/bin/nvh
     environment:
+      - http_proxy
       - https_proxy
       - NVH_NODE_MIRROR
       - NVH_NODE_DOWNLOAD_MIRROR
@@ -56,6 +60,7 @@ services:
       - ../tests:/usr/local/nvh_tests
       - ../bin/nvh:/usr/local/bin/nvh
     environment:
+      - http_proxy
       - https_proxy
       - NVH_NODE_MIRROR
       - NVH_NODE_DOWNLOAD_MIRROR
@@ -68,6 +73,7 @@ services:
       - ../tests:/usr/local/nvh_tests
       - ../bin/nvh:/usr/local/bin/nvh
     environment:
+      - http_proxy
       - https_proxy
       - NVH_NODE_MIRROR
       - NVH_NODE_DOWNLOAD_MIRROR
@@ -80,6 +86,7 @@ services:
       - ../tests:/usr/local/nvh_tests
       - ../bin/nvh:/usr/local/bin/nvh
     environment:
+      - http_proxy
       - https_proxy
       - NVH_NODE_MIRROR
       - NVH_NODE_DOWNLOAD_MIRROR
@@ -92,6 +99,7 @@ services:
       - ../tests:/usr/local/nvh_tests
       - ../bin/nvh:/usr/local/bin/nvh
     environment:
+      - http_proxy
       - https_proxy
       - NVH_NODE_MIRROR
       - NVH_NODE_DOWNLOAD_MIRROR
