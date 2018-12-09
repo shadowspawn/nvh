@@ -18,7 +18,7 @@ export PATH=${NVH_PREFIX}/bin:$PATH
 readonly ARGON_VERSION=$(NVH_MAX_REMOTE_MATCHES=1 nvh lsr argon)
 readonly NIGHTLY_LATEST_VERSION=$(NVH_MAX_REMOTE_MATCHES=1 nvh lsr nightly)
 readonly LTS_VERSION=$(NVH_MAX_REMOTE_MATCHES=1 nvh lsr lts)
-readonly TAOBAO_6_VERSION=$(NVH_MODE_MIRROR=https://npm.taobao.org/mirrors/node NVH_MAX_REMOTE_MATCHES=1 nvh lsr 6)
+readonly TAOBAO_6_VERSION=$(NVH_NODE_MIRROR=https://npm.taobao.org/mirrors/node NVH_MAX_REMOTE_MATCHES=1 nvh lsr 6)
 
 echo "Loading up cache..."
 
@@ -29,8 +29,9 @@ set -x
 nvh --insecure install argon
 nvh --insecure install nightly/latest
 nvh --insecure install lts
-NVH_MODE_MIRROR=https://npm.taobao.org/mirrors/node nvh --insecure install 6
+NVH_NODE_MIRROR=https://npm.taobao.org/mirrors/node nvh --insecure install 6
 # Linux
+# ToDo: Linux versions may be different (vs native)
 curl --insecure --location --progress-bar "https://nodejs.org/dist/${ARGON_VERSION}/node-${ARGON_VERSION}-linux-x64.tar.gz" > /dev/null
 curl --insecure --location --progress-bar "https://nodejs.org/dist/${LTS_VERSION}/node-${LTS_VERSION}-linux-x64.tar.gz" > /dev/null
 curl --insecure --location --progress-bar "https://nodejs.org/download/nightly/${NIGHTLY_LATEST_VERSION}/node-${NIGHTLY_LATEST_VERSION}-linux-x64.tar.gz" > /dev/null
