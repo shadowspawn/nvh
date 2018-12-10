@@ -125,7 +125,7 @@ Remove some downloaded versions:
 
     nvh rm 0.9.4 v0.10.0
 
-Remove all downloaded versions except the installed version, or all:
+Remove all downloaded versions except the version matching the installed version, or all:
 
     nvh cache prune
     nvh cache clear
