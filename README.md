@@ -80,7 +80,7 @@ The last form is for specifying [other releases](https://nodejs.org/download) av
 
 ## Using Downloaded Node Versions Without Reinstalling
 
-There are two commands for working directly with your downloaded versions of `node`, without reinstalling.
+There are three commands for working directly with your downloaded versions of `node`, without reinstalling.
 
 You can show the path to the downloaded version:
 
@@ -90,6 +90,11 @@ You can show the path to the downloaded version:
 Or run a downloaded `node` version with the `nvh run` command:
 
     nvh run 8.11.3 --debug some.js
+
+Or execute a command with `PATH` modified so `node` and `npm` will be from the downloaded `node` version:
+
+    nvh exec lts npm --version
+    nvh exec carbon my-script --fast test
 
 ## Preserving npm
 

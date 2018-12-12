@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased] (date goes here)
 
+## Added
+
+- `nvh exec <version> <command> [args]` executes command with PATH modified, allowing use of cached npm, or running scripts using cached node and npm. (So like `nvh run` but more general.)
+
 ## [6.1.0] (2018-12-10)
 
 ## Added

@@ -233,8 +233,9 @@ Commands:
   nvh uninstall                   Remove the installed node and npm
   nvh ls                          Output downloaded versions
   nvh ls-remote [version]         Output matching versions available for download
-  nvh run <version> [args ...]    Execute downloaded node <version> with [args ...]
+  nvh run <version> [args...]     Execute downloaded node <version> with [args ...]
   nvh which <version>             Output path for downloaded node <version>
+  nvh exec <vers> <cmd> [args...] Run command with modified PATH, so downloaded node <version> and npm first
   nvh cache clear                 Remove all downloaded versions
   nvh cache prune                 Remove all downloaded versions except the installed version
   nvh rm <version ...>            Remove the given downloaded version(s)
@@ -694,43 +695,52 @@ function clear_cache() {
 }
 
 #
+# preflight_version <version>
+# Returns resolved cache directory in g_cached_version
+#
+
+function preflight_cached_version() {
+  [[ -z "$1" ]] && abort "version required"
+  local version
+  version="$(display_latest_resolved_version "$1")" || return 2
+  [[ -n "${version}" ]] || abort "no version found for '$1'"
+
+  update_download_settings_from_version "$1"
+  g_cached_version="${CACHE_DIR}/${g_download_folder_name}/${version}"
+  [[ -d "${g_cached_version}" ]] || abort "'$1' (${version}) not in downloads cache"
+}
+
+
+#
+# display_bin_path_for_version <version>
 # Output bin path for <version>
 #
 
 function display_bin_path_for_version() {
-  [[ -z "$1" ]] && abort "version required"
-  local version
-  version="$(display_latest_resolved_version "$1")" || return 2
-  [[ -n "${version}" ]] || abort "no version found for '$1'"
-
-  update_download_settings_from_version "$1"
-  local bin="${CACHE_DIR}/${g_download_folder_name}/${version}/bin/node"
-  if [[ -f "${bin}" ]]; then
-    echo "${bin}"
-  else
-    abort "'$1' (${version}) not in downloads cache"
-  fi
+  preflight_cached_version "$1"
+  echo "${g_cached_version}/bin/node"
 }
 
 #
-# Execute the given <version> of node with [args ...]
+# run_with_version <version> [args...]
+# Run the given <version> of node with [args ...]
 #
 
-function execute_with_version() {
-  [[ -z "$1" ]] && abort "version required"
-  local version
-  version="$(display_latest_resolved_version "$1")" || return 2
-  [[ -n "${version}" ]] || abort "no version found for '$1'"
+function run_with_version() {
+  preflight_cached_version "$1"
+  shift # remove version from parameters
+  exec "${g_cached_version}/bin/node" "$@"
+}
 
-  update_download_settings_from_version "$1"
-  local bin="${CACHE_DIR}/${g_download_folder_name}/${version}/bin/node"
+#
+# exec_with_version <version> <command> [args...]
+# Modify the path to include <version> and execute command.
+#
 
-  if [[ -f "${bin}" ]]; then
-    shift # remove version from parameters
-    exec "${bin}" "$@"
-  else
-    abort "'$1' (${version}) not in downloads cache"
-  fi
+function exec_with_version() {
+  preflight_cached_version "$1"
+  shift # remove version from parameters
+  PATH="${g_cached_version}/bin:$PATH" exec "$@"
 }
 
 #
@@ -1080,6 +1090,7 @@ while [[ $# -ne 0 ]]; do
     -p|--preserve) set_preserve_npm ;;
     -V|--version) display_nvh_version; exit ;;
     -*) abort "unrecognised option '$1'"; exit 1 ;;
+    exec) unprocessed_args=("$@"); break ;;
     run) unprocessed_args=("$@"); break ;;
     *) unprocessed_args+=( "$1" ) ;;
   esac
@@ -1096,13 +1107,14 @@ if [[ $# -eq 0 ]]; then
 else
   case "$1" in
     doctor) show_diagnostics ;;
+    cache) shift; cache_subcommand "$@" ;;
+    exec) shift; exec_with_version "$@" ;;
     i|install) shift; install "$1" ;;
     ls|list) versions_paths ;;
     lsr|ls-remote|list-remote) shift; display_remote_versions "$1" ;;
-    cache) shift; cache_subcommand "$@" ;;
     prune) prune_cache ;;
     rm|remove) shift; remove_versions "$@" ;;
-    run) shift; execute_with_version "$@" ;;
+    run) shift; run_with_version "$@" ;;
     uninstall) uninstall_installed ;;
     which) shift; display_bin_path_for_version "$1" ;;
     *) abort "unrecognised command '$1' (perhaps you want 'nvh install $1'?)" ;;
