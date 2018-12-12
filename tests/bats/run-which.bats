@@ -2,36 +2,61 @@
 
 load ../export_test_versions
 
-
-@test "nvh run argon, nvh run ${ARGON_VERSION}, nvh run 4" {
-  readonly TMP_PREFIX="$(mktemp -d)"
-  export NVH_PREFIX="${TMP_PREFIX}"
-
-  nvh --insecure i argon
-
-  run nvh --insecure run argon --version
-  [ "$output" = "${ARGON_VERSION}" ]
-
-  run nvh --insecure run "${ARGON_VERSION}" --version
-  [ "$output" = "${ARGON_VERSION}" ]
-
-  run nvh --insecure run 4 --version
-  [ "$output" = "${ARGON_VERSION}" ]
-
-  rm -rf "${TMP_PREFIX}"
+function setup() {
+  export NVH_PREFIX="${TMPDIR}/nvh/bats/run"
+  # See https://github.com/bats-core/bats-core/issues/39
+  # beforeAll
+  if [[ "${BATS_TEST_NUMBER}" -eq 1 ]] ; then
+    nvh --insecure install argon
+    nvh --insecure install lts
+  fi
 }
 
-@test "nvh which lts, nvh which ${LTS_VERSION}" {
-  readonly TMP_PREFIX="$(mktemp -d)"
-  export NVH_PREFIX="${TMP_PREFIX}"
+function teardown() {
+  # afterAll
+  if [[ "${#BATS_TEST_NAMES[@]}" -eq "${BATS_TEST_NUMBER}" ]] ; then
+    rm -rf "${NVH_PREFIX}"
+  fi
+}
 
-  nvh --insecure i lts
 
+@test "setupAll for run/which/exec # (2 installs)" {
+  # Dummy test so setupAll displayed while running first setup
+  [ -d "${NVH_PREFIX}/nvh/versions/node/${ARGON_VERSION}" ]
+  [ -d "${NVH_PREFIX}/nvh/versions/node/${LTS_VERSION}" ]
+}
+
+@test "nvh which 4" {
+  run nvh --insecure which 4
+  [ "$output" = "${NVH_PREFIX}/nvh/versions/node/${ARGON_VERSION}/bin/node" ]
+}
+
+@test "nvh which lts" {
   run nvh --insecure which lts
   [ "$output" = "${NVH_PREFIX}/nvh/versions/node/${LTS_VERSION}/bin/node" ]
+}
 
-  run nvh --insecure which "${LTS_VERSION}"
-  [ "$output" = "${NVH_PREFIX}/nvh/versions/node/${LTS_VERSION}/bin/node" ]
+@test "nvh run 4" {
+  run nvh --insecure run 4 --version
+  [ "$output" = "${ARGON_VERSION}" ]
+}
 
-  rm -rf "${TMP_PREFIX}"
+@test "nvh run lts" {
+  run nvh --insecure run lts --version
+  [ "$output" = "${LTS_VERSION}" ]
+}
+
+@test "nvh exec 4 node" {
+  run nvh --insecure exec 4 node --version
+  [ "$output" = "${ARGON_VERSION}" ]
+}
+
+@test "nvh exec 4 npm" {
+  run nvh --insecure exec 4 npm --version
+  [ "$output" = "2.15.11" ]
+}
+
+@test "nvh exec lts" {
+  run nvh --insecure exec lts node --version
+  [ "$output" = "${LTS_VERSION}" ]
 }
