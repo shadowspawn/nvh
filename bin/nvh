@@ -286,19 +286,21 @@ function err_no_installed_print_help() {
 }
 
 #
-# Output version after selected.
+# next_version_installed <selected-version>
+# Output version after selected (which may be blank under some circumstances).
 #
 
 function next_version_installed() {
-  list_cache_versions | grep "${selected}" -A 1 | tail -n 1
+  list_cache_versions | grep "$1" -A 1 | tail -n 1
 }
 
 #
-# Output version before selected.
+# prev_version_installed <selected-version>
+# Output version before selected  (which may be blank under some circumstances).
 #
 
 function prev_version_installed() {
-  list_cache_versions | grep "${selected}" -B 1 | head -n 1
+  list_cache_versions | grep "$1" -B 1 | head -n 1
 }
 
 #
@@ -348,11 +350,12 @@ function versions_paths() {
 }
 
 #
-# Display installed versions with <selected>
+# display_versions_with_selected <selected-version>
+# Display installed versions, with selected version highlighted.
 #
 
 function display_versions_with_selected() {
-  selected="$1"
+  local selected="$1"
   echo
   for folder_and_version in $(versions_paths); do
     if [[ "${folder_and_version}" = "${selected}" ]]; then
@@ -382,9 +385,10 @@ function list_cache_versions() {
 function display_cache_versions() {
   enter_fullscreen
   set_active_node
+  local selected="${g_active_node}"
 
   clear
-  display_versions_with_selected "${g_active_node}"
+  display_versions_with_selected "${selected}"
 
   trap handle_sigint INT
   trap handle_sigtstp SIGTSTP
@@ -404,22 +408,26 @@ function display_cache_versions() {
           case "$arrow" in
             $UP)
               clear
-              display_versions_with_selected "$(prev_version_installed)"
+              selected="$(prev_version_installed "${selected}")"
+              display_versions_with_selected "${selected}"
               ;;
             $DOWN)
               clear
-              display_versions_with_selected "$(next_version_installed)"
+              selected="$(next_version_installed "${selected}")"
+              display_versions_with_selected "${selected}"
               ;;
           esac
         fi
         ;;
       "k")
         clear
-        display_versions_with_selected "$(prev_version_installed)"
+        selected="$(prev_version_installed "${selected}")"
+        display_versions_with_selected "${selected}"
         ;;
       "j")
         clear
-        display_versions_with_selected "$(next_version_installed)"
+        selected="$(next_version_installed "${selected}")"
+        display_versions_with_selected "${selected}"
         ;;
       "q")
         clear
@@ -429,7 +437,7 @@ function display_cache_versions() {
       "")
         # enter key returns empty string
         leave_fullscreen
-        activate "${selected}"
+        [[ -n "${selected}" ]] && activate "${selected}"
         exit
         ;;
     esac
