@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1117,SC2155
-# https://github.com/koalaman/shellcheck/wiki
+# shellcheck disable=SC2155
+# https://github.com/koalaman/shellcheck/wiki/SC2155
 
 #
 # Setup.
@@ -955,6 +955,7 @@ function show_diagnostics() {
   echo "ls-remote max matches: ${g_ls_remote_max_matches}"
 
   printf "\n\n## Proxy\n"
+  # https://github.com/koalaman/shellcheck/wiki/SC2154
   # shellcheck disable=SC2154
   [[ -n "${http_proxy}" ]] && echo "http_proxy: ${http_proxy}"
   # shellcheck disable=SC2154
