@@ -59,7 +59,7 @@ function teardown() {
   [ "$output" = "" ]
 }
 
-@test "nvh cache prune" {
+@test "nvh cache prune # (1 install)" {
   # Remove fake directory and install real lts
   nvh rm "${LTS_VERSION}"
   nvh --insecure install lts

@@ -18,7 +18,7 @@ load ../export_test_versions
 }
 
 # mostly --preserve, but also variations with i/install and codename/numeric
-@test "nvh i argon; nvh --preserve install ${LTS_VERSION}" {
+@test "nvh i argon; nvh --preserve install ${LTS_VERSION} # (2 installs)" {
   readonly TMP_PREFIX="$(mktemp -d)"
   readonly ARGON_NPM_VERSION="2.15.11"
 
