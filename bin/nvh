@@ -613,8 +613,7 @@ function install() {
   mkdir -p "${dir}" || abort "sudo required (or change ownership, or define NVH_PREFIX)"
   touch "${dir}/nvh.lock"
 
-  # shellcheck disable=SC2164
-  cd "${dir}"
+  cd "${dir}" || abort "Failed to cd to directory"
 
   install_log "fetch" "${url}"
   do_get "${url}" | tar -zx --strip-components=1
