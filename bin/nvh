@@ -695,11 +695,11 @@ function clear_cache() {
 }
 
 #
-# preflight_version <version>
+# find_cached_version <version>
 # Returns resolved cache directory in g_cached_version
 #
 
-function preflight_cached_version() {
+function find_cached_version() {
   [[ -z "$1" ]] && abort "version required"
   local version
   version="$(display_latest_resolved_version "$1")" || return 2
@@ -717,7 +717,7 @@ function preflight_cached_version() {
 #
 
 function display_bin_path_for_version() {
-  preflight_cached_version "$1"
+  find_cached_version "$1"
   echo "${g_cached_version}/bin/node"
 }
 
@@ -727,7 +727,7 @@ function display_bin_path_for_version() {
 #
 
 function run_with_version() {
-  preflight_cached_version "$1"
+  find_cached_version "$1"
   shift # remove version from parameters
   exec "${g_cached_version}/bin/node" "$@"
 }
@@ -738,7 +738,7 @@ function run_with_version() {
 #
 
 function exec_with_version() {
-  preflight_cached_version "$1"
+  find_cached_version "$1"
   shift # remove version from parameters
   PATH="${g_cached_version}/bin:$PATH" exec "$@"
 }
