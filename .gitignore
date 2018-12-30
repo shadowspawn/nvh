@@ -1,3 +1,4 @@
 *~~.dump
 test/export_test_versions.bash
 .DS_Store
+node_modules

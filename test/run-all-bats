@@ -9,4 +9,4 @@ for service in "${services[@]}" ; do
 done
 
 echo "macOS"
-bats tests
+../node_modules/.bin/bats tests

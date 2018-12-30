@@ -10,8 +10,8 @@ Setup:
 
     # using homebrew (Mac) to install mitmproxy
     brew install mitmproxy
-    # using npm to install bats globally
-    npm install --global bats
+    # install bats locally
+    npm install
 
 First prepare caching proxy server:
 
@@ -30,7 +30,7 @@ Run tests using caching proxy looking for expected versions from above:
     cd test
     export https_proxy="$(hostname):8080"
     # e.g. run one test natively
-    bats tests/lsr.bats
+    npx bats tests/lsr.bats
     # run all the tests in containers and natively
     ./run-all-bats
 

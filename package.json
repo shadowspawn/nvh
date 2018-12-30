@@ -28,5 +28,8 @@
     "lint": "shellcheck bin/nvh",
     "release": "bin/release"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "bats": "^1.1.0"
+  }
 }
