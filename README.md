@@ -6,7 +6,7 @@ Easily install Node.js versions. No profile setup required for default install l
 
 Requires `bash` (and does not require a working node install).
 
-Forked from [tj/n](https://github.com/tj/n) with [changes to command syntax](docs/coming-from-n.md), bug fixes, and new features.
+Forked from [tj/n](https://github.com/tj/n) with [changes to command syntax](doc/coming-from-n.md), bug fixes, and new features.
 
 - [Node Version Helper](#node-version-helper)
   - [Installation](#installation)
@@ -96,6 +96,8 @@ Or execute a command with `PATH` modified so `node` and `npm` will be from the d
     nvh exec lts npm --version
     nvh exec carbon my-script --fast test
 
+Note: using `nvh exec` is not a work
+
 ## Preserving npm
 
 A `node` install normally includes `npm` as well, but you may wish to preserve an updated `npm` and `npx` leaving them out of the install:
@@ -147,13 +149,13 @@ To change the location to say `$HOME/.nvh`, add lines like the following to your
     export NVH_PREFIX=$HOME/.nvh
     export PATH=$NVH_PREFIX/bin:$PATH
 
-See [Environment Variables](docs/environment-variables.md) for more about these settings:
+See [Environment Variables](doc/environment-variables.md) for more about these settings:
 
     NVH_NODE_MIRROR
     NVH_NODE_DOWNLOAD_MIRROR
     NVH_MAX_REMOTE_MATCHES
 
-See [Proxy Server](docs/proxy-server.md) for variables and advice for using a proxy server.
+See [Proxy Server](doc/proxy-server.md) for variables and advice for using a proxy server.
 
     https_proxy
 
