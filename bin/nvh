@@ -468,11 +468,9 @@ function is_ok() {
 }
 
 #
-# display_tarball_platform <version>
-#
+# display_tarball_platform
 
 function display_tarball_platform() {
-  local version="${1#v}"
   local uname="$(uname -a)"
   local arch=x86
   local os=
@@ -491,25 +489,16 @@ function display_tarball_platform() {
     *aarch64*) arch=arm64 ;;
   esac
 
-  if [[ "${arch}" = "armv6l" ]]; then
-    local semver=${version//./ }
-    local major=$(echo "${semver}" | grep -o -E '[0-9]+' | head -1 | sed -e 's/^0\+//')
-    local minor=$(echo "${semver}" | awk '{print $2}' | grep -o -E '[0-9]+' | head -1 | sed -e 's/^0\+//')
-    [[ $major -eq "" && $minor -lt 12 ]] && arch=arm-pi
-  fi
-
   echo "${os}-${arch}"
 }
 
 #
 # display <file> for current platform, as per <file> field in index.tab, which is different than actual download
-# display_compatible_file_field <version>
+# display_compatible_file_field
 #
 
 function display_compatible_file_field {
-  local version="$1"
-
-  local compatible_file_field="$(display_tarball_platform $"{version}")"
+  local compatible_file_field="$(display_tarball_platform)"
   if [[ "${compatible_file_field}" =~ darwin-(.*) ]]; then
     compatible_file_field="osx-${BASH_REMATCH[1]}-tar"
   fi
@@ -522,7 +511,7 @@ function display_compatible_file_field {
 
 function tarball_url() {
   local version="$1"
-  echo "${g_download_mirror_url}/${version}/node-${version}-$(display_tarball_platform "${version}").tar.gz"
+  echo "${g_download_mirror_url}/${version}/node-${version}-$(display_tarball_platform).tar.gz"
 }
 
 #
@@ -840,7 +829,7 @@ function display_remote_versions() {
   # Using temporary variable as curl complains if pipe closes early (e.g. head).
   local versions
   # Restrict search to platform as not always available, especially initially with slow builds coming later.
-  versions="$(display_remote_index | grep -E "$(display_compatible_file_field "${version}")" |  grep -E "${match}" | cut -f -1; return "${PIPESTATUS[0]}")" || return $?
+  versions="$(display_remote_index | grep -E "$(display_compatible_file_field)" |  grep -E "${match}" | cut -f -1; return "${PIPESTATUS[0]}")" || return $?
   echo "${versions}" | head -n "${match_count}"
 }
 
