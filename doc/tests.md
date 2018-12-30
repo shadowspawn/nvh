@@ -21,15 +21,15 @@ First prepare caching proxy server:
 
 Prepare file with expected version values for labels and codenames:
 
-    cd tests
+    cd test
     https_proxy=localhost:8080 ./lookup-versions
 
 Run tests using caching proxy looking for expected versions from above:
 
-    cd tests
+    cd test
     export https_proxy="$(hostname):8080"
     # e.g. run one test natively
-    bats bats/lsr.bats
+    bats tests/lsr.bats
     # run all the tests in containers and natively
     ./run-all-bats
 
@@ -41,9 +41,9 @@ There is an [issue](https://github.com/bats-core/bats-core/pull/24) affecting ba
 
 ## Manual Tests
 
-`nvh` and `tests/` are mounted in all containers. Exported environment variables are passed through: `https_proxy` `NVH_NODE_MIRROR` `NVH_NODE_DOWNLOAD_MIRROR` `NVH_MAX_REMOTE_MATCHES`. This makes it straight forward to try something locally and try same thing across other environments.
+`nvh` and `test/` are mounted in all containers. Exported environment variables are passed through: `https_proxy` `NVH_NODE_MIRROR` `NVH_NODE_DOWNLOAD_MIRROR` `NVH_MAX_REMOTE_MATCHES`. This makes it straight forward to try something locally and try same thing across other environments.
 
-    cd tests
+    cd test
     # open bash shell for manual testing
     docker-compose run ubuntu-curl
     # run command on containers, and native on host

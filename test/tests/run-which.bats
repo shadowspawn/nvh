@@ -3,7 +3,7 @@
 load ../export_test_versions
 
 function setup() {
-  export NVH_PREFIX="${TMPDIR}/nvh/bats/run"
+  export NVH_PREFIX="${TMPDIR}/nvh/test/run"
   # See https://github.com/bats-core/bats-core/issues/39
   # beforeAll
   if [[ "${BATS_TEST_NUMBER}" -eq 1 ]] ; then

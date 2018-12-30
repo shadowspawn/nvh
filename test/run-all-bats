@@ -4,9 +4,9 @@ services=( ubuntu-curl ubuntu-wget )
 
 for service in "${services[@]}" ; do
   echo "${service}"
-  docker-compose run --rm "${service}" "bats" "/usr/local/nvh_tests/bats"
+  docker-compose run --rm "${service}" "bats" "/usr/local/nvh_tests/tests"
   echo ""
 done
 
 echo "macOS"
-bats bats
+bats tests
