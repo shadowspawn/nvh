@@ -35,6 +35,11 @@ Run single test on a single system:
     npx bats tests/lsr.bats
     docker-compose run ubuntu-curl bats /mnt/tests/lsr.bats
 
+Run a single command on more containers:
+
+    cd test
+    bin/for-each-container uname -s
+
 ## BATS Development Tips
 
 There is an [issue](https://github.com/bats-core/bats-core/pull/24) affecting bats with bash 3 as used on Mac, that failing tests using `[[ ]]` are not detected. A work-around if the newer tests form is desired:
