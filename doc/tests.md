@@ -16,8 +16,9 @@ Setup:
 First prepare caching proxy server:
 
     # create proxy~~.dump, run build again when want fresh cache
-    ./scripts/proxy-build
-    ./scripts/proxy-run
+    cd test
+    ./bin/proxy-build
+    ./bin/proxy-run
 
 Prepare file with expected version values for labels and codenames:
 
