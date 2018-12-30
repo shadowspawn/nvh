@@ -95,7 +95,6 @@ Or execute a command with `PATH` modified so `node` and `npm` will be from the d
 (NB: this `npm` will be working with a different and empty global node_modules directory, and you should not install global
 modules this way.)
 
-    nvh exec lts npm --version
     nvh exec 10 my-script --fast test
 
 ## Preserving npm
