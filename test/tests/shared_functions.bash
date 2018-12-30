@@ -46,14 +46,14 @@ function display_remote_version() {
   fi
 
   local match='xxx'
-  local mirror="https://nodejs.org/dist"
+  local mirror="${NVH_NODE_MIRROR:-https://nodejs.org/dist}"
   if [[ "$1" = "lts" ]]; then
     match='[^-]$'
   elif [[ "$1" = "latest" ]]; then
     match='.'
   elif [[ "$1" = "nightly" ]]; then
     match='.'
-    local mirror="https://nodejs.org/download/nightly"
+    mirror="${NVH_NODE_DOWNLOAD_MIRROR:-https://nodejs.org/download}/nightly"
   fi
 
   # Using temporary variable as curl complains if pipe closes early (e.g. head).
