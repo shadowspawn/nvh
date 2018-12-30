@@ -9,14 +9,14 @@ Requires `bash` (and does not require a working node install).
 Forked from [tj/n](https://github.com/tj/n) with [changes to command syntax](doc/coming-from-n.md), bug fixes, and new features.
 
 - [Node Version Helper](#node-version-helper)
-  - [Installation](#installation)
-  - [Installing Node Versions](#installing-node-versions)
-  - [Specifying Node Versions](#specifying-node-versions)
-  - [Using Downloaded Node Versions Without Reinstalling](#using-downloaded-node-versions-without-reinstalling)
-  - [Preserving npm](#preserving-npm)
-  - [Miscellaneous](#miscellaneous)
-  - [Optional Environment Variables](#optional-environment-variables)
-  - [Alternatives to `nvh`](#alternatives-to-nvh)
+    - [Installation](#installation)
+    - [Installing Node Versions](#installing-node-versions)
+    - [Specifying Node Versions](#specifying-node-versions)
+    - [Using Downloaded Node Versions Without Reinstalling](#using-downloaded-node-versions-without-reinstalling)
+    - [Preserving npm](#preserving-npm)
+    - [Miscellaneous](#miscellaneous)
+    - [Optional Environment Variables](#optional-environment-variables)
+    - [Alternatives to `nvh`](#alternatives-to-nvh)
 
 ## Installation
 
@@ -91,12 +91,12 @@ Or run a downloaded `node` version with the `nvh run` command:
 
     nvh run 8.11.3 --debug some.js
 
-Or execute a command with `PATH` modified so `node` and `npm` will be from the downloaded `node` version:
+Or execute a command with `PATH` modified so `node` and `npm` will be from the downloaded `node` version.
+(NB: this `npm` will be working with a different and empty global node_modules directory, and you should not install global
+modules this way.)
 
     nvh exec lts npm --version
-    nvh exec carbon my-script --fast test
-
-Note: using `nvh exec` is not a work
+    nvh exec 10 my-script --fast test
 
 ## Preserving npm
 
