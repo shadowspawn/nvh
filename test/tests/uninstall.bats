@@ -13,14 +13,14 @@ function teardown() {
 
 
 @test "nvh uninstall (of lts)" {
-  nvh --insecure install lts
+  nvh install lts
   [ -f "${NVH_PREFIX}/bin/node" ]
   [ -f "${NVH_PREFIX}/bin/npm" ]
   [ -f "${NVH_PREFIX}/lib/node_modules/npm/package.json" ]
 
   # Check we get all the files if we uninstall and rm cache.
   nvh uninstall
-  nvh rm --insecure lts
+  nvh rm lts
   run find "${NVH_PREFIX}" -not -type d
   [ "${status}" -eq "0" ]
   [ "$output" = "" ]
@@ -28,14 +28,14 @@ function teardown() {
 
 
 @test "nvh uninstall (of nightly/latest)" {
-  nvh --insecure install nightly/latest
+  nvh install nightly/latest
   [ -f "${NVH_PREFIX}/bin/node" ]
   [ -f "${NVH_PREFIX}/bin/npm" ]
   [ -f "${NVH_PREFIX}/lib/node_modules/npm/package.json" ]
 
   # Check we get all the files if we uninstall and rm cache.
   nvh uninstall
-  nvh rm --insecure nightly/latest
+  nvh rm nightly/latest
   run find "${NVH_PREFIX}" -not -type d
   [ "${status}" -eq "0" ]
   [ "$output" = "" ]

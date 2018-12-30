@@ -2,7 +2,7 @@
 
 # These are the versions installed and hence cached by proxy-build.
 
-nvh --insecure install 4.9.1
-nvh --insecure install nightly/latest
-nvh --insecure install lts
-NVH_NODE_MIRROR=https://npm.taobao.org/mirrors/node nvh --insecure install 6.11
+nvh install 4.9.1
+nvh install nightly/latest
+nvh install lts
+NVH_NODE_MIRROR=https://npm.taobao.org/mirrors/node nvh install 6.11

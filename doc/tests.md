@@ -61,6 +61,7 @@ Using `docker-compose` adds:
 * specified `nvh` script mounted to `/usr/local/bin/nvh`
 * `test/tests` mounted to `/mnt/tests`
 * `node_modules/bats` provides `/usr/local/bin/bats` et al
+* curl and wget startup files to suppress certificate checking, to allow proxy usage
 
 So for example:
 

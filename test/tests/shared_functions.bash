@@ -39,10 +39,9 @@ function display_remote_version() {
 
   local fetch
   if command -v curl &> /dev/null; then
-    fetch="curl --silent --location --fail --insecure"
+    fetch="curl --silent --location --fail"
   else
-    # insecure to match current n implementation
-    fetch="wget -q -O- --no-check-certificate"
+    fetch="wget -q -O-"
   fi
 
   local match='xxx'

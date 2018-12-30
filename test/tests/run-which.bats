@@ -9,8 +9,8 @@ function setup() {
   # beforeAll
   # See https://github.com/bats-core/bats-core/issues/39
   if [[ "${BATS_TEST_NUMBER}" -eq 1 ]] ; then
-    nvh --insecure install 4.9.1
-    nvh --insecure install lts
+    nvh install 4.9.1
+    nvh install lts
   fi
 }
 
@@ -31,28 +31,28 @@ function teardown() {
 # nvh which
 
 @test "nvh which 4" {
-  run nvh --insecure which 4
+  run nvh which 4
   [ "$status" -eq 0 ]
   [ "$output" = "${NVH_PREFIX}/nvh/versions/node/v4.9.1/bin/node" ]
 }
 
 
 @test "nvh which v4.9.1" {
-  run nvh --insecure which v4.9.1
+  run nvh which v4.9.1
   [ "$status" -eq 0 ]
   [ "$output" = "${NVH_PREFIX}/nvh/versions/node/v4.9.1/bin/node" ]
 }
 
 
 @test "nvh which argon" {
-  run nvh --insecure which argon
+  run nvh which argon
   [ "$status" -eq 0 ]
   [ "$output" = "${NVH_PREFIX}/nvh/versions/node/v4.9.1/bin/node" ]
 }
 
 
 @test "nvh which lts" {
-  run nvh --insecure which lts
+  run nvh which lts
   local LTS_VERSION="$(display_remote_version lts)"
   [ "$status" -eq 0 ]
   [ "$output" = "${NVH_PREFIX}/nvh/versions/node/${LTS_VERSION}/bin/node" ]
@@ -62,14 +62,14 @@ function teardown() {
 # nvh run
 
 @test "nvh run 4" {
-  run nvh --insecure run 4 --version
+  run nvh run 4 --version
   [ "$status" -eq 0 ]
   [ "$output" = "v4.9.1" ]
 }
 
 
 @test "nvh run lts" {
-  run nvh --insecure run lts --version
+  run nvh run lts --version
   local LTS_VERSION="$(display_remote_version lts)"
   [ "$status" -eq 0 ]
   [ "$output" = "${LTS_VERSION}" ]
@@ -79,21 +79,21 @@ function teardown() {
 # nvh exec
 
 @test "nvh exec v4.9.1 node" {
-  run nvh --insecure exec v4.9.1 node --version
+  run nvh exec v4.9.1 node --version
   [ "$status" -eq 0 ]
   [ "$output" = "v4.9.1" ]
 }
 
 
 @test "nvh exec 4 npm" {
-  run nvh --insecure exec 4 npm --version
+  run nvh exec 4 npm --version
   [ "$status" -eq 0 ]
   [ "$output" = "2.15.11" ]
 }
 
 
 @test "nvh exec lts" {
-  run nvh --insecure exec lts node --version
+  run nvh exec lts node --version
   local LTS_VERSION="$(display_remote_version lts)"
   [ "$status" -eq 0 ]
   [ "$output" = "${LTS_VERSION}" ]

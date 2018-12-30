@@ -36,7 +36,7 @@ function teardown() {
 ## short alias, multiple, vNumeric
 
 @test "nvh rm lts v4.9.1" {
-  nvh --insecure rm lts v4.9.1
+  nvh rm lts v4.9.1
 
   run nvh cache ls
   [ "${status}" -eq "0" ]
@@ -48,7 +48,7 @@ function teardown() {
 ## long alias, nightly explicit
 
 @test "nvh remove nightly/${NIGHTLY_VERSION}" {
-  nvh --insecure remove "nightly/${NIGHTLY_VERSION}"
+  nvh remove "nightly/${NIGHTLY_VERSION}"
 
   run nvh cache ls
   [ "${status}" -eq "0" ]
@@ -61,7 +61,7 @@ function teardown() {
 ## cache flavour, partial numeric
 
 @test "nvh cache rm 4 # albeit cache rm is undocumented" {
-  nvh --insecure cache rm 4
+  nvh cache rm 4
 
   run nvh cache ls
   [ "${status}" -eq "0" ]
@@ -74,7 +74,7 @@ function teardown() {
 # nvh cache clear
 
 @test "nvh cache clear" {
-  nvh --insecure cache clear
+  nvh cache clear
 
   run nvh cache ls
   [ "${status}" -eq "0" ]
@@ -87,7 +87,7 @@ function teardown() {
 @test "nvh cache prune # (1 install)" {
   # Remove fake directory and install real lts
   nvh rm "${LTS_VERSION}"
-  nvh --insecure install lts
+  nvh install lts
   nvh cache prune
 
   run nvh cache ls

@@ -13,7 +13,7 @@ function teardown() {
 
 
 @test "nvh install lts" {
-  nvh --insecure install lts
+  nvh install lts
   local LTS_VERSION="$(display_remote_version lts)"
   [ -d "${NVH_PREFIX}/nvh/versions/node/${LTS_VERSION}" ]
   [ -f "${NVH_PREFIX}/bin/node" ]
@@ -28,13 +28,13 @@ function teardown() {
   local ARGON_NPM_VERSION="2.15.11"
   local LTS_VERSION="$(display_remote_version lts)"
 
-  nvh --insecure i ${ARGON_VERSION}
+  nvh i ${ARGON_VERSION}
   run "${NVH_PREFIX}/bin/node" --version
   [ "$output" = "${ARGON_VERSION}" ]
   run "${NVH_PREFIX}/bin/npm" --version
   [ "$output" = "${ARGON_NPM_VERSION}" ]
 
-  nvh --insecure --preserve install lts
+  nvh --preserve install lts
   run "${NVH_PREFIX}/bin/node" --version
   [ "$output" = "${LTS_VERSION}" ]
   # preserved npm version
@@ -45,7 +45,7 @@ function teardown() {
 @test "nvh install nightly" {
   local NIGHTLY_VERSION="$(display_remote_version nightly)"
 
-  nvh --insecure install nightly
+  nvh install nightly
   [ -d "${NVH_PREFIX}/nvh/versions/nightly/${NIGHTLY_VERSION}" ]
   [ -f "${NVH_PREFIX}/bin/node" ]
 
