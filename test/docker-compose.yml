@@ -5,7 +5,7 @@ services:
       context: dockerfiles
       dockerfile: Dockerfile-archlinux
     volumes:
-      - ../tests:/usr/local/nvh_tests
+      - ../test:/usr/local/nvh_tests
       - ../bin/nvh:/usr/local/bin/nvh
     environment:
       - http_proxy
@@ -18,7 +18,7 @@ services:
       context: dockerfiles
       dockerfile: Dockerfile-centos
     volumes:
-      - ../tests:/usr/local/nvh_tests
+      - ../test:/usr/local/nvh_tests
       - ../bin/nvh:/usr/local/bin/nvh
     environment:
       - http_proxy
@@ -31,7 +31,7 @@ services:
       context: dockerfiles
       dockerfile: Dockerfile-centos-old
     volumes:
-      - ../tests:/usr/local/nvh_tests
+      - ../test:/usr/local/nvh_tests
       - ../bin/nvh:/usr/local/bin/nvh
     environment:
       - http_proxy
@@ -44,7 +44,7 @@ services:
       context: dockerfiles
       dockerfile: Dockerfile-alpine-old
     volumes:
-      - ../tests:/usr/local/nvh_tests
+      - ../test:/usr/local/nvh_tests
       - ../bin/nvh:/usr/local/bin/nvh
     environment:
       - http_proxy
@@ -57,7 +57,7 @@ services:
       context: dockerfiles
       dockerfile: Dockerfile-ubuntu-curl
     volumes:
-      - ../tests:/usr/local/nvh_tests
+      - ../test:/usr/local/nvh_tests
       - ../bin/nvh:/usr/local/bin/nvh
     environment:
       - http_proxy
@@ -70,7 +70,7 @@ services:
       context: dockerfiles
       dockerfile: Dockerfile-ubuntu-wget
     volumes:
-      - ../tests:/usr/local/nvh_tests
+      - ../test:/usr/local/nvh_tests
       - ../bin/nvh:/usr/local/bin/nvh
     environment:
       - http_proxy
@@ -83,7 +83,7 @@ services:
       context: dockerfiles
       dockerfile: Dockerfile-ubuntu-old-curl
     volumes:
-      - ../tests:/usr/local/nvh_tests
+      - ../test:/usr/local/nvh_tests
       - ../bin/nvh:/usr/local/bin/nvh
     environment:
       - http_proxy
@@ -96,7 +96,7 @@ services:
       context: dockerfiles
       dockerfile: Dockerfile-ubuntu-old-wget
     volumes:
-      - ../tests:/usr/local/nvh_tests
+      - ../test:/usr/local/nvh_tests
       - ../bin/nvh:/usr/local/bin/nvh
     environment:
       - http_proxy
