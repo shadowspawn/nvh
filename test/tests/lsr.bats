@@ -1,65 +1,79 @@
 #!/usr/bin/env bats
 
-# Get the current values for labels and codenames, like LTS_VERSION
-load ../export_test_versions
+load shared_functions
+
 
 function setup() {
-  # Get to default setting, in case something has it in their .bashrc
-  unset NVH_MAX_REMOTE_MATCHES
+  unset_nvh_env
 }
+
 
 # labels
 
 @test "nvh lsr lts" {
   run nvh --insecure lsr lts
   [ "${status}" -eq "0" ]
-  [ "${output}" = "${LTS_VERSION}" ]
+  [ "${output}" = "$(display_remote_version lts)" ]
 }
 
 @test "nvh ls-remote latest" {
   run nvh --insecure ls-remote latest
   [ "${status}" -eq "0" ]
-  [ "${output}" = "${LATEST_VERSION}" ]
+  [ "${output}" = "$(display_remote_version latest)" ]
 }
 
 @test "nvh list-remote current" {
   run nvh --insecure list-remote current
   [ "${status}" -eq "0" ]
-  [ "${output}" = "${LATEST_VERSION}" ]
+  [ "${output}" = "$(display_remote_version latest)" ]
 }
 
-# # codenames
+
+# codenames
 
 @test "n=1 nvh lsr argon" {
   NVH_MAX_REMOTE_MATCHES=1 run nvh --insecure lsr argon
   [ "${status}" -eq "0" ]
-  [ "${output}" = "${ARGON_VERSION}" ]
+  [ "${output}" = "v4.9.1" ]
 }
 
-@test "n=1 nvh lsr Boron # case" {
-  NVH_MAX_REMOTE_MATCHES=1 run nvh --insecure lsr Boron
+@test "n=1 nvh lsr Argon # case" {
+  NVH_MAX_REMOTE_MATCHES=1 run nvh --insecure lsr Argon
   [ "${status}" -eq "0" ]
-  [ "${output}" = "${BORON_VERSION}" ]
+  [ "${output}" = "v4.9.1" ]
 }
 
-@test "n=1 nvh lsr carbon" {
-  NVH_MAX_REMOTE_MATCHES=1 run nvh --insecure lsr carbon
+
+# numeric versions
+
+@test "n=1 nvh lsr 4" {
+  NVH_MAX_REMOTE_MATCHES=1 run nvh --insecure lsr 4
   [ "${status}" -eq "0" ]
-  [ "${output}" = "${CARBON_VERSION}" ]
+  [ "${output}" = "v4.9.1" ]
 }
 
-# # partial version
-
-@test "n=1 nvh lsr 8" {
-  NVH_MAX_REMOTE_MATCHES=1 run nvh --insecure lsr 8
+@test "n=1 nvh lsr v4" {
+  NVH_MAX_REMOTE_MATCHES=1 run nvh --insecure lsr v4
   [ "${status}" -eq "0" ]
-  [ "${output}" = "${CARBON_VERSION}" ]
+  [ "${output}" = "v4.9.1" ]
 }
 
-@test "n=1 nvh lsr v8" {
-  NVH_MAX_REMOTE_MATCHES=1 run nvh --insecure lsr v8
+@test "n=1 nvh lsr 4.9" {
+  NVH_MAX_REMOTE_MATCHES=1 run nvh --insecure lsr 4.9
   [ "${status}" -eq "0" ]
-  [ "${output}" = "${CARBON_VERSION}" ]
+  [ "${output}" = "v4.9.1" ]
+}
+
+@test "n=1 nvh lsr 4.9.1" {
+  NVH_MAX_REMOTE_MATCHES=1 run nvh --insecure lsr 4.9.1
+  [ "${status}" -eq "0" ]
+  [ "${output}" = "v4.9.1" ]
+}
+
+@test "n=1 nvh lsr v4.9.1" {
+  NVH_MAX_REMOTE_MATCHES=1 run nvh --insecure lsr v4.9.1
+  [ "${status}" -eq "0" ]
+  [ "${output}" = "v4.9.1" ]
 }
 
 @test "nvh lsr 6.2 # multiple matches with header" {
@@ -88,36 +102,25 @@ function setup() {
   [ "${output}" = "v8.1.4" ]
 }
 
-@test "nvh lsr 6.2.1" {
-  run nvh --insecure lsr 6.2.1
-  [ "${status}" -eq "0" ]
-  [ "${output}" = "v6.2.1" ]
-}
-
-@test "nvh lsr v6.2.1" {
-  run nvh --insecure lsr v6.2.1
-  [ "${status}" -eq "0" ]
-  [ "${output}" = "v6.2.1" ]
-}
 
 # Nightly
 
 @test "n=1 nvh lsr nightly" {
   NVH_MAX_REMOTE_MATCHES=1 run nvh --insecure lsr nightly
   [ "${status}" -eq "0" ]
-  [ "${output}" = "${NIGHTLY_LATEST_VERSION}" ]
+  [ "${output}" = "$(display_remote_version nightly)" ]
 }
 
 @test "n=1 nvh lsr nightly/" {
   NVH_MAX_REMOTE_MATCHES=1 run nvh --insecure lsr nightly/
   [ "${status}" -eq "0" ]
-  [ "${output}" = "${NIGHTLY_LATEST_VERSION}" ]
+  [ "${output}" = "$(display_remote_version nightly)" ]
 }
 
 @test "n=1 nvh lsr nightly/latest" {
   NVH_MAX_REMOTE_MATCHES=1 run nvh --insecure lsr nightly/latest
   [ "${status}" -eq "0" ]
-  [ "${output}" = "${NIGHTLY_LATEST_VERSION}" ]
+  [ "${output}" = "$(display_remote_version nightly)" ]
 }
 
 @test "n=1 nvh lsr nightly/v10.8.1-nightly201808 # partial match" {
@@ -126,10 +129,11 @@ function setup() {
   [ "${output}" = "v10.8.1-nightly2018081382830a809b" ]
 }
 
-@test "n=1 nvh lsr nightly/6" {
-  NVH_MAX_REMOTE_MATCHES=1 run nvh --insecure lsr nightly/6
+# Numeric match should not find v7.10.1-nightly2017050369a8053e8a
+@test "n=1 nvh lsr nightly/7.1 # numeric match" {
+  NVH_MAX_REMOTE_MATCHES=1 run nvh --insecure lsr nightly/7.1
   [ "${status}" -eq "0" ]
-  [ "${output}" = "v6.11.1-nightly20170607f7ca483d68" ]
+  [ "${output}" = "v7.1.1-nightly201611093daf11635d" ]
 }
 
 # Numeric match should not find v7.10.1-nightly2017050369a8053e8a

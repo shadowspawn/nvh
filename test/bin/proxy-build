@@ -1,44 +1,45 @@
 #!/usr/bin/env bash
+# Unoffical bash safe mode
+set -euo pipefail
+BIN_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 waitproxy() {
     while ! nc -z localhost 8080 ; do sleep 1 ; done
 }
 
+if nc -z localhost 8080; then
+  echo "Error: port 8080 already in use. Is mitmdump already running?"
+  pgrep -f -l mitmdump
+  exit 2
+fi
+
+echo "Launching proxy..."
 mitmdump -w proxy~~.dump &> /dev/null &
 mitm_process="$!"
+echo "Waiting for proxy..."
 waitproxy
 
-# nvh setup
-readonly NVH_PREFIX="$(mktemp -d)"
-export NVH_PREFIX
-export PATH=${NVH_PREFIX}/bin:$PATH
+echo "Recording downloads..."
 
-# Loading tarballs for  Mac and Linux, so can run tests in containers too.
+source tests/shared_functions.bash
+unset_nvh_env
+setup_tmp_prefix
 
-readonly ARGON_VERSION=$(NVH_MAX_REMOTE_MATCHES=1 nvh lsr argon)
-readonly NIGHTLY_LATEST_VERSION=$(NVH_MAX_REMOTE_MATCHES=1 nvh lsr nightly)
-readonly LTS_VERSION=$(NVH_MAX_REMOTE_MATCHES=1 nvh lsr lts)
-readonly TAOBAO_6_VERSION=$(NVH_NODE_MIRROR=https://npm.taobao.org/mirrors/node NVH_MAX_REMOTE_MATCHES=1 nvh lsr 6)
-
-echo "Loading up cache..."
+# Hack curl to avoid certificate issues with proxy
+readonly CURL_HOME="$(dirname "${BIN_DIRECTORY}")/config"
+export CURL_HOME
 
 # Go through proxy so it can record traffic, http for taobao redirects
-export http_proxy="localhost:8080"
-export https_proxy="localhost:8080"
-set -x
-# native
-nvh --insecure install argon
-nvh --insecure install nightly/latest
-nvh --insecure install lts
-NVH_NODE_MIRROR=https://npm.taobao.org/mirrors/node nvh --insecure install 6
-# Linux
-# ToDo: Linux versions may be different (vs native)
-curl --insecure --location --progress-bar "https://nodejs.org/dist/${ARGON_VERSION}/node-${ARGON_VERSION}-linux-x64.tar.gz" > /dev/null
-curl --insecure --location --progress-bar "https://nodejs.org/dist/${LTS_VERSION}/node-${LTS_VERSION}-linux-x64.tar.gz" > /dev/null
-curl --insecure --location --progress-bar "https://nodejs.org/download/nightly/${NIGHTLY_LATEST_VERSION}/node-${NIGHTLY_LATEST_VERSION}-linux-x64.tar.gz" > /dev/null
-curl --insecure --location --progress-bar "https://npm.taobao.org/mirrors/node/${TAOBAO_6_VERSION}/node-${TAOBAO_6_VERSION}-linux-x64.tar.gz" > /dev/null
-set +x
+http_proxy="$(hostname):8080"
+export http_proxy
+https_proxy="$(hostname):8080"
+export https_proxy
 
-rm -rf "${NVH_PREFIX}"
+# native
+tests/install-reference-versions.bash
+# linux
+docker-compose run ubuntu-curl /mnt/tests/install-reference-versions.bash
+
+rm -rf "${TMP_PREFIX_DIR}"
 kill "${mitm_process}"
 

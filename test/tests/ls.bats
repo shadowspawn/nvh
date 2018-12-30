@@ -1,37 +1,40 @@
 #!/usr/bin/env bats
 
-load ../export_test_versions
+load shared_functions
+
+function setup() {
+  unset_nvh_env
+  setup_tmp_prefix
+}
+
+function teardown() {
+  rm -rf "${TMP_PREFIX_DIR}"
+}
 
 
 @test "nvh ls # just plain node" {
-  readonly TMP_PREFIX="$(mktemp -d)"
-
   # KISS and just make folders rather than do actual installs
-  mkdir -p "${TMP_PREFIX}/nvh/versions/node/${ARGON_VERSION}"
-  mkdir -p "${TMP_PREFIX}/nvh/versions/node/${LTS_VERSION}"
+  mkdir -p "${NVH_PREFIX}/nvh/versions/node/v4.9.1"
+  mkdir -p "${NVH_PREFIX}/nvh/versions/node/v10.15.0"
 
-  NVH_PREFIX="${TMP_PREFIX}" run nvh ls
+  run nvh ls
   [ "$status" -eq 0 ]
-  [ "${lines[0]}" = "node/${ARGON_VERSION}" ]
-  [ "${lines[1]}" = "node/${LTS_VERSION}" ]
+  [ "${lines[0]}" = "node/v4.9.1" ]
+  [ "${lines[1]}" = "node/v10.15.0" ]
   [ "${lines[2]}" = "" ]
-
-  rm -rf "${TMP_PREFIX}"
 }
 
+
 @test "nvh list # mixed node and nightly" {
-  readonly TMP_PREFIX="$(mktemp -d)"
-
+  local NIGHTLY_VERSION="v12.0.0-nightly201812104aabd7ed64"
   # KISS and just make folders rather than do actual installs
-  mkdir -p "${TMP_PREFIX}/nvh/versions/nightly/${NIGHTLY_LATEST_VERSION}"
-  mkdir -p "${TMP_PREFIX}/nvh/versions/node/${LATEST_VERSION}"
+  mkdir -p "${NVH_PREFIX}/nvh/versions/nightly/${NIGHTLY_VERSION}"
+  mkdir -p "${NVH_PREFIX}/nvh/versions/node/v10.15.0"
 
-  NVH_PREFIX="${TMP_PREFIX}" run nvh list
+  run nvh list
   [ "$status" -eq 0 ]
-  [ "${lines[0]}" = "nightly/${NIGHTLY_LATEST_VERSION}" ]
-  [ "${lines[1]}" = "node/${LATEST_VERSION}" ]
+  [ "${lines[0]}" = "nightly/${NIGHTLY_VERSION}" ]
+  [ "${lines[1]}" = "node/v10.15.0" ]
   [ "${lines[2]}" = "" ]
-
-  rm -rf "${TMP_PREFIX}"
 }
 

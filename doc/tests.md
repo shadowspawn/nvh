@@ -4,8 +4,6 @@
 
 The tests use `mitmproxy` and Bash Automated Testing System (`bats`). The proxy caching is actually optional, but much improves performance and avoids hammering nodejs server.
 
-ToDo: the test setup scripts are currently assuming same versions current for OSX and Linux, which is not always true!
-
 Setup:
 
     # using homebrew (Mac) to install mitmproxy
@@ -13,26 +11,29 @@ Setup:
     # install bats locally
     npm install
 
-First prepare caching proxy server:
+First prepare caching proxy server. This is optional, but speeds tests and especially rerunning tests.
 
     # create proxy~~.dump, run build again when want fresh cache
     cd test
     ./bin/proxy-build
     ./bin/proxy-run
+    # follow the instructions for configuring environment variables for using proxy, then run tests
 
-Prepare file with expected version values for labels and codenames:
+Run all the tests across a range of containers and on the host system:
+
+    npm run test
+
+Run all the tests on a single system:
 
     cd test
-    https_proxy=localhost:8080 ./lookup-versions
+    npx bats tests
+    docker-compose run ubuntu-curl bats /mnt/tests
 
-Run tests using caching proxy looking for expected versions from above:
+Run single test on a single system:
 
     cd test
-    export https_proxy="$(hostname):8080"
-    # e.g. run one test natively
     npx bats tests/lsr.bats
-    # run all the tests in containers and natively
-    ./run-all-bats
+    docker-compose run ubuntu-curl bats /mnt/tests/lsr.bats
 
 ## BATS Development Tips
 
@@ -40,16 +41,26 @@ There is an [issue](https://github.com/bats-core/bats-core/pull/24) affecting ba
 
     [[ "a" = "b ]] || return 2
 
-## Manual Tests
+## Docker Tips
 
-`nvh` and `test/` are mounted in all containers. Exported environment variables are passed through: `https_proxy` `NVH_NODE_MIRROR` `NVH_NODE_DOWNLOAD_MIRROR` `NVH_MAX_REMOTE_MATCHES`. This makes it straight forward to try something locally and try same thing across other environments.
+Using `docker-compose` in addition to `docker` for convenient mounting of `nvh` script and the tests into the container. Changes to the tests or to `nvh` itself are reflected immediately without needing to rebuild the containers.
+
+`bats` is being mounted directly out of `node_modules` into the container as a manual install based on its own install script. This is a bit of a hack, but avoids needing to install `git` or `npm` for a full remote install of `bats`, and means everything on the same version of `bats`.
+
+The containers each have:
+
+* either curl or wget (or both) installed
+
+Using `docker-compose` adds:
+
+* specified `nvh` script mounted to `/usr/local/bin/nvh`
+* `test/tests` mounted to `/mnt/tests`
+* `node_modules/bats` provides `/usr/local/bin/bats` et al
+
+So for example:
 
     cd test
-    # open bash shell for manual testing
     docker-compose run ubuntu-curl
-    # run command on containers, and native on host
-    export NVH_MAX_REMOTE_MATCHES=3
-    nvh lsr rc
-    ./run-all-containers nvh lsr rc
-    # run tests on (some) containers, and native on host
-    ./run-all-bats
+      # in container
+      nvh --version
+      bats /mnt/tests

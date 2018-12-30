@@ -26,6 +26,7 @@
   ],
   "scripts": {
     "lint": "shellcheck bin/nvh",
+    "test": "test/bin/run-all-tests",
     "release": "bin/release"
   },
   "license": "MIT",

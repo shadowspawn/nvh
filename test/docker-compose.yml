@@ -1,106 +1,58 @@
-version: '3'
+version: '2'
 services:
-  archlinux:
-    build:
-      context: dockerfiles
-      dockerfile: Dockerfile-archlinux
-    volumes:
-      - ../test:/usr/local/nvh_tests
-      - ../bin/nvh:/usr/local/bin/nvh
-    environment:
-      - http_proxy
-      - https_proxy
-      - NVH_NODE_MIRROR
-      - NVH_NODE_DOWNLOAD_MIRROR
-      - NVH_MAX_REMOTE_MATCHES
-  centos:
-    build:
-      context: dockerfiles
-      dockerfile: Dockerfile-centos
-    volumes:
-      - ../test:/usr/local/nvh_tests
-      - ../bin/nvh:/usr/local/bin/nvh
-    environment:
-      - http_proxy
-      - https_proxy
-      - NVH_NODE_MIRROR
-      - NVH_NODE_DOWNLOAD_MIRROR
-      - NVH_MAX_REMOTE_MATCHES
-  centos-old:
-    build:
-      context: dockerfiles
-      dockerfile: Dockerfile-centos-old
-    volumes:
-      - ../test:/usr/local/nvh_tests
-      - ../bin/nvh:/usr/local/bin/nvh
-    environment:
-      - http_proxy
-      - https_proxy
-      - NVH_NODE_MIRROR
-      - NVH_NODE_DOWNLOAD_MIRROR
-      - NVH_MAX_REMOTE_MATCHES
   alpine-old:
+    extends:
+      file: ./docker-base.yml
+      service: testbed
     build:
       context: dockerfiles
       dockerfile: Dockerfile-alpine-old
-    volumes:
-      - ../test:/usr/local/nvh_tests
-      - ../bin/nvh:/usr/local/bin/nvh
-    environment:
-      - http_proxy
-      - https_proxy
-      - NVH_NODE_MIRROR
-      - NVH_NODE_DOWNLOAD_MIRROR
-      - NVH_MAX_REMOTE_MATCHES
+  archlinux:
+    extends:
+      file: ./docker-base.yml
+      service: testbed
+    build:
+      context: dockerfiles
+      dockerfile: Dockerfile-archlinux
+  centos:
+    extends:
+      file: ./docker-base.yml
+      service: testbed
+    build:
+      context: dockerfiles
+      dockerfile: Dockerfile-centos
+  centos-old:
+    extends:
+      file: ./docker-base.yml
+      service: testbed
+    build:
+      context: dockerfiles
+      dockerfile: Dockerfile-centos-old
   ubuntu-curl:
+    extends:
+      file: ./docker-base.yml
+      service: testbed
     build:
       context: dockerfiles
       dockerfile: Dockerfile-ubuntu-curl
-    volumes:
-      - ../test:/usr/local/nvh_tests
-      - ../bin/nvh:/usr/local/bin/nvh
-    environment:
-      - http_proxy
-      - https_proxy
-      - NVH_NODE_MIRROR
-      - NVH_NODE_DOWNLOAD_MIRROR
-      - NVH_MAX_REMOTE_MATCHES
   ubuntu-wget:
+    extends:
+      file: ./docker-base.yml
+      service: testbed
     build:
       context: dockerfiles
       dockerfile: Dockerfile-ubuntu-wget
-    volumes:
-      - ../test:/usr/local/nvh_tests
-      - ../bin/nvh:/usr/local/bin/nvh
-    environment:
-      - http_proxy
-      - https_proxy
-      - NVH_NODE_MIRROR
-      - NVH_NODE_DOWNLOAD_MIRROR
-      - NVH_MAX_REMOTE_MATCHES
   ubuntu-old-curl:
+    extends:
+      file: ./docker-base.yml
+      service: testbed
     build:
       context: dockerfiles
       dockerfile: Dockerfile-ubuntu-old-curl
-    volumes:
-      - ../test:/usr/local/nvh_tests
-      - ../bin/nvh:/usr/local/bin/nvh
-    environment:
-      - http_proxy
-      - https_proxy
-      - NVH_NODE_MIRROR
-      - NVH_NODE_DOWNLOAD_MIRROR
-      - NVH_MAX_REMOTE_MATCHES
   ubuntu-old-wget:
+    extends:
+      file: ./docker-base.yml
+      service: testbed
     build:
       context: dockerfiles
       dockerfile: Dockerfile-ubuntu-old-wget
-    volumes:
-      - ../test:/usr/local/nvh_tests
-      - ../bin/nvh:/usr/local/bin/nvh
-    environment:
-      - http_proxy
-      - https_proxy
-      - NVH_NODE_MIRROR
-      - NVH_NODE_DOWNLOAD_MIRROR
-      - NVH_MAX_REMOTE_MATCHES

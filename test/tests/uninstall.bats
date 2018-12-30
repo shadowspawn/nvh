@@ -1,39 +1,42 @@
 #!/usr/bin/env bats
 
-load ../export_test_versions
+load shared_functions
 
+function setup() {
+  unset_nvh_env
+  setup_tmp_prefix
+}
 
-@test "nvh uninstall (of lts)" {
-  readonly TMP_PREFIX="$(mktemp -d)"
-  export NVH_PREFIX="${TMP_PREFIX}"
-
-  nvh --insecure install lts
-  [ -d "${TMP_PREFIX}/nvh/versions/node/${LTS_VERSION}" ]
-  [ -f "${TMP_PREFIX}/bin/node" ]
-
-  # Check we get all the files if we uninstall and rm cache.
-  nvh uninstall
-  nvh rm ${LTS_VERSION}
-  run find "${TMP_PREFIX}" -not -type d
-  [ "$output" = "" ]
-
-  rm -rf "${TMP_PREFIX}"
+function teardown() {
+  rm -rf "${TMP_PREFIX_DIR}"
 }
 
 
-@test "nvh uninstall (of nightly)" {
-  readonly TMP_PREFIX="$(mktemp -d)"
-  export NVH_PREFIX="${TMP_PREFIX}"
-
-  nvh --insecure install nightly
-  [ -d "${TMP_PREFIX}/nvh/versions/nightly/${NIGHTLY_LATEST_VERSION}" ]
-  [ -f "${TMP_PREFIX}/bin/node" ]
+@test "nvh uninstall (of lts)" {
+  nvh --insecure install lts
+  [ -f "${NVH_PREFIX}/bin/node" ]
+  [ -f "${NVH_PREFIX}/bin/npm" ]
+  [ -f "${NVH_PREFIX}/lib/node_modules/npm/package.json" ]
 
   # Check we get all the files if we uninstall and rm cache.
   nvh uninstall
-  nvh rm --insecure nightly/${NIGHTLY_LATEST_VERSION}
-  run find "${TMP_PREFIX}" -not -type d
+  nvh rm --insecure lts
+  run find "${NVH_PREFIX}" -not -type d
+  [ "${status}" -eq "0" ]
   [ "$output" = "" ]
+}
 
-  rm -rf "${TMP_PREFIX}"
+
+@test "nvh uninstall (of nightly/latest)" {
+  nvh --insecure install nightly/latest
+  [ -f "${NVH_PREFIX}/bin/node" ]
+  [ -f "${NVH_PREFIX}/bin/npm" ]
+  [ -f "${NVH_PREFIX}/lib/node_modules/npm/package.json" ]
+
+  # Check we get all the files if we uninstall and rm cache.
+  nvh uninstall
+  nvh rm --insecure nightly/latest
+  run find "${NVH_PREFIX}" -not -type d
+  [ "${status}" -eq "0" ]
+  [ "$output" = "" ]
 }

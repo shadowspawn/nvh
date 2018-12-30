@@ -1,58 +1,55 @@
 #!/usr/bin/env bats
 
-load ../export_test_versions
+load shared_functions
+
+function setup() {
+  unset_nvh_env
+  setup_tmp_prefix
+}
+
+function teardown() {
+  rm -rf "${TMP_PREFIX_DIR}"
+}
 
 
 @test "nvh install lts" {
-  readonly TMP_PREFIX="$(mktemp -d)"
+  nvh --insecure install lts
+  local LTS_VERSION="$(display_remote_version lts)"
+  [ -d "${NVH_PREFIX}/nvh/versions/node/${LTS_VERSION}" ]
+  [ -f "${NVH_PREFIX}/bin/node" ]
 
-  NVH_PREFIX="${TMP_PREFIX}" nvh --insecure install lts
-
-  [ -d "${TMP_PREFIX}/nvh/versions/node/${LTS_VERSION}" ]
-  [ -f "${TMP_PREFIX}/bin/node" ]
-
-  run "${TMP_PREFIX}/bin/node" --version
+  run "${NVH_PREFIX}/bin/node" --version
   [ "$output" = "${LTS_VERSION}" ]
-
-  rm -rf "${TMP_PREFIX}"
 }
 
-# mostly --preserve, but also variations with i/install and codename/numeric
-@test "nvh i argon; nvh --preserve install ${LTS_VERSION} # (2 installs)" {
-  readonly TMP_PREFIX="$(mktemp -d)"
-  readonly ARGON_NPM_VERSION="2.15.11"
+# mostly --preserve, but also variations with i/install and lts/numeric
+@test "nvh i 4.9.1; nvh --preserve install lts # (2 installs)" {
+  local ARGON_VERSION="v4.9.1"
+  local ARGON_NPM_VERSION="2.15.11"
+  local LTS_VERSION="$(display_remote_version lts)"
 
-  NVH_PREFIX="${TMP_PREFIX}" nvh --insecure i argon
-
-  run "${TMP_PREFIX}/bin/node" --version
+  nvh --insecure i ${ARGON_VERSION}
+  run "${NVH_PREFIX}/bin/node" --version
   [ "$output" = "${ARGON_VERSION}" ]
-
-  run "${TMP_PREFIX}/bin/npm" --version
+  run "${NVH_PREFIX}/bin/npm" --version
   [ "$output" = "${ARGON_NPM_VERSION}" ]
 
-  NVH_PREFIX="${TMP_PREFIX}" nvh --insecure --preserve install "${LTS_VERSION}"
-
-  run "${TMP_PREFIX}/bin/node" --version
+  nvh --insecure --preserve install lts
+  run "${NVH_PREFIX}/bin/node" --version
   [ "$output" = "${LTS_VERSION}" ]
-
   # preserved npm version
-  run "${TMP_PREFIX}/bin/npm" --version
+  run "${NVH_PREFIX}/bin/npm" --version
   [ "$output" = "${ARGON_NPM_VERSION}" ]
-
-  rm -rf "${TMP_PREFIX}"
 }
 
 @test "nvh install nightly" {
-  readonly TMP_PREFIX="$(mktemp -d)"
+  local NIGHTLY_VERSION="$(display_remote_version nightly)"
 
-  NVH_PREFIX="${TMP_PREFIX}" nvh --insecure install nightly
+  nvh --insecure install nightly
+  [ -d "${NVH_PREFIX}/nvh/versions/nightly/${NIGHTLY_VERSION}" ]
+  [ -f "${NVH_PREFIX}/bin/node" ]
 
-  [ -d "${TMP_PREFIX}/nvh/versions/nightly/${NIGHTLY_LATEST_VERSION}" ]
-  [ -f "${TMP_PREFIX}/bin/node" ]
-
-  run "${TMP_PREFIX}/bin/node" --version
-  [ "$output" = "${NIGHTLY_LATEST_VERSION}" ]
-
-  rm -rf "${TMP_PREFIX}"
+  run "${NVH_PREFIX}/bin/node" --version
+  [ "$output" = "${NIGHTLY_VERSION}" ]
 }
 
