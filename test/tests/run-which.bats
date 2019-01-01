@@ -9,8 +9,9 @@ function setup() {
   # beforeAll
   # See https://github.com/bats-core/bats-core/issues/39
   if [[ "${BATS_TEST_NUMBER}" -eq 1 ]] ; then
-    nvh install 4.9.1
-    nvh install lts
+    # Using --preserve to speed install, as only care about the cached versions.
+    nvh install --preserve 4.9.1
+    nvh install --preserve lts
   fi
 }
 
