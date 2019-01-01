@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+- `docs` directory name changed to `doc`
 - dev: make `bats` a dev dependency rather than use global install
 - dev: major refactor of tests and scripts
 - dev: tests more self-contained (and easier to run)
