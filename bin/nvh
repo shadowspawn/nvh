@@ -826,11 +826,17 @@ function display_remote_versions() {
     abort "invalid version '$1'"
   fi
   display_match_limit "${match_count}"
-  # Using temporary variable as curl complains if pipe closes early (e.g. head).
-  local versions
-  # Restrict search to platform as not always available, especially initially with slow builds coming later.
-  versions="$(display_remote_index | grep -E "$(display_compatible_file_field)" |  grep -E "${match}" | cut -f -1; return "${PIPESTATUS[0]}")" || return $?
-  echo "${versions}" | head -n "${match_count}"
+
+  # Implementation notes:
+  # - using awk rather than head so do not close pipe early on curl
+  # - restrict search to compatible files as not always available, or not at same time
+  # - return status of curl command (i.e. PIPESTATUS[0])
+  display_remote_index \
+    | grep -E "$(display_compatible_file_field)" \
+    |  grep -E "${match}" \
+    | awk "NR<=${match_count}" \
+    | cut -f -1
+  return "${PIPESTATUS[0]}"
 }
 
 #
