@@ -16,6 +16,7 @@ Forked from [tj/n](https://github.com/tj/n) with [changes to command syntax](doc
     - [Preserving npm](#preserving-npm)
     - [Miscellaneous](#miscellaneous)
     - [Optional Environment Variables](#optional-environment-variables)
+    - [How It Works](#how-it-works)
     - [Alternatives to `nvh`](#alternatives-to-nvh)
 
 ## Installation
@@ -157,6 +158,15 @@ See [Environment Variables](doc/environment-variables.md) for more about these s
 See [Proxy Server](doc/proxy-server.md) for variables and advice for using a proxy server.
 
     https_proxy
+
+## How It Works
+
+`nvh` downloads a prebuilt `node` package and installs to a single prefix (e.g. `/usr/local`). This overwrites the previous version. The `bin` folder in this location should be in your `PATH` (e.g. `/usr/local/bin`).
+
+The downloads are kept in a cache folder to be used for reinstalls. The downloads are also available for limited use using `nvh which` and `nvh run` and `nvh exec`.
+
+The global `npm` packages are not changed by the install, with the 
+exception of `npm` itself which by default is part of the `node` install.
 
 ## Alternatives to `nvh`
 
