@@ -1,6 +1,6 @@
 #!/usr/bin/env bats
 
-load shared_functions
+load shared-functions
 
 
 function setup() {

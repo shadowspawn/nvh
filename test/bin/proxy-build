@@ -21,7 +21,7 @@ waitproxy
 
 echo "Recording downloads..."
 
-source tests/shared_functions.bash
+source tests/shared-functions.bash
 unset_nvh_env
 setup_tmp_prefix
 
