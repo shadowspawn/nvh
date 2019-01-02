@@ -23,6 +23,7 @@ fi
 
 confirm "Are you releasing version '${NVH_VERSION}' ?"
 confirm "Have you updated CHANGELOG?"
+confirm "Are you running this from a shell with full internet access (not through proxy to run tests)?"
 
 git checkout master
 git merge develop
