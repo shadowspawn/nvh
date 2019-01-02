@@ -235,7 +235,7 @@ Commands:
   nvh ls-remote [version]         Output matching versions available for download
   nvh run <version> [args...]     Execute downloaded node <version> with [args ...]
   nvh which <version>             Output path for downloaded node <version>
-  nvh exec <vers> <cmd> [args...] Run command with modified PATH, so downloaded node <version> and npm first
+  nvh exec <vers> <cmd> [args...] Execute command with modified PATH, so downloaded node <version> and npm first
   nvh cache clear                 Remove all downloaded versions
   nvh cache prune                 Remove all downloaded versions except the installed version
   nvh rm <version ...>            Remove the given downloaded version(s)
