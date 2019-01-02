@@ -30,6 +30,31 @@ function setup_tmp_prefix() {
 }
 
 
+# Display relevant file name (third field of index.tab) for current platform.
+# Based on code from nvm rather than nvh for independent approach. Simplified for just common platforms initially.
+# See list on https://github.com/nodejs/nodejs-dist-indexer
+
+function display_compatible_file_field() {
+  local os="unexpected"
+  case "$(uname -a)" in
+    Linux\ *) os="linux" ;;
+    Darwin\ *) os="osx" ;;
+  esac
+
+  local arch="unexpected"
+  local uname_m
+  uname_m="$(uname -m)"
+  case "${uname_m}" in
+    x86_64 | amd64) arch="x64" ;;
+    i*86) arch="x86" ;;
+    aarch64) arch="arm64" ;;
+    *) arch="${uname_m}" ;;
+  esac
+
+  echo "${os}-${arch}"
+}
+
+
 # display_remote_version <version>
 # Limited support for using index.tab to resolve version into a number.
 # Return version number, including leading v.
@@ -55,9 +80,11 @@ function display_remote_version() {
     mirror="${NVH_NODE_DOWNLOAD_MIRROR:-https://nodejs.org/download}/nightly"
   fi
 
-  # Using temporary variable as curl complains if pipe closes early (e.g. head).
-  # (Not filtering for platform yet.)
-  local versions
-  versions="$(${fetch} "${mirror}/index.tab" | tail -n +2 | grep -E "${match}" | cut -f -1)"
-  echo "${versions}" | head -n 1
+  # Using awk rather than head so do not close pipe early on curl
+  ${fetch} "${mirror}/index.tab" \
+    | tail -n +2 \
+    | grep "$(display_compatible_file_field)" \
+    | grep -E "${match}" \
+    | cut -f -1 \
+    | awk "NR==1"
 }
