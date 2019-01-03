@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased] (date goes here)
 
+## Changed
+
+- be more conservative determining architecture to reduce possibility install incompatible binary
+
 ## [6.2.0] (2019-01-02)
 
 ## Added
@@ -21,7 +25,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - dev: make `bats` a dev dependency rather than use global install
 - dev: major refactor of tests and scripts
 - dev: tests more self-contained (and easier to run)
-
 
 ## Fixed
 

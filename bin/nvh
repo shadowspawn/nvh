@@ -471,23 +471,29 @@ function is_ok() {
 # display_tarball_platform
 
 function display_tarball_platform() {
-  local uname="$(uname -a)"
-  local arch=x86
-  local os=
+  # https://en.wikipedia.org/wiki/Uname
 
-  case "$uname" in
-    Linux*) os=linux ;;
-    Darwin*) os=darwin ;;
-    SunOS*) os=sunos ;;
+  local os="unexpected_os"
+  local uname_a="$(uname -a)"
+  case "${uname_a}" in
+    Linux*) os="linux" ;;
+    Darwin*) os="darwin" ;;
+    SunOS*) os="sunos" ;;
+    AIX*) os="aix" ;;
   esac
 
-  case "$uname" in
-    *x86_64*) arch=x64 ;;
-    *armv6l*) arch=armv6l ;;
-    *armv7l*) arch=armv7l ;;
-    *arm64*) arch=arm64 ;;
-    *aarch64*) arch=arm64 ;;
+  local arch="unexpected_arch"
+  local uname_m="$(uname -m)"
+  case "${uname_m}" in
+    x86_64) arch=x64 ;;
+    i386 | i686) arch="x86" ;;
+    aarch64) arch=arm64 ;;
+    *)
+      # e.g. armv6l, armv7l, arm64
+      arch="${uname_m}"
+      ;;
   esac
+  # (arch unlikely to be right for SunOS and AIX. Investigate further if/when anyone asks!)
 
   echo "${os}-${arch}"
 }
