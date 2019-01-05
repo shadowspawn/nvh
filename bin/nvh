@@ -28,7 +28,7 @@ g_showing_get_progress="false"
 PRESERVE_NPM="false"
 # readonly after option parsing
 
-g_ls_remote_max_matches=${NVH_MAX_REMOTE_MATCHES:-20}
+NVH_MAX_REMOTE_MATCHES=${NVH_MAX_REMOTE_MATCHES:-20}
 
 g_download_mirror_url=${NVH_NODE_MIRROR}
 g_download_folder_name="node"
@@ -627,18 +627,6 @@ function install() {
 }
 
 #
-# set_show_all_remote_matches
-#
-
-function set_show_all_remote_matches() {
-  g_ls_remote_max_matches=32000
-}
-
-function set_show_single_remote_match() {
-  g_ls_remote_max_matches=1
-}
-
-#
 # Remove <version ...>
 #
 
@@ -746,8 +734,7 @@ function display_latest_resolved_version() {
     echo "${version}"
   else
     # Complicated recognising exact version, KISS and awlays lookup for now.
-    set_show_single_remote_match
-    display_remote_versions "$1"
+    NVH_MAX_REMOTE_MATCHES=1 display_remote_versions "$1"
   fi
 }
 
@@ -785,7 +772,7 @@ function display_remote_versions() {
   local version="$1"
   update_download_settings_from_version "${version}"
   local match='.'
-  local match_count="${g_ls_remote_max_matches}"
+  local match_count="${NVH_MAX_REMOTE_MATCHES}"
   if [[ -z "${version}" ]]; then
     match='.'
   elif [[ "${version}" = "lts" ]]; then
@@ -959,7 +946,7 @@ function show_diagnostics() {
   echo "node downloads mirror: ${NVH_NODE_DOWNLOAD_MIRROR}"
   echo "install destination: ${NVH_PREFIX}"
   [[ -n "${NVH_PREFIX}" ]] && echo "PATH: ${PATH}"
-  echo "ls-remote max matches: ${g_ls_remote_max_matches}"
+  echo "ls-remote max matches: ${NVH_MAX_REMOTE_MATCHES}"
 
   printf "\n\n## Proxy\n"
   # https://github.com/koalaman/shellcheck/wiki/SC2154
@@ -1081,7 +1068,7 @@ function main() {
 
   while [[ $# -ne 0 ]]; do
     case "$1" in
-      --all) set_show_all_remote_matches ;;
+      --all) NVH_MAX_REMOTE_MATCHES=32000 ;;
       -h|--help|help) display_help; exit ;;
       --insecure) set_insecure ;;
       -p|--preserve) PRESERVE_NPM="true" ;;
@@ -1094,7 +1081,9 @@ function main() {
     shift
   done
 
+  # readonly now done with option parsing
   readonly PRESERVE_NPM
+  # Note: NVH_MAX_REMOTE_MATCHES not readonly, used as env in display_latest_resolved_version
 
   set -- "${unprocessed_args[@]}"
 
