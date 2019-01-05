@@ -404,7 +404,7 @@ function display_cache_versions() {
       $ESCAPE_SEQ)
         # Handle ESC sequences followed by other characters, i.e. arrow keys
         read -rsn 1 -t 1 tmp
-        if  [[ "$tmp" = "[" ]]; then
+        if [[ "$tmp" = "[" ]]; then
           read -rsn 1 -t 1 arrow
           case "$arrow" in
             $UP)
@@ -839,7 +839,7 @@ function display_remote_versions() {
   # - return status of curl command (i.e. PIPESTATUS[0])
   display_remote_index \
     | grep -E "$(display_compatible_file_field)" \
-    |  grep -E "${match}" \
+    | grep -E "${match}" \
     | awk "NR<=${match_count}" \
     | cut -f -1
   return "${PIPESTATUS[0]}"
@@ -1107,8 +1107,8 @@ if [[ $# -eq 0 ]]; then
   display_cache_versions
 else
   case "$1" in
-    doctor) show_diagnostics ;;
     cache) shift; cache_subcommand "$@" ;;
+    doctor) show_diagnostics ;;
     exec) shift; exec_with_version "$@" ;;
     i|install) shift; install "$1" ;;
     ls|list) versions_paths ;;
