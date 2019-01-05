@@ -11,15 +11,16 @@ readonly TAB_CHAR=$'\t'
 
 NVH_PREFIX=${NVH_PREFIX:-/usr/local}
 NVH_PREFIX=${NVH_PREFIX%/}
+readonly NVH_PREFIX
 readonly CACHE_DIR=$NVH_PREFIX/nvh/versions
 
-NODE_MIRROR=${NVH_NODE_MIRROR:-https://nodejs.org/dist}
-NODE_MIRROR=${NODE_MIRROR%/}
-readonly NODE_MIRROR
+NVH_NODE_MIRROR=${NVH_NODE_MIRROR:-https://nodejs.org/dist}
+NVH_NODE_MIRROR=${NVH_NODE_MIRROR%/}
+readonly NVH_NODE_MIRROR
 
-NODE_DOWNLOAD_MIRROR=${NVH_NODE_DOWNLOAD_MIRROR:-https://nodejs.org/download}
-NODE_DOWNLOAD_MIRROR=${NODE_DOWNLOAD_MIRROR%/}
-readonly NODE_DOWNLOAD_MIRROR
+NVH_NODE_DOWNLOAD_MIRROR=${NVH_NODE_DOWNLOAD_MIRROR:-https://nodejs.org/download}
+NVH_NODE_DOWNLOAD_MIRROR=${NVH_NODE_DOWNLOAD_MIRROR%/}
+readonly NVH_NODE_DOWNLOAD_MIRROR
 
 # Modified by command options, but otherwise constant
 g_showing_get_progress="false"
@@ -27,7 +28,7 @@ PRESERVE_NPM="false"
 
 g_ls_remote_max_matches=${NVH_MAX_REMOTE_MATCHES:-20}
 
-g_download_mirror_url=${NODE_MIRROR}
+g_download_mirror_url=${NVH_NODE_MIRROR}
 g_download_folder_name="node"
 
 # Starting options. May get added to from environment variables et al.
@@ -113,12 +114,12 @@ function set_insecure() {
 function update_download_settings_from_version() {
   if is_download_folder "$1" ; then
     g_download_folder_name="$1"
-    g_download_mirror_url="${NODE_DOWNLOAD_MIRROR}/${g_download_folder_name}"
+    g_download_mirror_url="${NVH_NODE_DOWNLOAD_MIRROR}/${g_download_folder_name}"
   elif is_download_version "$1"; then
     [[ "$1" =~ ^([^/]+)/(.*) ]]
     local remote_folder="${BASH_REMATCH[1]}"
     g_download_folder_name="${remote_folder}"
-    g_download_mirror_url="${NODE_DOWNLOAD_MIRROR}/${g_download_folder_name}"
+    g_download_mirror_url="${NVH_NODE_DOWNLOAD_MIRROR}/${g_download_folder_name}"
   fi
 }
 
@@ -313,6 +314,7 @@ function display_nvh_version() {
 }
 
 #
+# set_active_node
 # Check for active version and return as $g_active_node
 #
 
@@ -959,8 +961,8 @@ function show_diagnostics() {
   printf "\n\n# Settings\n"
 
   printf "\n\n## nvh\n"
-  echo "node mirror: ${NODE_MIRROR}"
-  echo "node downloads mirror: ${NODE_DOWNLOAD_MIRROR}"
+  echo "node mirror: ${NVH_NODE_MIRROR}"
+  echo "node downloads mirror: ${NVH_NODE_DOWNLOAD_MIRROR}"
   echo "install destination: ${NVH_PREFIX}"
   [[ -n "${NVH_PREFIX}" ]] && echo "PATH: ${PATH}"
   echo "ls-remote max matches: ${g_ls_remote_max_matches}"
@@ -1057,15 +1059,15 @@ function show_diagnostics() {
   fi
 
   printf "\nChecking mirror is reachable...\n"
-  if is_ok "${NODE_MIRROR}/"; then
+  if is_ok "${NVH_NODE_MIRROR}/"; then
     printf "good\n"
   else
     warn "mirror not reachable"
     printf "Showing failing command and output\n"
     if command -v curl &> /dev/null; then
-      ( set -x; do_get --head "${NODE_MIRROR}/" )
+      ( set -x; do_get --head "${NVH_NODE_MIRROR}/" )
     else
-      ( set -x; do_get --spider "${NODE_MIRROR}/" )
+      ( set -x; do_get --spider "${NVH_NODE_MIRROR}/" )
     printf "\n"
    fi
   fi
