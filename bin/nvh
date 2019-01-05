@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2155
-# https://github.com/koalaman/shellcheck/wiki/SC2155
+# Disabled "Declare and assign separately to avoid masking return values": https://github.com/koalaman/shellcheck/wiki/SC2155
 
 #
 # Setup.
@@ -22,32 +22,31 @@ NVH_NODE_DOWNLOAD_MIRROR=${NVH_NODE_DOWNLOAD_MIRROR:-https://nodejs.org/download
 NVH_NODE_DOWNLOAD_MIRROR=${NVH_NODE_DOWNLOAD_MIRROR%/}
 readonly NVH_NODE_DOWNLOAD_MIRROR
 
-# Modified by command options, but otherwise constant
-g_showing_get_progress="false"
-
 PRESERVE_NPM="false"
-# readonly after option parsing
+# made readonly after CLI option parsing
 
 NVH_MAX_REMOTE_MATCHES=${NVH_MAX_REMOTE_MATCHES:-20}
 
 g_download_mirror_url=${NVH_NODE_MIRROR}
 g_download_folder_name="node"
 
-# Starting options. May get added to from environment variables et al.
+# Options for curl and wget.
 # Defining commands in variables is fraught (http://mywiki.wooledge.org/BashFAQ/050)
 # but we can follow the simple case and store arguments in an array.
 
+GET_OPTIONS_SHOW_PROGRESS="false"
 # --location to follow redirects
 # --fail to avoid happily downloading error page from web server for 404 et al
 # --show-error to show why failed (on stderr)
-g_curl_options=( "--location" "--fail" "--show-error" )
+CURL_OPTIONS=( "--location" "--fail" "--show-error" )
 if [[ -t 1 ]]; then
-  g_curl_options+=( "--progress-bar" )
-  command -v curl &> /dev/null && g_showing_get_progress="true"
+  CURL_OPTIONS+=( "--progress-bar" )
+  command -v curl &> /dev/null && GET_OPTIONS_SHOW_PROGRESS="true"
 else
-  g_curl_options+=( "--silent" )
+  CURL_OPTIONS+=( "--silent" )
 fi
-g_wget_options=( "-q" "-O-" )
+WGET_OPTIONS=( "-q" "-O-" )
+# options made readonly after CLI option parsing
 
 # Set by set_active_node
 g_active_node=
@@ -85,9 +84,9 @@ fi
 
 function do_get() {
   if command -v curl &> /dev/null; then
-    curl "${g_curl_options[@]}" "$@"
+    curl "${CURL_OPTIONS[@]}" "$@"
   elif command -v wget &> /dev/null; then
-    wget "${g_wget_options[@]}" "$@"
+    wget "${WGET_OPTIONS[@]}" "$@"
   else
     abort "curl or wget command required"
   fi
@@ -96,17 +95,17 @@ function do_get() {
 function do_get_index() {
   if command -v curl &> /dev/null; then
     # --silent to suppress progress et al
-    curl --silent "${g_curl_options[@]}" "$@"
+    curl --silent "${CURL_OPTIONS[@]}" "$@"
   elif command -v wget &> /dev/null; then
-    wget "${g_wget_options[@]}" "$@"
+    wget "${WGET_OPTIONS[@]}" "$@"
   else
     abort "curl or wget command required"
   fi
 }
 
 function set_insecure() {
-  g_curl_options+=( "--insecure" )
-  g_wget_options+=( "--no-check-certificate" )
+  CURL_OPTIONS+=( "--insecure" )
+  WGET_OPTIONS+=( "--no-check-certificate" )
 }
 
 #
@@ -618,7 +617,7 @@ function install() {
 
   install_log "fetch" "${url}"
   do_get "${url}" | tar -zx --strip-components=1
-  [[ "${g_showing_get_progress}" = "true" ]] && erase_line
+  [[ "${GET_OPTIONS_SHOW_PROGRESS}" = "true" ]] && erase_line
   rm -f "${dir}/nvh.lock"
 
   disable_pax_mprotect bin/node
@@ -1084,6 +1083,9 @@ function main() {
 
   # readonly now done with option parsing
   readonly PRESERVE_NPM
+  readonly CURL_OPTIONS
+  readonly WGET_OPTIONS
+  readonly GET_OPTIONS_SHOW_PROGRESS
   # Note: NVH_MAX_REMOTE_MATCHES not readonly, used as env in display_latest_resolved_version
 
   set -- "${unprocessed_args[@]}"
