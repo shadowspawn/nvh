@@ -1071,54 +1071,57 @@ function show_diagnostics() {
   fi
 }
 
-#######################################################################################################
-
 #
-# Handle arguments.
+# main [arguments]
+# CLI parsing and processing
 #
 
-# First pass. Process the options so they can come before or after commands,
-# particularly for `nvh lsr --all` and `nvh install --preserve foo`
-# which feel pretty natural.
+function main() {
+  # First pass. Process the options so they can come before or after commands,
+  # particularly for `nvh lsr --all` and `nvh install --preserve foo`
+  # which feel pretty natural.
 
-unprocessed_args=()
+  local unprocessed_args=()
 
-while [[ $# -ne 0 ]]; do
-  case "$1" in
-    --all) set_show_all_remote_matches ;;
-    -h|--help|help) display_help; exit ;;
-    --insecure) set_insecure ;;
-    -p|--preserve) set_preserve_npm ;;
-    -V|--version) display_nvh_version; exit ;;
-    -*) abort "unrecognised option '$1'"; exit 1 ;;
-    exec) unprocessed_args=("$@"); break ;;
-    run) unprocessed_args=("$@"); break ;;
-    *) unprocessed_args+=( "$1" ) ;;
-  esac
-  shift
-done
+  while [[ $# -ne 0 ]]; do
+    case "$1" in
+      --all) set_show_all_remote_matches ;;
+      -h|--help|help) display_help; exit ;;
+      --insecure) set_insecure ;;
+      -p|--preserve) set_preserve_npm ;;
+      -V|--version) display_nvh_version; exit ;;
+      -*) abort "unrecognised option '$1'"; exit 1 ;;
+      exec) unprocessed_args=("$@"); break ;;
+      run) unprocessed_args=("$@"); break ;;
+      *) unprocessed_args+=( "$1" ) ;;
+    esac
+    shift
+  done
 
-set -- "${unprocessed_args[@]}"
+  set -- "${unprocessed_args[@]}"
 
-# Second pass. Commands.
+  # Second pass. Commands.
 
-if [[ $# -eq 0 ]]; then
-  [[ -z "$(versions_paths)" ]] && err_no_installed_print_help
-  display_cache_versions
-else
-  case "$1" in
-    cache) shift; cache_subcommand "$@" ;;
-    doctor) show_diagnostics ;;
-    exec) shift; exec_with_version "$@" ;;
-    i|install) shift; install "$1" ;;
-    ls|list) versions_paths ;;
-    lsr|ls-remote|list-remote) shift; display_remote_versions "$1" ;;
-    prune) prune_cache ;;
-    rm|remove) shift; remove_versions "$@" ;;
-    run) shift; run_with_version "$@" ;;
-    uninstall) uninstall_installed ;;
-    which) shift; display_bin_path_for_version "$1" ;;
-    *) abort "unrecognised command '$1' (perhaps you want 'nvh install $1'?)" ;;
-  esac
-fi
+  if [[ $# -eq 0 ]]; then
+    [[ -z "$(versions_paths)" ]] && err_no_installed_print_help
+    display_cache_versions
+  else
+    case "$1" in
+      cache) shift; cache_subcommand "$@" ;;
+      doctor) show_diagnostics ;;
+      exec) shift; exec_with_version "$@" ;;
+      i|install) shift; install "$1" ;;
+      ls|list) versions_paths ;;
+      lsr|ls-remote|list-remote) shift; display_remote_versions "$1" ;;
+      prune) prune_cache ;;
+      rm|remove) shift; remove_versions "$@" ;;
+      run) shift; run_with_version "$@" ;;
+      uninstall) uninstall_installed ;;
+      which) shift; display_bin_path_for_version "$1" ;;
+      *) abort "unrecognised command '$1' (perhaps you want 'nvh install $1'?)" ;;
+    esac
+  fi
+}
 
+
+main "$@"
