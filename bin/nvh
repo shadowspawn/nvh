@@ -24,7 +24,9 @@ readonly NVH_NODE_DOWNLOAD_MIRROR
 
 # Modified by command options, but otherwise constant
 g_showing_get_progress="false"
+
 PRESERVE_NPM="false"
+# readonly after option parsing
 
 g_ls_remote_max_matches=${NVH_MAX_REMOTE_MATCHES:-20}
 
@@ -625,14 +627,6 @@ function install() {
 }
 
 #
-# Set preserve for npm and npx.
-#
-
-function set_preserve_npm() {
-  PRESERVE_NPM="true"
-}
-
-#
 # set_show_all_remote_matches
 #
 
@@ -1090,7 +1084,7 @@ function main() {
       --all) set_show_all_remote_matches ;;
       -h|--help|help) display_help; exit ;;
       --insecure) set_insecure ;;
-      -p|--preserve) set_preserve_npm ;;
+      -p|--preserve) PRESERVE_NPM="true" ;;
       -V|--version) display_nvh_version; exit ;;
       -*) abort "unrecognised option '$1'"; exit 1 ;;
       exec) unprocessed_args=("$@"); break ;;
@@ -1099,6 +1093,8 @@ function main() {
     esac
     shift
   done
+
+  readonly PRESERVE_NPM
 
   set -- "${unprocessed_args[@]}"
 
