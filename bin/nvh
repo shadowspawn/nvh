@@ -57,14 +57,15 @@ g_active_node=
 # http://no-color.org
 # https://bixense.com/clicolors
 
-g_use_color="true"
+USE_COLOR="true"
 if [[ -n "${CLICOLOR_FORCE+defined}" && "${CLICOLOR_FORCE}" != "0" ]]; then
-  g_use_color="true"
+  USE_COLOR="true"
 elif [[ -n "${NO_COLOR+defined}" || "${CLICOLOR}" = "0" || ! -t 1 ]]; then
-  g_use_color="false"
+  USE_COLOR="false"
 fi
+readonly USE_COLOR
 # Select Graphic Rendition codes
-if [[ "${g_use_color}" = "true" ]]; then
+if [[ "${USE_COLOR}" = "true" ]]; then
   # KISS and use codes rather than tput, avoid dealing with missing tput or TERM.
   readonly SGR_RESET="\033[0m"
   readonly SGR_FAINT="\033[2m"
