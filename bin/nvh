@@ -1003,16 +1003,29 @@ function show_diagnostics() {
   echo "ls-remote max matches: ${NVH_MAX_REMOTE_MATCHES}"
 
   printf "\n\n## Proxy\n"
-  # https://github.com/koalaman/shellcheck/wiki/SC2154
+  # disable "var is referenced but not assigned": https://github.com/koalaman/shellcheck/wiki/SC2154
   # shellcheck disable=SC2154
   [[ -n "${http_proxy}" ]] && echo "http_proxy: ${http_proxy}"
   # shellcheck disable=SC2154
   [[ -n "${https_proxy}" ]] && echo "https_proxy: ${https_proxy}"
   if command -v curl &> /dev/null; then
-    [[ -e "${HOME}/.curlrc" ]] && echo "have .curlrc"
+    # curl supports lower case and upper case!
+    # shellcheck disable=SC2154
+    [[ -n "${all_proxy}" ]] && echo "all_proxy: ${all_proxy}"
+    [[ -n "${ALL_PROXY}" ]] && echo "ALL_PROXY: ${ALL_PROXY}"
+    [[ -n "${HTTP_PROXY}" ]] && echo "HTTP_PROXY: ${HTTP_PROXY}"
     [[ -n "${HTTPS_PROXY}" ]] && echo "HTTPS_PROXY: ${HTTPS_PROXY}"
+    if [[ -e "${CURL_HOME}/.curlrc" ]]; then
+       echo "have \$CURL_HOME/.curlrc"
+    elif [[ -e "${HOME}/.curlrc" ]]; then
+      echo "have \$HOME/.curlrc"
+    fi
   elif command -v wget &> /dev/null; then
-    [[ -e "${HOME}/.wgetrc" ]] && echo "have .wgetrc"
+    if [[ -e "${WGETRC}" ]]; then
+      echo "have \$WGETRC"
+    elif [[ -e "${HOME}/.wgetrc" ]]; then
+      echo "have \$HOME/.wgetrc"
+    fi
   fi
 
   printf "\n\n# Checks\n"
