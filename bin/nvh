@@ -27,8 +27,9 @@ PRESERVE_NPM="false"
 
 NVH_MAX_REMOTE_MATCHES=${NVH_MAX_REMOTE_MATCHES:-20}
 
-g_download_mirror_url=${NVH_NODE_MIRROR}
-g_download_folder_name="node"
+# modified by update_mirror_settings_for_version
+g_mirror_url=${NVH_NODE_MIRROR}
+g_mirror_folder_name="node"
 
 # Options for curl and wget.
 # Defining commands in variables is fraught (http://mywiki.wooledge.org/BashFAQ/050)
@@ -109,19 +110,21 @@ function set_insecure() {
 }
 
 #
-# update_download_settings_from_version <version>
+# update_mirror_settings_for_version <version>
 # e.g. <nightly/latest> means using download mirror and folder is nightly
-#
+# Globals modified:
+# - g_mirror_url
+# - g_mirror_folder_name
 
-function update_download_settings_from_version() {
+function update_mirror_settings_for_version() {
   if is_download_folder "$1" ; then
-    g_download_folder_name="$1"
-    g_download_mirror_url="${NVH_NODE_DOWNLOAD_MIRROR}/${g_download_folder_name}"
+    g_mirror_folder_name="$1"
+    g_mirror_url="${NVH_NODE_DOWNLOAD_MIRROR}/${g_mirror_folder_name}"
   elif is_download_version "$1"; then
     [[ "$1" =~ ^([^/]+)/(.*) ]]
     local remote_folder="${BASH_REMATCH[1]}"
-    g_download_folder_name="${remote_folder}"
-    g_download_mirror_url="${NVH_NODE_DOWNLOAD_MIRROR}/${g_download_folder_name}"
+    g_mirror_folder_name="${remote_folder}"
+    g_mirror_url="${NVH_NODE_DOWNLOAD_MIRROR}/${g_mirror_folder_name}"
   fi
 }
 
@@ -521,7 +524,7 @@ function display_compatible_file_field {
 
 function tarball_url() {
   local version="$1"
-  echo "${g_download_mirror_url}/${version}/node-${version}-$(display_tarball_platform).tar.gz"
+  echo "${g_mirror_url}/${version}/node-${version}-$(display_tarball_platform).tar.gz"
 }
 
 #
@@ -592,19 +595,19 @@ function install() {
   local resolved_version
   resolved_version="$(display_latest_resolved_version "$1")" || return 2
   [[ -n "${resolved_version}" ]] || abort "no version found for '$1'"
-  update_download_settings_from_version "$1"
+  update_mirror_settings_for_version "$1"
 
-  local dir="${CACHE_DIR}/${g_download_folder_name}/${resolved_version}"
+  local dir="${CACHE_DIR}/${g_mirror_folder_name}/${resolved_version}"
 
   if [[ -d "${dir}" ]]; then
     if [[ ! -e "${dir}/nvh.lock" ]] ; then
-      activate "${g_download_folder_name}/${resolved_version}"
+      activate "${g_mirror_folder_name}/${resolved_version}"
       exit
     fi
   fi
 
   echo
-  install_log "installing" "${g_download_folder_name}/${resolved_version}"
+  install_log "installing" "${g_mirror_folder_name}/${resolved_version}"
 
   local url="$(tarball_url "${resolved_version}")"
   is_ok "${url}" || abort "download preflight failed for '$resolved_version' (${url})"
@@ -622,7 +625,7 @@ function install() {
 
   disable_pax_mprotect bin/node
 
-  activate "${g_download_folder_name}/${resolved_version}"
+  activate "${g_mirror_folder_name}/${resolved_version}"
   echo
 }
 
@@ -636,8 +639,8 @@ function remove_versions() {
     local version
     version="$(display_latest_resolved_version "$1")" || break
     if [[ -n "${version}" ]]; then
-      update_download_settings_from_version "$1"
-      local dir="${CACHE_DIR}/${g_download_folder_name}/${version}"
+      update_mirror_settings_for_version "$1"
+      local dir="${CACHE_DIR}/${g_mirror_folder_name}/${version}"
       if [[ -s "${dir}" ]]; then
         rm -rf "${dir}"
       else
@@ -684,8 +687,8 @@ function find_cached_version() {
   version="$(display_latest_resolved_version "$1")" || exit 1
   [[ -n "${version}" ]] || abort "no version found for '$1'"
 
-  update_download_settings_from_version "$1"
-  g_cached_version="${CACHE_DIR}/${g_download_folder_name}/${version}"
+  update_mirror_settings_for_version "$1"
+  g_cached_version="${CACHE_DIR}/${g_mirror_folder_name}/${version}"
   [[ -d "${g_cached_version}" ]] || abort "'$1' (${version}) not in downloads cache"
 }
 
@@ -745,7 +748,7 @@ function display_latest_resolved_version() {
 #
 
 display_remote_index() {
-  local index_url="${g_download_mirror_url}/index.tab"
+  local index_url="${g_mirror_url}/index.tab"
   # tail to remove header line
   do_get_index "${index_url}" | tail -n +2
   if [[ "${PIPESTATUS[0]}" -ne 0 ]]; then
@@ -770,7 +773,7 @@ function display_match_limit(){
 
 function display_remote_versions() {
   local version="$1"
-  update_download_settings_from_version "${version}"
+  update_mirror_settings_for_version "${version}"
   local match='.'
   local match_count="${NVH_MAX_REMOTE_MATCHES}"
   if [[ -z "${version}" ]]; then
@@ -798,7 +801,7 @@ function display_remote_versions() {
   elif is_download_folder "${version}"; then
     match='.'
   elif is_download_version "${version}"; then
-    version="${version#${g_download_folder_name}/}"
+    version="${version#${g_mirror_folder_name}/}"
     if [[ "${version}" = "latest" || "${version}" = "current" ]]; then
       match_count=1
       match='.'
