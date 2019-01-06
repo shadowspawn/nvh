@@ -52,6 +52,9 @@ WGET_OPTIONS=( "-q" "-O-" )
 # Set by set_active_node
 g_active_node=
 
+# Set by find_cached_version
+g_cached_version=
+
 # ANSI escape codes
 # https://en.wikipedia.org/wiki/ANSI_escape_code
 # http://no-color.org
@@ -79,8 +82,8 @@ else
 fi
 
 #
-# do_get <args...>
-# Call curl or wget with combination of global and passed arguments.
+# Synopsis: do_get [option...] url
+# Call curl or wget with combination of global and passed options.
 #
 
 function do_get() {
@@ -93,6 +96,12 @@ function do_get() {
   fi
 }
 
+#
+# Synopsis: do_get_index [option...] url
+# Call curl or wget with combination of global and passed options,
+# with options tweaked to be more suitable for getting index.
+#
+
 function do_get_index() {
   if command -v curl &> /dev/null; then
     # --silent to suppress progress et al
@@ -104,17 +113,25 @@ function do_get_index() {
   fi
 }
 
+#
+# Synopsis: set_insecure
+# Globals modified:
+# - CURL_OPTIONS
+# - WGET_OPTIONS
+#
+
 function set_insecure() {
   CURL_OPTIONS+=( "--insecure" )
   WGET_OPTIONS+=( "--no-check-certificate" )
 }
 
 #
-# update_mirror_settings_for_version <version>
+# Synopsis: update_mirror_settings_for_version version
 # e.g. <nightly/latest> means using download mirror and folder is nightly
 # Globals modified:
 # - g_mirror_url
 # - g_mirror_folder_name
+#
 
 function update_mirror_settings_for_version() {
   if is_download_folder "$1" ; then
@@ -129,7 +146,7 @@ function update_mirror_settings_for_version() {
 }
 
 #
-# install_log <action> <msg>
+# Synopsis: install_log action message
 #
 
 function install_log() {
@@ -137,8 +154,8 @@ function install_log() {
 }
 
 #
-# abort <messages...>
-# Exit with the given messge
+# Synopsis: abort message ...
+# Exit with the given message
 #
 
 function abort() {
@@ -146,19 +163,25 @@ function abort() {
 }
 
 #
-# More assorted logging functions
+# Synopsis: trace message ...
+# Debugging output to stderr, not used in production code.
 #
 
 function trace() {
   >&2 printf "trace: %s\n" "$*"
 }
 
+#
+# Synopsis: warn message ...
+# Highlight message in colour. Currently using STDOUT as only used by `nvh doctor`.
+#
+
 function warn() {
   printf "${SGR_RED}%s${SGR_RESET}\n" "$*"
 }
 
 #
-# Version test patterns
+# Synopsis: is_lts_codename version
 #
 
 function is_lts_codename() {
@@ -167,10 +190,18 @@ function is_lts_codename() {
   [[ "$1" =~ ^([Aa]rgon|[Bb]oron|[Cc]arbon|[Dd]ubnium|[Ee]rbium|[Ff]ermium|[Gg]allium|[Hh]ydrogen|[Ii]ron)$ ]]
 }
 
+#
+# Synopsis: is_download_folder version
+#
+
 function is_download_folder() {
   # e.g. nightly
   [[ "$1" =~ ^(chakracore-nightly|chakracore-rc|chakracore-release|next-nightly|nightly|rc|release|test|v8-canary)$ ]]
 }
+
+#
+# Synopsis: is_download_version version
+#
 
 function is_download_version() {
   # e.g. nightly/, nightly/latest, nightly/v11
@@ -182,10 +213,18 @@ function is_download_version() {
   return 2
 }
 
+#
+# Synopsis: is_numeric_version version
+#
+
 function is_numeric_version() {
   # e.g. 6, v7.1, 8.11.3
   [[ "$1" =~ ^[v]{0,1}[0-9]+(\.[0-9]+){0,2}$ ]]
 }
+
+#
+# Synopsis: is_exact_numeric_version version
+#
 
 function is_exact_numeric_version() {
   # e.g. 6, v7.1, 8.11.3
@@ -225,7 +264,7 @@ function handle_sigtstp() {
 }
 
 #
-# Output usage information.
+# Synopsis: display_help
 #
 
 function display_help() {
@@ -287,40 +326,38 @@ See also https://github.com/JohnRGee/nvh.git for further information.
 EOF
 }
 
+#
+# Synopsis: err_no_installed_print_help
+#
+
 function err_no_installed_print_help() {
   display_help
   abort "no downloaded versions yet, see above help for commands"
 }
 
 #
-# next_version_installed <selected-version>
+# Synopsis: next_version_installed selected_version
 # Output version after selected (which may be blank under some circumstances).
 #
 
 function next_version_installed() {
-  list_cache_versions | grep "$1" -A 1 | tail -n 1
+  display_cache_versions | grep "$1" -A 1 | tail -n 1
 }
 
 #
-# prev_version_installed <selected-version>
+# Synopsis: prev_version_installed selected_version
 # Output version before selected  (which may be blank under some circumstances).
 #
 
 function prev_version_installed() {
-  list_cache_versions | grep "$1" -B 1 | head -n 1
+  display_cache_versions | grep "$1" -B 1 | head -n 1
 }
 
 #
-# Output nvh version.
-#
-
-function display_nvh_version() {
-  echo "${VERSION}"
-}
-
-#
-# set_active_node
-# Check for active version and return as $g_active_node
+# Synopsis: set_active_node
+# Checks cached downloads for a binary matching the active node.
+# Globals modified:
+# - g_active_node
 #
 
 function set_active_node() {
@@ -342,10 +379,11 @@ function set_active_node() {
 }
 
 #
+# Synopsis: display_versions_paths
 # Display sorted versions directories paths.
 #
 
-function versions_paths() {
+function display_versions_paths() {
   # e.g. node/v8.11.3
   # sort string . number . number . number
 
@@ -358,14 +396,14 @@ function versions_paths() {
 }
 
 #
-# display_versions_with_selected <selected-version>
+# Synopsis: display_versions_with_selected selected_version
 # Display installed versions, with selected version highlighted.
 #
 
 function display_versions_with_selected() {
   local selected="$1"
   echo
-  for folder_and_version in $(versions_paths); do
+  for folder_and_version in $(display_versions_paths); do
     if [[ "${folder_and_version}" = "${selected}" ]]; then
       printf "  ${SGR_CYAN}ο${SGR_RESET} %s\n" "${folder_and_version}"
     else
@@ -377,20 +415,21 @@ function display_versions_with_selected() {
 }
 
 #
-# List cache versions.
+# Synopsis: display_cache_versions
 #
 
-function list_cache_versions() {
-  for folder_and_version in $(versions_paths); do
+function display_cache_versions() {
+  for folder_and_version in $(display_versions_paths); do
     echo "${folder_and_version}"
   done
 }
 
 #
+# Synopsis: menu_select_cache_versions
 # Display downloaded versions in cache. and mark the installed version.
 #
 
-function display_cache_versions() {
+function menu_select_cache_versions() {
   enter_fullscreen
   set_active_node
   local selected="${g_active_node}"
@@ -453,7 +492,7 @@ function display_cache_versions() {
 }
 
 #
-# Move up a line and erase.
+# Synopsis: erase_line
 #
 
 function erase_line() {
@@ -461,6 +500,7 @@ function erase_line() {
 }
 
 #
+# Synopsis: is_ok url
 # Check the HEAD response of <url>.
 #
 
@@ -475,7 +515,8 @@ function is_ok() {
 }
 
 #
-# display_tarball_platform
+# Synopsis: display_tarball_platform
+#
 
 function display_tarball_platform() {
   # https://en.wikipedia.org/wiki/Uname
@@ -506,8 +547,8 @@ function display_tarball_platform() {
 }
 
 #
+# Synopsis: display_compatible_file_field
 # display <file> for current platform, as per <file> field in index.tab, which is different than actual download
-# display_compatible_file_field
 #
 
 function display_compatible_file_field {
@@ -519,7 +560,7 @@ function display_compatible_file_field {
 }
 
 #
-# tarball_url <version>
+# Synopsis: tarball_url version
 #
 
 function tarball_url() {
@@ -528,6 +569,7 @@ function tarball_url() {
 }
 
 #
+# Synopsis: disable_pax_mprotect binary
 # Disable PaX mprotect for <binary>
 #
 
@@ -553,7 +595,7 @@ function disable_pax_mprotect() {
 }
 
 #
-# activate <path_from_prefix>
+# Synopsis: activate path_from_prefix
 # e.g. activate node/8.11.3, activate nightly/11.0.0-nightly201807118174d0c8ca
 #
 
@@ -587,7 +629,7 @@ function activate() {
 }
 
 #
-# Install <version>
+# Synopsis: install version
 #
 
 function install() {
@@ -630,7 +672,7 @@ function install() {
 }
 
 #
-# Remove <version ...>
+# Synopsis: remove_versions version ...
 #
 
 function remove_versions() {
@@ -654,13 +696,13 @@ function remove_versions() {
 }
 
 #
-# Prune/clear versions
+# Synopsis: prune_cache
 #
 
 function prune_cache() {
   set_active_node
 
-  for folder_and_version in $(versions_paths); do
+  for folder_and_version in $(display_versions_paths); do
     if [[ "${folder_and_version}" != "${g_active_node}" ]]; then
       echo "${folder_and_version}"
       rm -rf "${CACHE_DIR:?}/${folder_and_version}"
@@ -668,18 +710,23 @@ function prune_cache() {
   done
 }
 
+#
+# Synopsis: clear_cache
+#
+
 function clear_cache() {
-  # Side note:tThis will leave behind empty folders, so not a clean uninstall.
-  for folder_and_version in $(versions_paths); do
+  # Side note: this will leave behind empty folders, so not a clean uninstall.
+  for folder_and_version in $(display_versions_paths); do
     echo "${folder_and_version}"
     rm -rf "${CACHE_DIR:?}/${folder_and_version}"
   done
 }
 
 #
-# find_cached_version <version>
-# Returns resolved cache directory in g_cached_version
-#
+# Synopsis: find_cached_version version
+# Finds cache directory for resolved version.
+# Globals modified:
+# - g_cached_version
 
 function find_cached_version() {
   [[ -z "$1" ]] && abort "version required"
@@ -694,8 +741,7 @@ function find_cached_version() {
 
 
 #
-# display_bin_path_for_version <version>
-# Output bin path for <version>
+# Synopsis: display_bin_path_for_version version
 #
 
 function display_bin_path_for_version() {
@@ -704,8 +750,8 @@ function display_bin_path_for_version() {
 }
 
 #
-# run_with_version <version> [args...]
-# Run the given <version> of node with [args ...]
+# Synopsis: run_with_version version [args...]
+# Run the given <version> of node with [args ..]
 #
 
 function run_with_version() {
@@ -715,7 +761,7 @@ function run_with_version() {
 }
 
 #
-# exec_with_version <version> <command> [args...]
+# Synopsis: exec_with_version <version> command [args...]
 # Modify the path to include <version> and execute command.
 #
 
@@ -726,7 +772,7 @@ function exec_with_version() {
 }
 
 #
-# Display resolved version.
+# Synopsis: display_latest_resolved_version version
 #
 
 function display_latest_resolved_version() {
@@ -742,8 +788,8 @@ function display_latest_resolved_version() {
 }
 
 #
-# Display index.tab from remote url
-# Reference: https://github.com/nodejs/nodejs-dist-indexer
+# Synopsis: display_remote_index
+# index.tab reference: https://github.com/nodejs/nodejs-dist-indexer
 # Index fields are: version	date	files	npm	v8	uv	zlib	openssl	modules	lts
 #
 
@@ -758,7 +804,7 @@ display_remote_index() {
 }
 
 #
-# display_match_limit
+# Synopsis: display_match_limit limit
 #
 
 function display_match_limit(){
@@ -768,7 +814,7 @@ function display_match_limit(){
 }
 
 #
-# display_remote_versions <version>
+# Synopsis: display_remote_versions version
 #
 
 function display_remote_versions() {
@@ -832,8 +878,8 @@ function display_remote_versions() {
 }
 
 #
+# Synopsis: cache_subcommand subcommand [arguments...]
 # Parse cache sub-commands
-# cache_subcommand [arguments]
 #
 
 cache_subcommand() {
@@ -842,7 +888,7 @@ cache_subcommand() {
   [[ -z "${subcommand}" ]] && printf "\n  Usage: nvh cache clear|list|prune|remove\n\n" && exit
   case "${subcommand}" in
     clear) clear_cache ;;
-    ls|list) versions_paths ;;
+    ls|list) display_versions_paths ;;
     prune) prune_cache ;;
     rm|remove) shift; remove_versions "$@" ;;
     *) abort "unrecognised cache command '$1'" ;;
@@ -850,7 +896,7 @@ cache_subcommand() {
 }
 
 #
-# delete_with_echo <target>
+# Synopsis: delete_with_echo target
 #
 
 function delete_with_echo() {
@@ -861,7 +907,7 @@ function delete_with_echo() {
 }
 
 #
-# uninstall_installed
+# Synopsis: uninstall_installed
 # Uninstall the installed node and npm (leaving alone the cache),
 # so undo install, and may expose possible system installed versions.
 #
@@ -885,7 +931,7 @@ uninstall_installed() {
 }
 
 #
-# Show useful diagnostics
+# Synopsis: show_permission_suggestions
 #
 
 function show_permission_suggestions() {
@@ -893,6 +939,11 @@ function show_permission_suggestions() {
   echo "- run nvh with sudo, or"
   echo "- define NVH_PREFIX to a writeable location, or"
 }
+
+#
+# Synopsis: show_diagnostics
+# Show environment and check for common problems.
+#
 
 function show_diagnostics() {
   echo "This information is to help you diagnose issues, and useful when reporting an issue."
@@ -1058,7 +1109,7 @@ function show_diagnostics() {
 }
 
 #
-# main [arguments]
+# Synopsis: main [parameter...]
 # CLI parsing and processing
 #
 
@@ -1075,7 +1126,7 @@ function main() {
       -h|--help|help) display_help; exit ;;
       --insecure) set_insecure ;;
       -p|--preserve) PRESERVE_NPM="true" ;;
-      -V|--version) display_nvh_version; exit ;;
+      -V|--version) echo "${VERSION}"; exit ;;
       -*) abort "unrecognised option '$1'"; exit 1 ;;
       exec) unprocessed_args=("$@"); break ;;
       run) unprocessed_args=("$@"); break ;;
@@ -1096,15 +1147,15 @@ function main() {
   # Second pass. Commands.
 
   if [[ $# -eq 0 ]]; then
-    [[ -z "$(versions_paths)" ]] && err_no_installed_print_help
-    display_cache_versions
+    [[ -z "$(display_versions_paths)" ]] && err_no_installed_print_help
+    menu_select_cache_versions
   else
     case "$1" in
       cache) shift; cache_subcommand "$@" ;;
       doctor) show_diagnostics ;;
       exec) shift; exec_with_version "$@" ;;
       i|install) shift; install "$1" ;;
-      ls|list) versions_paths ;;
+      ls|list) display_versions_paths ;;
       lsr|ls-remote|list-remote) shift; display_remote_versions "$1" ;;
       prune) prune_cache ;;
       rm|remove) shift; remove_versions "$@" ;;
@@ -1116,5 +1167,8 @@ function main() {
   fi
 }
 
+#
+# Code
+#
 
 main "$@"
