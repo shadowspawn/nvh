@@ -249,7 +249,7 @@ Changes from [tj/n](https://github.com/tj/n) 2.1.12
 [Unreleased]: https://github.com/JohnRGee/nvh/compare/master...develop
 [6.2.0]: https://github.com/JohnRGee/nvh/compare/v6.1.0...JohnRGee:v6.2.0
 [6.1.0]: https://github.com/JohnRGee/nvh/compare/v6.0.4...JohnRGee:v6.1.0
-[6.0.3]: https://github.com/JohnRGee/nvh/compare/v6.0.3...JohnRGee:v6.0.4
+[6.0.4]: https://github.com/JohnRGee/nvh/compare/v6.0.3...JohnRGee:v6.0.4
 [6.0.3]: https://github.com/JohnRGee/nvh/compare/v6.0.2...JohnRGee:v6.0.3
 [6.0.2]: https://github.com/JohnRGee/nvh/compare/v6.0.1...JohnRGee:v6.0.2
 [6.0.1]: https://github.com/JohnRGee/nvh/compare/v6.0.0...JohnRGee:v6.0.1
