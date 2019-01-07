@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased] (date goes here)
 
+## Added
+
+- check for more proxy settings in `nvh doctor`, including `CURL_HOME` and `WGETRC`
+
 ## Changed
 
 - be more conservative determining architecture to reduce possibility install incompatible binary
