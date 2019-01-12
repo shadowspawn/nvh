@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
-## [Unreleased] (date goes here)
+## [6.3.0] (2019-01-12)
 
 ## Added
 
@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Changed
 
-- `doc` directory name changed back to `docs`, because supported by GitHub
+- `doc` directory name changed back to `docs` (!), because supported by GitHub
 
 ## Changed
 
@@ -257,6 +257,7 @@ Changes from [tj/n](https://github.com/tj/n) 2.1.12
 - `--arch` option
 
 [Unreleased]: https://github.com/JohnRGee/nvh/compare/master...develop
+[6.3.0]: https://github.com/JohnRGee/nvh/compare/v6.2.0...JohnRGee:v6.3.0
 [6.2.0]: https://github.com/JohnRGee/nvh/compare/v6.1.0...JohnRGee:v6.2.0
 [6.1.0]: https://github.com/JohnRGee/nvh/compare/v6.0.4...JohnRGee:v6.1.0
 [6.0.4]: https://github.com/JohnRGee/nvh/compare/v6.0.3...JohnRGee:v6.0.4
