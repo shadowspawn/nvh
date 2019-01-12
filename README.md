@@ -6,7 +6,7 @@ Easily install Node.js versions. No profile setup required for default install l
 
 Requires `bash` (and does not require a working node install).
 
-Forked from [tj/n](https://github.com/tj/n) with [changes to command syntax](doc/coming-from-n.md), bug fixes, and new features.
+Forked from [tj/n](https://github.com/tj/n) with [changes to command syntax](docs/coming-from-n.md), bug fixes, and new features.
 
 - [Node Version Helper](#node-version-helper)
     - [Installation](#installation)
@@ -149,13 +149,13 @@ To change the location to say `$HOME/.nvh`, add lines like the following to your
     export NVH_PREFIX=$HOME/.nvh
     export PATH=$NVH_PREFIX/bin:$PATH
 
-See [Environment Variables](doc/environment-variables.md) for more about these settings:
+See [Environment Variables](docs/environment-variables.md) for more about these settings:
 
     NVH_NODE_MIRROR
     NVH_NODE_DOWNLOAD_MIRROR
     NVH_MAX_REMOTE_MATCHES
 
-See [Proxy Server](doc/proxy-server.md) for variables and advice for using a proxy server.
+See [Proxy Server](docs/proxy-server.md) for variables and advice for using a proxy server.
 
     https_proxy
 
@@ -165,7 +165,7 @@ See [Proxy Server](doc/proxy-server.md) for variables and advice for using a pro
 
 The downloads are kept in a cache folder to be used for reinstalls. The downloads are also available for limited use using `nvh which` and `nvh run` and `nvh exec`.
 
-The global `npm` packages are not changed by the install, with the 
+The global `npm` packages are not changed by the install, with the
 exception of `npm` itself which by default is part of the `node` install.
 
 ## Alternatives to `nvh`

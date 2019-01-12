@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Changed
 
+- `doc` directory name changed back to `docs`, because supported by GitHub
+
+## Changed
+
 - be more conservative determining architecture to reduce possibility install incompatible binary
 
 ## [6.2.0] (2019-01-02)
