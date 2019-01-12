@@ -4,7 +4,7 @@
 
 Easily install Node.js versions. No profile setup required for default install location.
 
-Requires `bash` (and does not require a working node install). 
+Requires `bash` (and does not require a working node install).
 
 On Windows the "Windows Subsystem for Linux" is supported, but not "Git BASH".
 
