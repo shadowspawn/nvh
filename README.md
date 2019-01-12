@@ -4,7 +4,9 @@
 
 Easily install Node.js versions. No profile setup required for default install location.
 
-Requires `bash` (and does not require a working node install).
+Requires `bash` (and does not require a working node install). 
+
+On Windows the "Windows Subsystem for Linux" is supported, but not "Git BASH".
 
 Forked from [tj/n](https://github.com/tj/n) with [changes to command syntax](docs/coming-from-n.md), bug fixes, and new features.
 
@@ -177,11 +179,11 @@ exception of `npm` itself which by default is part of the `node` install.
 
 `nvh` is a fork from [tj/n](https://github.com/tj/n), so the original is an alternative!
 
-`nvh` does not:
+`nvh` does **not**:
 
 - manage the global npm modules per version of node
 - dynamically change the available node as navigate in shell
-- run natively on Windows (although there is now the Windows Subsystem for Linux on Windows 10)
+- run natively on Windows or in Git BASH
 
 Three alternatives offering different feature sets are:
 
