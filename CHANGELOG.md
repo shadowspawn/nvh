@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Added
 
+- `NVH_PRESERVE_NPM` to preserve `npm` by default for installs
+- `--no-preserve` to override `NVH_PRESERVE_NPM`
 - check for more proxy settings in `nvh doctor`, including `CURL_HOME` and `WGETRC`
 
 ## Changed

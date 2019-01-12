@@ -23,7 +23,7 @@ function teardown() {
 }
 
 # mostly --preserve, but also variations with i/install and lts/numeric
-@test "nvh i 4.9.1; nvh --preserve install lts # (2 installs)" {
+@test "--preserve variations # (4 installs)" {
   local ARGON_VERSION="v4.9.1"
   local ARGON_NPM_VERSION="2.15.11"
   local LTS_VERSION="$(display_remote_version lts)"
@@ -34,12 +34,19 @@ function teardown() {
   run "${NVH_PREFIX}/bin/npm" --version
   [ "$output" = "${ARGON_NPM_VERSION}" ]
 
-  nvh --preserve install lts
+  nvh --preserve install "${LTS_VERSION}"
   run "${NVH_PREFIX}/bin/node" --version
   [ "$output" = "${LTS_VERSION}" ]
-  # preserved npm version
   run "${NVH_PREFIX}/bin/npm" --version
   [ "$output" = "${ARGON_NPM_VERSION}" ]
+
+  NVH_PRESERVE_NPM=1 nvh install "${LTS_VERSION}"
+  run "${NVH_PREFIX}/bin/npm" --version
+  [ "$output" = "${ARGON_NPM_VERSION}" ]
+
+  NVH_PRESERVE_NPM=1 nvh install --no-preserve "${LTS_VERSION}"
+  run "${NVH_PREFIX}/bin/npm" --version
+  [ "$output" != "${ARGON_NPM_VERSION}" ]
 }
 
 @test "nvh install nightly" {

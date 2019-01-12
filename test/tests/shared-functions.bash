@@ -6,10 +6,11 @@
 #   lots
 
 function unset_nvh_env(){
-  unset NVH_PREFIX
-  unset NVH_NODE_MIRROR
-  unset NVH_NODE_DOWNLOAD_MIRROR
   unset NVH_MAX_REMOTE_MATCHES
+  unset NVH_PREFIX
+  unset NVH_PRESERVE_NPM
+  unset NVH_NODE_DOWNLOAD_MIRROR
+  unset NVH_NODE_MIRROR
 }
 
 

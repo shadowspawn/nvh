@@ -38,16 +38,16 @@ One way to bootstrap an install if `npm` is not yet available:
 
 Execute `nvh install <version>` to download and install a version of `node`. If `<version>` has already been downloaded, `nvh` will install from its cache.
 
-    nvh install 4.9.1
+    nvh install 8.11.3
     nvh i lts
 
 Execute `nvh` on its own to view your downloaded versions, and install the selected version.
 
     $ nvh
 
-      node/v4.9.1
-    ο node/v6.14.3
       node/v8.11.3
+    ο node/v10.15.0
+      node/v11.6.0
 
     Use up/down arrow keys to select a version, return key to install, q to quit
 
@@ -100,7 +100,7 @@ modules this way.)
 
 ## Preserving npm
 
-A `node` install normally includes `npm` as well, but you may wish to preserve an updated `npm` and `npx` leaving them out of the install:
+A `node` install normally includes `npm` as well, but you may wish to preserve an updated `npm` and `npx` leaving them out of the install using `--preserve`:
 
     $ nvh install latest
     installed : v10.6.0
@@ -110,6 +110,10 @@ A `node` install normally includes `npm` as well, but you may wish to preserve a
     installed : v8.0.0
     $ npm --version
     6.1.0
+
+You can make `--preserve` the default behaviour for installs by setting `NVH_PRESERVE_NPM`:
+
+    export NVH_PRESERVE_NPM=1
 
 ## Miscellaneous
 
@@ -121,7 +125,7 @@ List matching remote versions available for download:
 
     nvh ls-remote lts
     nvh ls-remote latest
-    nvh lsr 6
+    nvh lsr 10
     nvh lsr --all
 
 List downloaded versions in cache:
@@ -130,7 +134,7 @@ List downloaded versions in cache:
 
 Remove some downloaded versions:
 
-    nvh rm 0.9.4 v0.10.0
+    nvh rm 4.9.1 8.15.0
 
 Remove all downloaded versions except the version matching the installed version, or all:
 
@@ -151,9 +155,10 @@ To change the location to say `$HOME/.nvh`, add lines like the following to your
 
 See [Environment Variables](docs/environment-variables.md) for more about these settings:
 
+    NVH_MAX_REMOTE_MATCHES
     NVH_NODE_MIRROR
     NVH_NODE_DOWNLOAD_MIRROR
-    NVH_MAX_REMOTE_MATCHES
+    NVH_PRESERVE_NPM
 
 See [Proxy Server](docs/proxy-server.md) for variables and advice for using a proxy server.
 

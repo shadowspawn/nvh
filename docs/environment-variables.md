@@ -1,8 +1,13 @@
 # Environment Variables
 
-`NVH_PREFIX` is covered in the [README](../README.md#optional-environment-variables)
+Note: if you are using `sudo` for the install, by default the command you run does not have access to your exported environment variables. You can use `sudo -E` to pass the existing environment variables.
 
-If you are using `sudo` for the install, by default the command you run does not have access to your exported environment variables. You can use `sudo -E` to preserve (pass) the existing environment variables.
+## Custom Install Destination
+
+The `nvh` command downloads and installs to `/usr/local` by default, but you may override this location by defining `NVH_PREFIX`. e.g.
+
+    export NVH_PREFIX=$HOME/.nvh
+    export PATH=$NVH_PREFIX/bin:$PATH
 
 ## Custom Node Mirror
 
@@ -19,7 +24,18 @@ Note: the username and password will be visible (via `ps`) to other users on you
 
 `nvh ls-remote` defaults to a showing a maximum of 20 matching versions, but you can change this. e.g.
 
-    NVH_MAX_REMOTE_MATCHES=3
+    export NVH_MAX_REMOTE_MATCHES=3
+
+## Preserving npm
+
+By default the `node` install also includes `npm` and `npx`. You can change this by setting `NVH_PRESERVE_NPM` to a non-empty string. This has the same affect as specifying `--preserve` on the command line, and leaves `npm` and `npx` out of the install preserving the current versions.
+
+    export NVH_PRESERVE_NPM=1
+
+You can be explicit to get the desired behaviour whatever the environment variable:
+
+    nvh install --no-preserve latest
+    nvh install --preserve nightly
 
 ## Proxy Server
 
