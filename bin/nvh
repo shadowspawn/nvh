@@ -285,6 +285,7 @@ Commands:
   nvh cache prune                 Remove all downloaded versions except the installed version
   nvh rm <version ...>            Remove the given downloaded version(s)
   nvh doctor                      Output diagnostics to help solve issues
+  nvh prefix                      Output prefix to install location
   nvh help                        Display help information
 
 Options:
@@ -1174,6 +1175,7 @@ function main() {
       i|install) shift; install "$1" ;;
       ls|list) display_versions_paths ;;
       lsr|ls-remote|list-remote) shift; display_remote_versions "$1" ;;
+      prefix) echo "${NVH_PREFIX}"; exit ;;
       prune) prune_cache ;;
       rm|remove) shift; remove_versions "$@" ;;
       run) shift; run_with_version "$@" ;;
