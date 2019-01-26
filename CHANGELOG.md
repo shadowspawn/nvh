@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - `nvh prefix` for scripting and help instructions which work across multiple setups
 
+## Changed
+
+- use `--compressed` with `curl` for getting remote node version index
+
 ## [6.3.0] (2019-01-12)
 
 ## Added
