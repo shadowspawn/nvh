@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
+## [Unreleased] (date goes here)
+
 ## [7.0.0] (2019-01-27)
 
 ## Added
@@ -267,6 +269,7 @@ Changes from [tj/n](https://github.com/tj/n) 2.1.12
 - `--arch` option
 
 [Unreleased]: https://github.com/JohnRGee/nvh/compare/master...develop
+[7.0.0]: https://github.com/JohnRGee/nvh/compare/v6.3.0...JohnRGee:v7.0.0
 [6.3.0]: https://github.com/JohnRGee/nvh/compare/v6.2.0...JohnRGee:v6.3.0
 [6.2.0]: https://github.com/JohnRGee/nvh/compare/v6.1.0...JohnRGee:v6.2.0
 [6.1.0]: https://github.com/JohnRGee/nvh/compare/v6.0.4...JohnRGee:v6.1.0
