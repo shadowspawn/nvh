@@ -185,8 +185,9 @@ exception of `npm` itself which by default is part of the `node` install.
 - dynamically change the available node as navigate in shell
 - run natively on Windows or in Git BASH
 
-Three alternatives offering different feature sets are:
+Alternatives offering different feature sets are:
 
-- [nvs](https://github.com/jasongin/nvs) Node Version Switcher
-- [nvm](https://github.com/creationix/nvm) Node Version Manager
-- [nave](https://github.com/isaacs/nave) Virtual Environments for Node
+- [nvs](https://github.com/jasongin/nvs) Node Version Switcher (cross-platform)
+- [nvm](https://github.com/creationix/nvm) Node Version Manager (Linux and Mac)
+- [nvm-windows](https://github.com/coreybutler/nvm-windows) Node.js version manager for Windows
+- [nave](https://github.com/isaacs/nave) Virtual Environments for Node (Linux and Mac)
