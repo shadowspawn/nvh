@@ -195,4 +195,3 @@ Alternatives offering different feature sets are:
 - [nvs](https://github.com/jasongin/nvs) Node Version Switcher (cross-platform)
 - [nvm](https://github.com/creationix/nvm) Node Version Manager (Linux and Mac)
 - [nvm-windows](https://github.com/coreybutler/nvm-windows) Node.js version manager for Windows
-- [nave](https://github.com/isaacs/nave) Virtual Environments for Node (Linux and Mac)
