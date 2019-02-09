@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased] (date goes here)
 
+## Added
+
+- example instructions to `chown` rather than use `sudo`
+
 ## [7.0.0] (2019-01-27)
 
 ## Added
