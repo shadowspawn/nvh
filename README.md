@@ -8,7 +8,7 @@ Requires `bash` (and does not require a working node install).
 
 On Windows the "Windows Subsystem for Linux" is supported, but not "Git BASH".
 
-Forked from [tj/n](https://github.com/tj/n) with [changes to command syntax](docs/coming-from-n.md), bug fixes, and new features.
+Forked from [tj/n](https://github.com/tj/n) with improvements to syntax and error handling, bug fixes, and new features.
 
 - [Node Version Helper](#node-version-helper)
     - [Installation](#installation)
@@ -23,14 +23,19 @@ Forked from [tj/n](https://github.com/tj/n) with [changes to command syntax](doc
 
 ## Installation
 
-If you already have `node`, the easiest way to install `nvh` is through `npm`:
+If you already have `node`, the easiest way to install `nvh` is with `npm`:
 
-    npm install -g @shadowspawn/nvh
+    npm install --global @shadowspawn/nvh
     nvh help
 
 `nvh` installs node to `/usr/local` by default, but you may change this location by defining `NVH_PREFIX` (see [environment variables](#optional-environment-variables)). The downloads are written to a cache in subdirectory `nvh/versions`.
 
-One way to bootstrap an install if `npm` is not yet available:
+To avoid requiring `sudo` for `nvh` and `npm` global installs, it is recommended you either install to your home directory using `NVH_PREFIX`, or take ownership of the system directories:
+
+    sudo mkdir -p /usr/local/nvh
+    sudo chown -R $(whoami) /usr/local/{nvh,bin,include,lib,share}
+
+If `npm` is not yet available, a way to bootstrap an install:
 
     curl -L https://github.com/JohnRGee/nvh/raw/master/bin/nvh -o nvh
     bash nvh install lts
@@ -185,8 +190,8 @@ exception of `npm` itself which by default is part of the `node` install.
 - dynamically change the available node as navigate in shell
 - run natively on Windows or in Git BASH
 
-Three alternatives offering different feature sets are:
+Alternatives offering different feature sets are:
 
-- [nvs](https://github.com/jasongin/nvs) Node Version Switcher
-- [nvm](https://github.com/creationix/nvm) Node Version Manager
-- [nave](https://github.com/isaacs/nave) Virtual Environments for Node
+- [nvs](https://github.com/jasongin/nvs) Node Version Switcher (cross-platform)
+- [nvm](https://github.com/creationix/nvm) Node Version Manager (Linux and Mac)
+- [nvm-windows](https://github.com/coreybutler/nvm-windows) Node.js version manager for Windows
