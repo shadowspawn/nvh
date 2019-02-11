@@ -8,7 +8,7 @@ Requires `bash` (and does not require a working node install).
 
 On Windows the "Windows Subsystem for Linux" is supported, but not "Git BASH".
 
-Forked from [tj/n](https://github.com/tj/n) with [changes to command syntax](docs/coming-from-n.md), bug fixes, and new features.
+Forked from [tj/n](https://github.com/tj/n) with improvements to syntax and error handling, bug fixes, and new features.
 
 - [Node Version Helper](#node-version-helper)
     - [Installation](#installation)
