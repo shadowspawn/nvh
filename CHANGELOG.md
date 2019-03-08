@@ -7,7 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
-## [Unreleased] (date goes here)
+## [7.0.2] (2019-03-09)
+
+### Changed
+
+- updated README and help with new GitHub username (changed from JohnRGee to shadowspawn)
 
 ## [7.0.1] (2019-02-11)
 
@@ -279,6 +283,7 @@ Changes from [tj/n](https://github.com/tj/n) v2.1.12
 - `--arch` option
 
 [Unreleased]: https://github.com/shadowspawn/nvh/compare/master...develop
+[7.0.2]: https://github.com/shadowspawn/nvh/compare/v7.0.1...shadowspawn:v7.0.2
 [7.0.1]: https://github.com/shadowspawn/nvh/compare/v7.0.0...shadowspawn:v7.0.1
 [7.0.0]: https://github.com/shadowspawn/nvh/compare/v6.3.0...shadowspawn:v7.0.0
 [6.3.0]: https://github.com/shadowspawn/nvh/compare/v6.2.0...shadowspawn:v6.3.0
