@@ -37,7 +37,7 @@ To avoid requiring `sudo` for `nvh` and `npm` global installs, it is recommended
 
 If `npm` is not yet available, a way to bootstrap an install:
 
-    curl -L https://github.com/JohnRGee/nvh/raw/master/bin/nvh -o nvh
+    curl -L https://github.com/shadowspawn/nvh/raw/master/bin/nvh -o nvh
     bash nvh install lts
     # Now node and npm are available
 

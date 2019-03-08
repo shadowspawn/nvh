@@ -68,7 +68,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - `nvh uninstall` to remove installed version of node, npm, et al
     - background in [tj/n#540](https://github.com/tj/n/issues/540)
-- show extra information after install if installed node version is not active version. Resolves [#3](https://github.com/JohnRGee/nvh/issues/3)
+- show extra information after install if installed node version is not active version. Resolves [#3](https://github.com/shadowspawn/nvh/issues/3)
 
 ## [6.0.4] (2018-11-13)
 
@@ -181,7 +181,7 @@ Major changes to install:
 - instructions at bottom of `nvh` version selection
 - allow options after command, as well as before
 - `current` as alias for `latest`
-    - [#2](https://github.com/JohnRGee/nvh/issues/2)
+    - [#2](https://github.com/shadowspawn/nvh/issues/2)
     - inspired by [tj/n#522](https://github.com/tj/n/issues/522)
 - docs for using proxy
 - environment variables for proxy username and password
@@ -192,7 +192,7 @@ Major changes to install:
 
 - requiring explicit `nvh install <version>` command, rather than implicit `nvh <version>`
 - switched install implementation to `rsync`. This is a significant change and a new dependency for minimal installs, but allows improving some behaviours in a consistent way.
-    - fix `--preserve` when there are links in destination [#1](https://github.com/JohnRGee/nvh/issues/1)
+    - fix `--preserve` when there are links in destination [#1](https://github.com/shadowspawn/nvh/issues/1)
     - symbolic link below top level [tj/n#100](https://github.com/tj/n/issues/100)
     - symbolic link at top level [tj/n#227](https://github.com/tj/n/pull/227)
     - rejected rsync dependency [tj/n#104](https://github.com/tj/n/pull/104)
@@ -278,20 +278,20 @@ Changes from [tj/n](https://github.com/tj/n) v2.1.12
 - `--download` option
 - `--arch` option
 
-[Unreleased]: https://github.com/JohnRGee/nvh/compare/master...develop
-[7.0.1]: https://github.com/JohnRGee/nvh/compare/v7.0.0...JohnRGee:v7.0.1
-[7.0.0]: https://github.com/JohnRGee/nvh/compare/v6.3.0...JohnRGee:v7.0.0
-[6.3.0]: https://github.com/JohnRGee/nvh/compare/v6.2.0...JohnRGee:v6.3.0
-[6.2.0]: https://github.com/JohnRGee/nvh/compare/v6.1.0...JohnRGee:v6.2.0
-[6.1.0]: https://github.com/JohnRGee/nvh/compare/v6.0.4...JohnRGee:v6.1.0
-[6.0.4]: https://github.com/JohnRGee/nvh/compare/v6.0.3...JohnRGee:v6.0.4
-[6.0.3]: https://github.com/JohnRGee/nvh/compare/v6.0.2...JohnRGee:v6.0.3
-[6.0.2]: https://github.com/JohnRGee/nvh/compare/v6.0.1...JohnRGee:v6.0.2
-[6.0.1]: https://github.com/JohnRGee/nvh/compare/v6.0.0...JohnRGee:v6.0.1
-[6.0.0]: https://github.com/JohnRGee/nvh/compare/v5.0.0...JohnRGee:v6.0.0
-[5.0.0]: https://github.com/JohnRGee/nvh/compare/v4.2.0...JohnRGee:v5.0.0
-[4.2.1]: https://github.com/JohnRGee/nvh/compare/v4.2.0...JohnRGee:v4.2.1
-[4.2.0]: https://github.com/JohnRGee/nvh/compare/v4.1.0...JohnRGee:v4.2.0
-[4.1.0]: https://github.com/JohnRGee/nvh/compare/v4.0.0...JohnRGee:v4.1.0
-[4.0.0]: https://github.com/JohnRGee/nvh/compare/v3.0.0...JohnRGee:v4.0.0
-[3.0.0]: https://github.com/JohnRGee/nvh/compare/8ad6cd3bc76fc674f7faf3d8cf2f4d6e7d1849c3...JohnRGee:v3.0.0
+[Unreleased]: https://github.com/shadowspawn/nvh/compare/master...develop
+[7.0.1]: https://github.com/shadowspawn/nvh/compare/v7.0.0...shadowspawn:v7.0.1
+[7.0.0]: https://github.com/shadowspawn/nvh/compare/v6.3.0...shadowspawn:v7.0.0
+[6.3.0]: https://github.com/shadowspawn/nvh/compare/v6.2.0...shadowspawn:v6.3.0
+[6.2.0]: https://github.com/shadowspawn/nvh/compare/v6.1.0...shadowspawn:v6.2.0
+[6.1.0]: https://github.com/shadowspawn/nvh/compare/v6.0.4...shadowspawn:v6.1.0
+[6.0.4]: https://github.com/shadowspawn/nvh/compare/v6.0.3...shadowspawn:v6.0.4
+[6.0.3]: https://github.com/shadowspawn/nvh/compare/v6.0.2...shadowspawn:v6.0.3
+[6.0.2]: https://github.com/shadowspawn/nvh/compare/v6.0.1...shadowspawn:v6.0.2
+[6.0.1]: https://github.com/shadowspawn/nvh/compare/v6.0.0...shadowspawn:v6.0.1
+[6.0.0]: https://github.com/shadowspawn/nvh/compare/v5.0.0...shadowspawn:v6.0.0
+[5.0.0]: https://github.com/shadowspawn/nvh/compare/v4.2.0...shadowspawn:v5.0.0
+[4.2.1]: https://github.com/shadowspawn/nvh/compare/v4.2.0...shadowspawn:v4.2.1
+[4.2.0]: https://github.com/shadowspawn/nvh/compare/v4.1.0...shadowspawn:v4.2.0
+[4.1.0]: https://github.com/shadowspawn/nvh/compare/v4.0.0...shadowspawn:v4.1.0
+[4.0.0]: https://github.com/shadowspawn/nvh/compare/v3.0.0...shadowspawn:v4.0.0
+[3.0.0]: https://github.com/shadowspawn/nvh/compare/8ad6cd3bc76fc674f7faf3d8cf2f4d6e7d1849c3...shadowspawn:v3.0.0

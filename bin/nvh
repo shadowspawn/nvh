@@ -323,7 +323,7 @@ Examples:
   nvh i -p lts        Install newest LTS release, preserving installed npm and npx
   nvh                 Display downloaded node versions and install selection
 
-See also https://github.com/JohnRGee/nvh.git for further information.
+See also https://github.com/shadowspawn/nvh.git for further information.
 EOF
 }
 
