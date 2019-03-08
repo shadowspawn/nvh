@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- updated README and help with new GitHub username (changed from JohnRGee to shadowspawn)
+- updated README and package et al with new GitHub username (changed from JohnRGee to shadowspawn)
 
 ## [7.0.1] (2019-02-11)
 
