@@ -41,7 +41,7 @@ Add a description of what actually happened.
 Optionally add any other useful information or commentary.
 -->
 
-## nvh Doctor
+## Doctor
 
 <!--
 Paste in the output from `nvh doctor`. Mask any private information, particularly if there are usernames or passwords in proxy information.
