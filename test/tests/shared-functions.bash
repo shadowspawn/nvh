@@ -70,10 +70,11 @@ function display_remote_version() {
     fetch="wget -q -O-"
   fi
 
+  local TAB_CHAR=$'\t'
   local match='xxx'
   local mirror="${NVH_NODE_MIRROR:-https://nodejs.org/dist}"
   if [[ "$1" = "lts" ]]; then
-    match='[^-]$'
+    match="^([^${TAB_CHAR}]+${TAB_CHAR}){9}[^-]"
   elif [[ "$1" = "latest" ]]; then
     match='.'
   elif [[ "$1" = "nightly" ]]; then

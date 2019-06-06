@@ -7,7 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
-## [Unreleased] (date goes here)
+## [7.0.3] (2019-06-06)
+
+## Fixed
+
+- lts version lookup working again after change to `index.tab` format used on node download site
 
 ## [7.0.2] (2019-03-09)
 
