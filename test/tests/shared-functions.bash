@@ -65,7 +65,7 @@ function display_remote_version() {
 
   local fetch
   if command -v curl &> /dev/null; then
-    fetch="curl --silent --location --fail"
+    fetch="curl --silent --location --fail --compressed"
   else
     fetch="wget -q -O-"
   fi
