@@ -7,9 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
+## [8.0.0] (2019-07-22)
+
+### Changed
+
+- Add npm version to installed message
+
 ## [7.0.3] (2019-06-06)
 
-## Fixed
+### Fixed
 
 - lts version lookup working again after change to `index.tab` format used on node download site
 
@@ -21,43 +27,43 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [7.0.1] (2019-02-11)
 
-## Added
+### Added
 
 - example instructions to `chown` rather than use `sudo`
 
-## Changed
+### Changed
 
 - dev: detached `nvh` repo from upstream `tj/n`
 
 ## [7.0.0] (2019-01-27)
 
-## Added
+### Added
 
 - `nvh prefix` for scripting and help instructions which work across multiple setups
 
-## Changed
+### Changed
 
 - use `--compressed` with `curl` for getting remote node version index
 
 ## [6.3.0] (2019-01-12)
 
-## Added
+### Added
 
 - `NVH_PRESERVE_NPM` to preserve `npm` by default for installs
 - `--no-preserve` to override `NVH_PRESERVE_NPM`
 - check for more proxy settings in `nvh doctor`, including `CURL_HOME` and `WGETRC`
 
-## Changed
+### Changed
 
 - `doc` directory name changed back to `docs` (!), because supported by GitHub
 
-## Changed
+### Changed
 
 - be more conservative determining architecture to reduce possibility install incompatible binary
 
 ## [6.2.0] (2019-01-02)
 
-## Added
+### Added
 
 - `nvh exec <version> <command> [args]` executes command with PATH modified, allowing running scripts or commands using cached node and npm. (So like `nvh run` but more general.)
 
@@ -68,13 +74,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - dev: major refactor of tests and scripts
 - dev: tests more self-contained (and easier to run)
 
-## Fixed
+### Fixed
 
 - invalid version error handling for `nvh run` and `nvh which`
 
 ## [6.1.0] (2018-12-10)
 
-## Added
+### Added
 
 - `nvh uninstall` to remove installed version of node, npm, et al
     - background in [tj/n#540](https://github.com/tj/n/issues/540)

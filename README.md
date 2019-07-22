@@ -110,7 +110,7 @@ modules this way.)
 A `node` install normally includes `npm` as well, but you may wish to preserve an updated `npm` and `npx` leaving them out of the install using `--preserve`:
 
     $ nvh install latest
-    installed : v10.6.0
+    installed : v10.6.0 (with npm 6.1.0)
     $ npm --version
     6.1.0
     $ nvh install --preserve v8.0.0

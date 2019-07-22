@@ -6,7 +6,7 @@
 # Setup.
 #
 
-readonly VERSION="7.0.3"
+readonly VERSION="8.0.0"
 readonly TAB_CHAR=$'\t'
 
 NVH_PREFIX=${NVH_PREFIX:-/usr/local}
@@ -627,7 +627,14 @@ function activate() {
     install_log "installed" "$("${installed_node}" --version) to ${installed_node}"
     install_log "active" "$("${active_node}" --version) at ${active_node}"
   else
-    install_log "installed" "$("${installed_node}" --version)"
+    local npm_version_str=""
+    local installed_npm="${NVH_PREFIX}/bin/npm"
+    local active_npm="$(command -v npm)"
+    if [[ -z "${NVH_PRESERVE_NPM}" && -e "${active_npm}" && -e "${installed_npm}" && "${active_npm}" = "${installed_npm}" ]]; then
+      npm_version_str=" (with npm $(npm --version))"
+    fi
+
+    install_log "installed" "$("${installed_node}" --version)${npm_version_str}"
   fi
 }
 
