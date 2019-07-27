@@ -33,7 +33,11 @@ If you already have `node`, the easiest way to install `nvh` is with `npm`:
 To avoid requiring `sudo` for `nvh` and `npm` global installs, it is recommended you either install to your home directory using `NVH_PREFIX`, or take ownership of the system directories:
 
     sudo mkdir -p /usr/local/nvh
-    sudo chown -R $(whoami) /usr/local/{nvh,bin,include,lib,share}
+    sudo chown -R $(whoami) /usr/local/nvh
+    sudo chown -R $(whoami) /usr/local/bin
+    sudo chown -R $(whoami) /usr/local/include
+    sudo chown -R $(whoami) /usr/local/lib
+    sudo chown -R $(whoami) /usr/local/share
 
 If `npm` is not yet available, a way to bootstrap an install:
 
