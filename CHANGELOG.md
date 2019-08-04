@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased] (date goes here)
 
+### Fixed
+
+- dev: wget tests running with proxy cache (#5)
+
 ## [8.0.0] (2019-07-22)
 
 ### Changed
