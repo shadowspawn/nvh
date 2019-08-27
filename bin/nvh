@@ -568,7 +568,11 @@ function display_compatible_file_field {
 
 function tarball_url() {
   local version="$1"
-  echo "${g_mirror_url}/${version}/node-${version}-$(display_tarball_platform).tar.gz"
+
+  local ext="gz"
+  if [[ "${NVH_USE_XZ}" = "true" ]]; then local ext="xz"; fi
+
+  echo "${g_mirror_url}/${version}/node-${version}-$(display_tarball_platform).tar.${ext}"
 }
 
 #
@@ -664,6 +668,9 @@ function install() {
   local url="$(tarball_url "${resolved_version}")"
   is_ok "${url}" || abort "download preflight failed for '$resolved_version' (${url})"
 
+  local tarflags="-zx"
+  if [[ "${NVH_USE_XZ}" = "true" ]]; then local tarflags="-Jx"; fi
+
   install_log "mkdir" "${dir}"
   mkdir -p "${dir}" || abort "sudo required (or change ownership, or define NVH_PREFIX)"
   touch "${dir}/nvh.lock"
@@ -671,7 +678,7 @@ function install() {
   cd "${dir}" || abort "Failed to cd to directory"
 
   install_log "fetch" "${url}"
-  do_get "${url}" | tar -zx --strip-components=1
+  do_get "${url}" | tar "${tarflags}" --strip-components=1
   [[ "${GET_OPTIONS_SHOW_PROGRESS}" = "true" ]] && erase_line
   rm -f "${dir}/nvh.lock"
 
