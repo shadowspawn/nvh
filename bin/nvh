@@ -294,6 +294,8 @@ Options:
   -h, --help          Display help information
   --insecure          Turn off certificate checking for https requests (may be needed from behind a proxy server)
   -p, --preserve      Preserve npm and npx during install of node
+  --use-xz            Download xz-compressed tarballs, if available and extractable by tar, during install of node (this is the default)
+  --no-use-xz         Download gzip-compressed tarballs, rather than xz-compressed ones, during install of node
   -V, --version       Output version of nvh
 
 Aliases:
@@ -1159,6 +1161,8 @@ function main() {
       --insecure) set_insecure ;;
       -p|--preserve) NVH_PRESERVE_NPM="true" ;;
       --no-preserve) NVH_PRESERVE_NPM="" ;;
+      --use-xz) NVH_USE_XZ="true" ;;
+      --no-use-xz) NVH_USE_XZ="false" ;;
       -V|--version) echo "${VERSION}"; exit ;;
       -*) abort "unrecognised option '$1'"; exit 1 ;;
       exec) unprocessed_args=("$@"); break ;;
