@@ -22,6 +22,16 @@ NVH_NODE_DOWNLOAD_MIRROR=${NVH_NODE_DOWNLOAD_MIRROR:-https://nodejs.org/download
 NVH_NODE_DOWNLOAD_MIRROR=${NVH_NODE_DOWNLOAD_MIRROR%/}
 readonly NVH_NODE_DOWNLOAD_MIRROR
 
+# Enabled by default. User may set NVH_USE_XZ to 0 to disable.
+# Normalise to true/false.
+# May be overridden by command line flags.
+
+if [[ "${NVH_USE_XZ}" = "0" ]]; then
+  NVH_USE_XZ="false"
+else
+  NVH_USE_XZ="true"
+fi
+
 # NVH_PRESERVE_NPM tested with -z -n
 # made readonly after CLI option parsing
 
