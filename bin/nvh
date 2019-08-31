@@ -518,6 +518,18 @@ function is_ok() {
 }
 
 #
+# Synopsis: can_use_xz
+#
+
+function can_use_xz() {
+  # nvh uses xz on Linux and macOS at this time, if the system supports it
+  if ! ([[ "$(uname -s)" = "Linux" ]] && command -v xz &> /dev/null) \
+  && ! ([[ "$(uname -s)" = "Darwin" ]] && [[ "$(sw_vers -productVersion | cut -d '.' -f 2)" -gt "8" ]]); then
+    return 1
+  fi
+}
+
+#
 # Synopsis: display_tarball_platform
 #
 
