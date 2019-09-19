@@ -8,7 +8,7 @@ Written in `bash` (and does not require a working node install).
 
 On Windows the "Windows Subsystem for Linux" is supported, but not "Git BASH".
 
-Forked from [tj/n](https://github.com/tj/n) with improvements to syntax and error handling, bug fixes, and new features.
+Forked from [tj/n](https://github.com/tj/n) with improvements to syntax, new features, and prototype future changes for `n`.
 
 - [Node Version Helper](#node-version-helper)
     - [Installation](#installation)
