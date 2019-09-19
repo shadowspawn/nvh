@@ -46,3 +46,8 @@ Optionally add any other useful information or commentary.
 <!--
 Paste in the output from `nvh doctor`. Mask any private information, particularly if there are usernames or passwords in proxy information.
 -->
+
+```
+$ nvh doctor
+...
+```
