@@ -22,12 +22,16 @@ NVH_NODE_DOWNLOAD_MIRROR=${NVH_NODE_DOWNLOAD_MIRROR:-https://nodejs.org/download
 NVH_NODE_DOWNLOAD_MIRROR=${NVH_NODE_DOWNLOAD_MIRROR%/}
 readonly NVH_NODE_DOWNLOAD_MIRROR
 
-# Enabled by default. User may set NVH_USE_XZ to 0 to disable.
-# Normalise to true/false.
+# Using xz instead of gzip is enabled by default, if xz compatibility checks pass.
+# User may set NVH_USE_XZ to 0 to disable, or set to anything else to force-enable.
 # May be overridden by command line flags.
 
+g_xz_force_enabled="false"
 if [[ "${NVH_USE_XZ}" = "0" ]]; then
   NVH_USE_XZ="false"
+elif [[ -n "${NVH_USE_XZ+defined}" ]]; then
+  NVH_USE_XZ="true"
+  g_xz_force_enabled="true"
 else
   NVH_USE_XZ="true"
 fi
@@ -686,12 +690,14 @@ function install() {
     fi
   fi
 
-  [[ "${NVH_USE_XZ}" = "true" ]] && can_use_xz || NVH_USE_XZ="false"
+  if [[ "${NVH_USE_XZ}" = true ]] && [[ "S{g_xz_force_enabled}" = "false" ]]; then
+    can_use_xz || NVH_USE_XZ="false"
+  fi
 
   echo
   install_log "installing" "${g_mirror_folder_name}/${resolved_version}"
 
-  if [[ "${NVH_USE_XZ}" = "true" ]]; then
+  if [[ "${NVH_USE_XZ}" = "true" ]] && [[ "${g_xz_force_enabled}" = "false" ]]; then
     local resolved_major_version
     resolved_major_version="$(echo ${resolved_version#v} | cut -d '.' -f '1')"
     if [[ "${resolved_major_version}" -lt 4 ]]; then
@@ -1193,7 +1199,7 @@ function main() {
       --insecure) set_insecure ;;
       -p|--preserve) NVH_PRESERVE_NPM="true" ;;
       --no-preserve) NVH_PRESERVE_NPM="" ;;
-      --use-xz) NVH_USE_XZ="true" ;;
+      --use-xz) NVH_USE_XZ="true"; g_xz_force_enabled="false" ;;
       --no-use-xz) NVH_USE_XZ="false" ;;
       -V|--version) echo "${VERSION}"; exit ;;
       -*) abort "unrecognised option '$1'"; exit 1 ;;
