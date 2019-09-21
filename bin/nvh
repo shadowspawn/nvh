@@ -667,6 +667,14 @@ function install() {
   echo
   install_log "installing" "${g_mirror_folder_name}/${resolved_version}"
 
+  if [[ "${NVH_USE_XZ}" = "true" ]]; then
+    local resolved_major_version
+    resolved_major_version="$(echo ${resolved_version#v} | cut -d '.' -f '1')"
+    if [[ "${resolved_major_version}" -lt 4 ]]; then
+      NVH_USE_XZ="false"
+    fi
+  fi
+
   local url="$(tarball_url "${resolved_version}")"
   is_ok "${url}" || abort "download preflight failed for '$resolved_version' (${url})"
 
