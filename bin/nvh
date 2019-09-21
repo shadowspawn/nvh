@@ -676,6 +676,8 @@ function install() {
     fi
   fi
 
+  [[ "${NVH_USE_XZ}" = "true" ]] && can_use_xz || NVH_USE_XZ="false"
+
   echo
   install_log "installing" "${g_mirror_folder_name}/${resolved_version}"
 
