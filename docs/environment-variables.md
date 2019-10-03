@@ -40,3 +40,16 @@ You can be explicit to get the desired behaviour whatever the environment variab
 ## Proxy Server
 
 See also `https_proxy` in [Proxy Server](proxy-server.md).
+
+## xz Compression
+
+nvh defaults to using xz compressed node tarballs for the download if it is likely tar on the system supports xz decompression.
+You can override the automatic choice by setting an environment variable to zero or non-zero:
+
+    export NVH_USE_XZ=0 # to disable
+    export NVH_USE_XZ=1 # to enable
+
+You can be explicit to get the desired behaviour whatever the environment variable:
+
+    nvh install --use-xz nightly
+    nvh install --no-use-xz latest

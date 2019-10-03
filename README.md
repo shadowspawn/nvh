@@ -170,6 +170,7 @@ See [Environment Variables](docs/environment-variables.md) for more about these 
     NVH_NODE_MIRROR
     NVH_NODE_DOWNLOAD_MIRROR
     NVH_PRESERVE_NPM
+    NVH_USE_XZ
 
 See [Proxy Server](docs/proxy-server.md) for variables and advice for using a proxy server.
 
