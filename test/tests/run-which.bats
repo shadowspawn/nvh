@@ -5,7 +5,7 @@ load shared-functions
 function setup() {
   unset_nvh_env
   # fixed directory so can reuse the two installs
-  export NVH_PREFIX="${TMPDIR}/nvh/test/run-which"
+  export NVH_PREFIX="${TMPDIR:-/tmp}/nvh/test/run-which"
   # beforeAll
   # See https://github.com/bats-core/bats-core/issues/39
   if [[ "${BATS_TEST_NUMBER}" -eq 1 ]] ; then
