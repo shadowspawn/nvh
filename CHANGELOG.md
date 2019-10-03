@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Downloads now default to using tarballs compressed by xz over gzip. (#8, #10)
+- Downloads now default to using tarballs compressed by `xz` over `gzip`, if `xz` support detected. (#8, #10)
 
 ### Changed
 
@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - dev: wget tests running with proxy cache (#5)
+- dev: fallback to /tmp in tests if TMPDIR not set (#9)
 
 ## [8.0.0] (2019-07-22)
 
