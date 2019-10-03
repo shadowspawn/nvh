@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased] (date goes here)
 
+### Changed
+
+- stop using markdown formatting in `nvh doctor` output (#7)
+
 ### Fixed
 
 - dev: wget tests running with proxy cache (#5)
