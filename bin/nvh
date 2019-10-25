@@ -6,7 +6,7 @@
 # Setup.
 #
 
-readonly VERSION="9.0.1-0"
+readonly VERSION="9.1.0"
 readonly TAB_CHAR=$'\t'
 
 NVH_PREFIX=${NVH_PREFIX:-/usr/local}
@@ -442,7 +442,7 @@ function display_versions_with_selected() {
     fi
   done
   echo
-  printf "Use up/down arrow keys to select a version, return key to install, q to quit"
+  printf "Use up/down arrow keys to select a version, return key to install, d to delete, q to quit"
 }
 
 #
@@ -495,6 +495,27 @@ function menu_select_cache_versions() {
               display_versions_with_selected "${selected}"
               ;;
           esac
+        fi
+        ;;
+      "d")
+        if [[ -n "${selected}" ]]; then
+          clear
+          # Note: prev/next is constrained to min/max
+          local after_delete_selection="$(next_version_installed "${selected}")"
+          if [[ "${after_delete_selection}" == "${selected}"  ]]; then
+            after_delete_selection="$(prev_version_installed "${selected}")"
+          fi
+          remove_versions "${selected}"
+
+          if [[ "${after_delete_selection}" == "${selected}" ]]; then
+            clear
+            leave_fullscreen
+            echo "All downloaded versions have been deleted from cache."
+            exit
+          fi
+
+          selected="${after_delete_selection}"
+          display_versions_with_selected "${selected}"
         fi
         ;;
       "k")
