@@ -324,6 +324,7 @@ Changes from [tj/n](https://github.com/tj/n) v2.1.12
 - `--arch` option
 
 [Unreleased]: https://github.com/shadowspawn/nvh/compare/master...develop
+[9.1.1]: https://github.com/shadowspawn/nvh/compare/v9.0.0...shadowspawn:v9.1.1
 [9.1.0]: https://github.com/shadowspawn/nvh/compare/v9.0.0...shadowspawn:v9.1.0
 [9.0.0]: https://github.com/shadowspawn/nvh/compare/v8.0.0...shadowspawn:v9.0.0
 [8.0.0]: https://github.com/shadowspawn/nvh/compare/v7.0.3...shadowspawn:v8.0.0
