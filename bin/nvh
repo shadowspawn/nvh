@@ -6,7 +6,7 @@
 # Setup.
 #
 
-readonly VERSION="9.1.1-0"
+readonly VERSION="9.1.1"
 readonly TAB_CHAR=$'\t'
 
 NVH_PREFIX=${NVH_PREFIX:-/usr/local}
@@ -749,7 +749,7 @@ function install() {
   cd "${dir}" || abort "Failed to cd to directory"
 
   install_log "fetch" "${url}"
-  do_get "${url}" | tar "${tarflags}" --strip-components=1
+  do_get "${url}" | tar "${tarflags}" --strip-components=1 --no-same-owner
   [[ "${GET_OPTIONS_SHOW_PROGRESS}" = "true" ]] && erase_line
   rm -f "${dir}/nvh.lock"
 
