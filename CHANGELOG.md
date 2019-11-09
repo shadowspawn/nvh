@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-- Specify `--no-same-owner` for tarball extraction so cache files not owned by unexpected user
+- Specify `--no-same-owner` for tarball extraction so cache files not owned by unexpected user (when run with sudo)
 
 ## [9.1.0] (2019-10-25)
 
