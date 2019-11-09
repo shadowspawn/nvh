@@ -6,7 +6,7 @@
 # Setup.
 #
 
-readonly VERSION="9.1.1"
+readonly VERSION="9.1.2-0"
 readonly TAB_CHAR=$'\t'
 
 NVH_PREFIX=${NVH_PREFIX:-/usr/local}
