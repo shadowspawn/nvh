@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased] (date goes here)
 
+### Changed
+
+- in README use `raw.githubusercontent.com` for raw access for bootstrapping
+
 ## [9.1.1] (2019-11-10)
 
 ### Fixed
