@@ -7,7 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
-## [Unreleased] (date goes here)
+## [9.1.2] (2019-11-16)
+
+### Added
+
+- advice to reset command hash when node location changes
 
 ### Changed
 
