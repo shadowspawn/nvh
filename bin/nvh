@@ -6,7 +6,7 @@
 # Setup.
 #
 
-readonly VERSION="9.1.3-0"
+readonly VERSION="9.2.0"
 readonly TAB_CHAR=$'\t'
 
 NVH_PREFIX=${NVH_PREFIX:-/usr/local}
@@ -609,6 +609,7 @@ function display_tarball_platform() {
     x86_64) arch=x64 ;;
     i386 | i686) arch="x86" ;;
     aarch64) arch=arm64 ;;
+    armv8l) arch=arm64 ;; # armv8l probably supports arm64, and there is no specific armv8l build so give it a go
     *)
       # e.g. armv6l, armv7l, arm64
       arch="${uname_m}"
