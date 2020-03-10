@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
+## [Unreleased] (date goes here)
+
 ## [9.2.0] (2020-03-10)
 
 ### Added
@@ -338,8 +340,9 @@ Changes from [tj/n](https://github.com/tj/n) v2.1.12
 - `--arch` option
 
 [Unreleased]: https://github.com/shadowspawn/nvh/compare/master...develop
-[9.1.2]: https://github.com/shadowspawn/nvh/compare/v9.0.1...shadowspawn:v9.1.2
-[9.1.1]: https://github.com/shadowspawn/nvh/compare/v9.0.0...shadowspawn:v9.1.1
+[9.2.0]: https://github.com/shadowspawn/nvh/compare/v9.1.2...shadowspawn:v9.2.0
+[9.1.2]: https://github.com/shadowspawn/nvh/compare/v9.1.1...shadowspawn:v9.1.2
+[9.1.1]: https://github.com/shadowspawn/nvh/compare/v9.1.0...shadowspawn:v9.1.1
 [9.1.0]: https://github.com/shadowspawn/nvh/compare/v9.0.0...shadowspawn:v9.1.0
 [9.0.0]: https://github.com/shadowspawn/nvh/compare/v8.0.0...shadowspawn:v9.0.0
 [8.0.0]: https://github.com/shadowspawn/nvh/compare/v7.0.3...shadowspawn:v8.0.0
