@@ -6,7 +6,7 @@
 # Setup.
 #
 
-readonly VERSION="9.2.1-0"
+readonly VERSION="9.3.0"
 readonly TAB_CHAR=$'\t'
 
 NVH_PREFIX=${NVH_PREFIX:-/usr/local}
@@ -343,6 +343,7 @@ Versions:
     4.9.1, 8, v6.1    Numeric versions
     lts               Newest Long Term Support official release
     latest, current   Newest official release
+    auto              Read version from .nvh-node-version
     boron, carbon     Codenames for release streams
     and nightly, chakracore-release/latest, rc/10 et al
 
@@ -871,18 +872,36 @@ function exec_with_version() {
 }
 
 #
+# Synopsis: display_auto_version
+#
+
+function display_auto_version() {
+  local filename=".nvh-node-version"
+  [[ -e "${filename}" ]] || abort "auto version file not found (${filename})"
+  # read returns a non-zero status but does still work if there is no line ending
+  <"${filename}" read -r version
+  # trim possible trailing \d from a Windows created file
+  version="${version%%[[:space:]]}"
+  echo "${version}"
+}
+
+#
 # Synopsis: display_latest_resolved_version version
 #
 
 function display_latest_resolved_version() {
-  local version=${1#node/}
-  if is_exact_numeric_version "${version}"; then
+  local version=${1}
+  if [[ "${version}" = "auto" ]]; then
+    version="$(display_auto_version)" || return 2
+  fi
+  simple_version=${version#node/} # Only place supporting node/ [sic]
+  if is_exact_numeric_version "${simple_version}"; then
     # Just numbers, already resolved, no need to lookup first.
-    version="v${version#v}"
-    echo "${version}"
+    simple_version="v${simple_version#v}"
+    echo "${simple_version}"
   else
-    # Complicated recognising exact version, KISS and awlays lookup for now.
-    NVH_MAX_REMOTE_MATCHES=1 display_remote_versions "$1"
+    # Complicated recognising exact version, KISS and lookup.
+    NVH_MAX_REMOTE_MATCHES=1 display_remote_versions "${version}"
   fi
 }
 
@@ -1285,6 +1304,7 @@ function main() {
       run) shift; run_with_version "$@" ;;
       uninstall) uninstall_installed ;;
       which) shift; display_bin_path_for_version "$1" ;;
+      NVH_MOCK_DISPLAY_LATEST_RESOLVED_VERSION) shift; display_latest_resolved_version "$1"; exit ;;
       *) abort "unrecognised command '$1' (perhaps you want 'nvh install $1'?)" ;;
     esac
   fi
