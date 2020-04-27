@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
+## [9.4.0] (2020-04-27)
+
+### Added
+
+- support for some node support aliases, such as `lts_latest`
+
 ## [9.3.0] (2020-04-12)
 
 ### Added

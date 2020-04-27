@@ -261,6 +261,31 @@ function is_exact_numeric_version() {
 }
 
 #
+# Synopsis: is_node_support_version version
+# Reference: https://github.com/nodejs/package-maintenance/issues/236#issue-474783582
+#
+
+function is_node_support_version() {
+  [[ "$1" =~ ^(active|lts_active|lts_latest|lts|current)$ ]]
+}
+
+#
+# Synopsis: display_latest_node_support_alias version
+# Map aliases onto existing n aliases, current and lts
+#
+
+function display_latest_node_support_alias() {
+  case "$1" in
+    "active") printf "current" ;;
+    "lts_active") printf "lts" ;;
+    "lts_latest") printf "lts" ;;
+    "lts") printf "lts" ;;
+    "current") printf "current" ;;
+    *) printf "unexpected-version"
+  esac
+}
+
+#
 # Functions used when showing versions installed
 #
 
@@ -345,6 +370,7 @@ Versions:
     latest, current   Newest official release
     auto              Read version from .nvh-node-version
     boron, carbon     Codenames for release streams
+    lts_latest        node support aliases
     and nightly, chakracore-release/latest, rc/10 et al
 
 Examples:
@@ -941,6 +967,10 @@ function display_remote_versions() {
   update_mirror_settings_for_version "${version}"
   local match='.'
   local match_count="${NVH_MAX_REMOTE_MATCHES}"
+  if is_node_support_version "${version}"; then
+    version="$(display_latest_node_support_alias "${version}")"
+    match_count=1
+  fi
   if [[ -z "${version}" ]]; then
     match='.'
   elif [[ "${version}" = "lts" ]]; then
@@ -1304,7 +1334,7 @@ function main() {
       run) shift; run_with_version "$@" ;;
       uninstall) uninstall_installed ;;
       which) shift; display_bin_path_for_version "$1" ;;
-      NVH_MOCK_DISPLAY_LATEST_RESOLVED_VERSION) shift; display_latest_resolved_version "$1"; exit ;;
+      NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION) shift; display_latest_resolved_version "$1"; exit ;;
       *) abort "unrecognised command '$1' (perhaps you want 'nvh install $1'?)" ;;
     esac
   fi

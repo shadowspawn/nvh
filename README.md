@@ -87,6 +87,10 @@ There is support for release streams:
 
 - `argon`, `boron`, `carbon`: codenames for LTS release streams
 
+These node support aliases may be used, although for now simply resolve to the latest matching version:
+
+- `active`, `lts_active`, `lts_latest`, `lts`, `current`
+
 The last form is for specifying [other releases](https://nodejs.org/download) available using the name of the remote download folder optionally followed by the complete or incomplete version.
 
 - `chakracore-release/latest`
