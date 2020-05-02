@@ -62,7 +62,7 @@ Execute `nvh` on its own to view your downloaded versions, and install the selec
 
     Use up/down arrow keys to select a version, return key to install, d to delete, q to quit
 
-(You can also use `j` and `k` to navigate up or down without using arrows.)
+(You can also use <kbd>j</kbd> and <kbd>k</kbd> to navigate up or down without using arrows.)
 
 ## Specifying Node Versions
 
