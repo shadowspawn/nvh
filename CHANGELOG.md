@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased] (date goes here)
 
+### Added
+
+- support for node support alias `supported`
+
 ## [9.4.0] (2020-04-27)
 
 ### Added

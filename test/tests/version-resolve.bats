@@ -106,3 +106,10 @@ function setup() {
   [ "$status" -eq 0 ]
   [ "$output" = "${TARGET_VERSION}" ]
 }
+
+@test "display_latest_resolved_version supported" {
+  local TARGET_VERSION="$(display_remote_version latest)"
+  run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION supported
+  [ "$status" -eq 0 ]
+  [ "$output" = "${TARGET_VERSION}" ]
+}
