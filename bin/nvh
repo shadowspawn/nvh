@@ -181,6 +181,9 @@ function update_xz_settings_for_version() {
 function install_log() {
   printf "  ${SGR_CYAN}%10s${SGR_RESET} : ${SGR_FAINT}%s${SGR_RESET}\n" "$1" "$2"
 }
+function trace_log() {
+  >&2 printf "  ${SGR_CYAN}%10s${SGR_RESET} : ${SGR_FAINT}%s${SGR_RESET}\n" "$1" "$2"
+}
 
 #
 # Synopsis: abort message ...
@@ -904,17 +907,69 @@ function exec_with_version() {
 }
 
 #
-# Synopsis: display_auto_version
+# Synopsis: display_file_node_version filename
 #
 
-function display_auto_version() {
-  local filename=".nvh-node-version"
-  [[ -e "${filename}" ]] || abort "auto version file not found (${filename})"
+function display_file_node_version() {
+  local filename="$1"
+  trace_log "found" "${filename}"
   # read returns a non-zero status but does still work if there is no line ending
+  local version
   <"${filename}" read -r version
   # trim possible trailing \d from a Windows created file
   version="${version%%[[:space:]]}"
+  trace_log "read" "${version}"
   echo "${version}"
+}
+
+#
+# Synopsis: display_package_engine_version
+#
+
+function display_package_engine_version() {
+  trace_log "found" "package.json"
+  command -v node2 && abort "node not availble"
+  local range="$(node -e "console.log(require('./package.json').engines.node)")"
+  trace_log "read" "${range}"
+  abort "not yet implemented"
+}
+
+#
+# Synopsis: display_nvmrc_version
+#
+
+function display_nvmrc_version() {
+  trace_log "found" ".nvmrc"
+  local version
+  <".nvmrc" read -r version
+  trace_log "read" "${version}"
+  # Translate from nvm aliases
+  case "${version}" in
+    lts/\*) version="lts" ;;
+    lts/*) version="${version:4}" ;;
+    node) version="current" ;;
+    *) ;;
+  esac
+  echo "${version}"
+}
+
+#
+# Synopsis: display_auto_version
+# Sets g_auto_versio
+#
+
+function display_auto_version() {
+  if [[ -e ".nvh-node-version" ]]; then
+    display_file_node_version ".nvh-node-version"
+  elif [[ -e ".node-version" ]]; then
+    display_file_node_version ".node-version"
+  elif [[ -e ".nvmrc" ]]; then
+    display_nvmrc_version
+  elif [[ -e "package.json" ]]; then
+    display_package_engine_version
+  else
+    abort "no file found for auto version"
+  fi
 }
 
 #
