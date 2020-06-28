@@ -10,7 +10,7 @@ load shared-functions
 function setup() {
   unset_nvh_env
   tmpdir="${TMPDIR:-/tmp}"
-  export MY_DIR="${tmpdir}/n/test/version-resolve-auto-file"
+  export MY_DIR="${tmpdir}/nvh/test/version-resolve-auto-file"
   mkdir -p "${MY_DIR}"
   rm -f "${MY_DIR}/.nvh-node-version"
 
