@@ -928,7 +928,7 @@ function display_file_node_version() {
 
 function display_package_engine_version() {
   trace_log "found" "package.json"
-  command -v node &> /dev/null || abort "an active version of node is required for reading engines from package.json"
+  command -v node &> /dev/null || abort "an active version of node is required to rea engines from package.json"
   local range
   range="$(node -e "package = require('./package.json'); if (package && package.engines && package.engines.node) console.log(package.engines.node)")"
   trace_log "read" "${range}"
@@ -948,7 +948,11 @@ function display_package_engine_version() {
       ^) [[ "${version}" =~ ^([0-9]+) ]] && version="${BASH_REMATCH[1]}" ;;
     esac
   else
-    abort "complex range"
+    command -v npx &> /dev/null || abort "an active version of npx is required to use complex engine ranges from package.json"
+    trace_log "resolving" "${range}"
+    local version_per_line="$(nvh lsr --all)"
+    local versions_one_line=$(echo ${version_per_line} | tr '\n' ' ')
+    npx --quiet semver -r "${range}" ${versions_one_line} | tail -n 1
   fi
   echo "${version}"
 }
