@@ -156,7 +156,7 @@ function write_engine() {
   [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v4.9.1" ]
 }
 
-@test "auto engine full semver, <4.9" {
+@test "auto engine (semver), <4.9" {
   cd "${MY_DIR}"
   write_engine "<4.9"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
@@ -164,7 +164,7 @@ function write_engine() {
   [ "${lines[${PAYLOAD_COMPLEX_LINE}]}" = "v4.8.7" ]
 }
 
-@test "auto engine full semver, 4.8.2 - 4.8.4" {
+@test "auto engine (semver), 4.8.2 - 4.8.4" {
   cd "${MY_DIR}"
   write_engine "4.8.2 - 4.8.4"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
@@ -172,7 +172,7 @@ function write_engine() {
   [ "${lines[${PAYLOAD_COMPLEX_LINE}]}" = "v4.8.4" ]
 }
 
-@test "auto engine full semver, >4.2 <4.9 || >2.1 <3.4" {
+@test "auto engine (semver), >4.2 <4.9 || >2.1 <3.4" {
   cd "${MY_DIR}"
   write_engine ">4.2 <4.9 || >2.1 <3.4"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
