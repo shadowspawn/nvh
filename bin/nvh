@@ -928,10 +928,29 @@ function display_file_node_version() {
 
 function display_package_engine_version() {
   trace_log "found" "package.json"
-  command -v node2 && abort "node not availble"
-  local range="$(node -e "console.log(require('./package.json').engines.node)")"
+  command -v node &> /dev/null || abort "an active version of node is required for reading engines from package.json"
+  local range
+  range="$(node -e "package = require('./package.json'); if (package && package.engines && package.engines.node) console.log(package.engines.node)")"
   trace_log "read" "${range}"
-  abort "not yet implemented"
+  if [[ -z "${range}" || "*" == "${range}" ]]; then
+    echo "current"
+    return
+  fi
+
+  local version
+  if [[ "${range}" =~ ^([>~^=]|\>\=)?v?([0-9]+(\.[0-9]+){0,2})(.[xX*])?$ ]]; then
+    local operator="${BASH_REMATCH[1]}"
+    version="${BASH_REMATCH[2]}"
+    case "${operator}" in
+      '' | =) ;;
+      \> | \>=) version="current" ;;
+      \~) [[ "${version}" =~ ^([0-9]+\.[0-9]+)\.[0-9]+$ ]] && version="${BASH_REMATCH[1]}" ;;
+      ^) [[ "${version}" =~ ^([0-9]+) ]] && version="${BASH_REMATCH[1]}" ;;
+    esac
+  else
+    abort "complex range"
+  fi
+  echo "${version}"
 }
 
 #
@@ -955,10 +974,10 @@ function display_nvmrc_version() {
 
 #
 # Synopsis: display_auto_version
-# Sets g_auto_versio
 #
 
 function display_auto_version() {
+  # ToDo: search up, like npm and nvm
   if [[ -e ".nvh-node-version" ]]; then
     display_file_node_version ".nvh-node-version"
   elif [[ -e ".node-version" ]]; then
