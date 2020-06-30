@@ -84,98 +84,98 @@ function write_engine() {
   [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "${TARGET_VERSION}" ]
 }
 
-@test "auto engine, 4" {
+@test "auto engine, 8" {
   cd "${MY_DIR}"
-  write_engine "4"
+  write_engine "8"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
   [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v4.9.1" ]
+  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v8.17.0" ]
 }
 
-@test "auto engine, 4.x" {
+@test "auto engine, 8.x" {
   cd "${MY_DIR}"
-  write_engine "4.x"
+  write_engine "8.x"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
   [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v4.9.1" ]
+  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v8.17.0" ]
 }
 
-@test "auto engine, 4.X" {
+@test "auto engine, 8.X" {
   cd "${MY_DIR}"
-  write_engine "4.X"
+  write_engine "8.X"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
   [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v4.9.1" ]
+  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v8.17.0" ]
 }
 
-@test "auto engine, 4.*" {
+@test "auto engine, 8.*" {
   cd "${MY_DIR}"
-  write_engine "4.*"
+  write_engine "8.*"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
   [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v4.9.1" ]
+  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v8.17.0" ]
 }
 
-@test "auto engine, ~4.8.0" {
+@test "auto engine, ~8.11.0" {
   cd "${MY_DIR}"
-  write_engine "~4.8.0"
+  write_engine "~8.11.0"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
   [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v4.8.7" ]
+  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v8.11.4" ]
 }
 
-@test "auto engine, ~4.8" {
+@test "auto engine, ~8.11" {
   cd "${MY_DIR}"
-  write_engine "~4.8"
+  write_engine "~8.11"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
   [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v4.8.7" ]
+  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v8.11.4" ]
 }
 
-@test "auto engine, ~4" {
+@test "auto engine, ~8" {
   cd "${MY_DIR}"
-  write_engine "~4"
+  write_engine "~8"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
   [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v4.9.1" ]
+  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v8.17.0" ]
 }
 
-@test "auto engine, ^4.8.0" {
+@test "auto engine, ^8.11.0" {
   cd "${MY_DIR}"
-  write_engine "^4.8.0"
+  write_engine "^8.11.0"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
   [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v4.9.1" ]
+  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v8.17.0" ]
 }
 
-@test "auto engine, ^4.x" {
+@test "auto engine, ^8.x" {
   cd "${MY_DIR}"
-  write_engine "^4.x"
+  write_engine "^8.x"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
   [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v4.9.1" ]
+  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v8.17.0" ]
 }
 
-@test "auto engine (semver), <4.9" {
+@test "auto engine (semver), <8.12" {
   cd "${MY_DIR}"
-  write_engine "<4.9"
+  write_engine "<8.12"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
   [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_COMPLEX_LINE}]}" = "v4.8.7" ]
+  [ "${lines[${PAYLOAD_COMPLEX_LINE}]}" = "v8.11.4" ]
 }
 
-@test "auto engine (semver), 4.8.2 - 4.8.4" {
+@test "auto engine (semver), 8.11.1 - 8.11.3" {
   cd "${MY_DIR}"
-  write_engine "4.8.2 - 4.8.4"
+  write_engine "8.11.1 - 8.11.3"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
   [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_COMPLEX_LINE}]}" = "v4.8.4" ]
+  [ "${lines[${PAYLOAD_COMPLEX_LINE}]}" = "v8.11.3" ]
 }
 
-@test "auto engine (semver), >4.2 <4.9 || >2.1 <3.4" {
+@test "auto engine (semver), >8.1 <8.12 || >2.1 <3.4" {
   cd "${MY_DIR}"
-  write_engine ">4.2 <4.9 || >2.1 <3.4"
+  write_engine ">8.1 <8.12 || >2.1 <3.4"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
   [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_COMPLEX_LINE}]}" = "v4.8.7" ]
+  [ "${lines[${PAYLOAD_COMPLEX_LINE}]}" = "v8.11.4" ]
 }
