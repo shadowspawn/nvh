@@ -953,6 +953,7 @@ function display_package_engine_version() {
     trace_log "resolving" "${range}"
     local version_per_line="$(nvh lsr --all)"
     local versions_one_line=$(echo "${version_per_line}" | tr '\n' ' ')
+    # Using semver@7 so works with older versions of node.
     # shellcheck disable=SC2086
     npx --quiet semver@7 -r "${range}" ${versions_one_line} | tail -n 1
   fi
