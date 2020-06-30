@@ -911,11 +911,11 @@ function exec_with_version() {
 #
 
 function display_file_node_version() {
-  local filename="$1"
-  trace_log "found" "${filename}"
+  local filepath="$1"
+  trace_log "found" "${filepath}"
   # read returns a non-zero status but does still work if there is no line ending
   local version
-  <"${filename}" read -r version
+  <"${filepath}" read -r version
   # trim possible trailing \d from a Windows created file
   version="${version%%[[:space:]]}"
   trace_log "read" "${version}"
@@ -927,10 +927,11 @@ function display_file_node_version() {
 #
 
 function display_package_engine_version() {
-  trace_log "found" "package.json"
-  command -v node &> /dev/null || abort "an active version of node is required to rea engines from package.json"
+  local filepath="$1"
+  trace_log "found" "${filepath}"
+  command -v node &> /dev/null || abort "an active version of node is required to read 'engines' from package.json"
   local range
-  range="$(node -e "package = require('./package.json'); if (package && package.engines && package.engines.node) console.log(package.engines.node)")"
+  range="$(node -e "package = require('${filepath}'); if (package && package.engines && package.engines.node) console.log(package.engines.node)")"
   trace_log "read" "${range}"
   if [[ -z "${range}" || "*" == "${range}" ]]; then
     echo "current"
@@ -948,11 +949,12 @@ function display_package_engine_version() {
       ^) [[ "${version}" =~ ^([0-9]+) ]] && version="${BASH_REMATCH[1]}" ;;
     esac
   else
-    command -v npx &> /dev/null || abort "an active version of npx is required to use complex engine ranges from package.json"
+    command -v npx &> /dev/null || abort "an active version of npx is required to use complex 'engine' ranges from package.json"
     trace_log "resolving" "${range}"
     local version_per_line="$(nvh lsr --all)"
-    local versions_one_line=$(echo ${version_per_line} | tr '\n' ' ')
-    npx --quiet semver -r "${range}" ${versions_one_line} | tail -n 1
+    local versions_one_line=$(echo "${version_per_line}" | tr '\n' ' ')
+    # shellcheck disable=SC2086
+    npx --quiet semver@7 -r "${range}" ${versions_one_line} | tail -n 1
   fi
   echo "${version}"
 }
@@ -962,9 +964,10 @@ function display_package_engine_version() {
 #
 
 function display_nvmrc_version() {
-  trace_log "found" ".nvmrc"
+  local filepath="$1"
+  trace_log "found" "${filepath}"
   local version
-  <".nvmrc" read -r version
+  <"${filepath}" read -r version
   trace_log "read" "${version}"
   # Translate from nvm aliases
   case "${version}" in
@@ -981,18 +984,24 @@ function display_nvmrc_version() {
 #
 
 function display_auto_version() {
-  # ToDo: search up, like npm and nvm
-  if [[ -e ".nvh-node-version" ]]; then
-    display_file_node_version ".nvh-node-version"
-  elif [[ -e ".node-version" ]]; then
-    display_file_node_version ".node-version"
-  elif [[ -e ".nvmrc" ]]; then
-    display_nvmrc_version
-  elif [[ -e "package.json" ]]; then
-    display_package_engine_version
-  else
-    abort "no file found for auto version"
-  fi
+  local parent
+  parent="${PWD}"
+  while [[ -n "${parent}" ]]; do
+    if [[ -e "${parent}/.nvh-node-version" ]]; then
+      display_file_node_version "${parent}/.nvh-node-version"
+    elif [[ -e "${parent}/.node-version" ]]; then
+      display_file_node_version "${parent}/.node-version"
+    elif [[ -e "${parent}/.nvmrc" ]]; then
+      display_nvmrc_version "${parent}/.nvmrc"
+    elif [[ -e "${parent}/package.json" ]]; then
+      display_package_engine_version "${parent}/package.json"
+    else
+      parent=${parent%/*}
+      continue
+    fi
+    break
+  done
+  [[ -n "${parent}" ]] || abort "no file found for auto version"
 }
 
 #
