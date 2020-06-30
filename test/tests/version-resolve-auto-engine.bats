@@ -14,6 +14,14 @@ function setup() {
   mkdir -p "${MY_DIR}"
   rm -f "${MY_DIR}/package.json"
 
+  # Need a version of npx available
+  export NVH_PREFIX="${MY_DIR}"
+  export PATH="${MY_DIR}/bin:${PATH}"
+  # beforeAll
+  if [[ "${BATS_TEST_NUMBER}" -eq 1 ]] ; then
+    nvh install lts
+  fi
+
   # Output looks likes:
   ##        found : package.json
   ##         read : 101.0.1
@@ -28,6 +36,13 @@ function setup() {
   ## v4.8.4
   # so version payload is...
   PAYLOAD_COMPLEX_LINE=3
+}
+
+function teardown() {
+  # afterAll
+  if [[ "${#BATS_TEST_NAMES[@]}" -eq "${BATS_TEST_NUMBER}" ]] ; then
+    rm -rf "${MY_DIR}"
+  fi
 }
 
 function write_engine() {
