@@ -87,7 +87,7 @@ These node support aliases may be used, although simply resolve to the latest ma
 
 - `lts`, `active`, `lts_active`, `lts_latest`, `supported`, `current`
 
-There is an `auto` label to read the target version from a file. `nvh` looks for in order:
+There is an `auto` label to read the target version from a file in the current directory, or any parent directory. `nvh` looks for in order:
 
 - `.nvh-node-version`: version on first line
 - `.node-version`: version on first line
