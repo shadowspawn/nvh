@@ -12,7 +12,7 @@ function setup() {
   mkdir -p "${MY_DIR}"
   rm -f "${MY_DIR}/package.json"
 
-  # Need a version of npx available
+  # Need a version of node and npx available for reading package.json
   export NVH_PREFIX="${MY_DIR}"
   export PATH="${MY_DIR}/bin:${PATH}"
   # beforeAll
@@ -172,7 +172,7 @@ function write_engine() {
 @test "auto engine, subdir" {
   cd "${MY_DIR}"
   write_engine "8.11.2"
-  mkdir sub-engine
+  mkdir -p sub-engine
   cd sub-engine
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
   [ "$status" -eq 0 ]

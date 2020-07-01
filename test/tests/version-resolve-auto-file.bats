@@ -24,6 +24,13 @@ function setup() {
   PAYLOAD_LINE=2
 }
 
+function teardown() {
+  # afterAll
+  if [[ "${#BATS_TEST_NAMES[@]}" -eq "${BATS_TEST_NUMBER}" ]] ; then
+    rm -rf "${MY_DIR}"
+  fi
+}
+
 @test "auto, missing file" {
   cd "${MY_DIR}"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
@@ -73,7 +80,7 @@ function setup() {
 @test "auto .nvh-node-version, from sub directory" {
   cd "${MY_DIR}"
   printf "101.0.6\nmore text\n" > .nvh-node-version
-  mkdir sub6
+  mkdir -p sub6
   cd sub6
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
   [ "$status" -eq 0 ]
@@ -92,7 +99,7 @@ function setup() {
 @test "auto .node-version, from sub directory" {
   cd "${MY_DIR}"
   printf "101.0.7\nmore text\n" > .nvh-node-version
-  mkdir sub7
+  mkdir -p sub7
   cd sub7
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
   [ "$status" -eq 0 ]

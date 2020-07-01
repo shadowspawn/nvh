@@ -16,6 +16,14 @@ function setup() {
   rm -f "${MY_DIR}/.nvmrc"
 
   PAYLOAD_LINE=2
+
+  # Need a version of node available for reading package.json
+  export NVH_PREFIX="${MY_DIR}"
+  export PATH="${MY_DIR}/bin:${PATH}"
+  if [[ "${BATS_TEST_NUMBER}" -eq 1 ]] ; then
+    # beforeAll
+    nvh install lts
+  fi
 }
 
 function teardown() {
@@ -48,7 +56,7 @@ function teardown() {
   [ "${lines[${PAYLOAD_LINE}]}" = "v401.0.2" ]
 }
 
-@test ".node-version second" {
+@test ".node-version third" {
   cd "${MY_DIR}"
   echo "401.0.3" > .nvmrc
   echo '{ "engines" : { "node" : "v401.0.4" } }' > package.json

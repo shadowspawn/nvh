@@ -22,6 +22,13 @@ function setup() {
   PAYLOAD_LINE=2
 }
 
+function teardown() {
+  # afterAll
+  if [[ "${#BATS_TEST_NAMES[@]}" -eq "${BATS_TEST_NUMBER}" ]] ; then
+    rm -rf "${MY_DIR}"
+  fi
+}
+
 @test "auto .nvmrc, numeric" {
   cd "${MY_DIR}"
   printf "102.0.1\n" > .nvmrc
@@ -68,7 +75,7 @@ function setup() {
 @test "auto .nvmrc, sub directory" {
   cd "${MY_DIR}"
   printf "v102.0.3\n" > .nvmrc
-  mkdir sub-npmrc
+  mkdir -p sub-npmrc
   cd sub-npmrc
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
   [ "$status" -eq 0 ]
