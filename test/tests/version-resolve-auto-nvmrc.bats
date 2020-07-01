@@ -64,3 +64,13 @@ function setup() {
   [ "$status" -eq 0 ]
   [ "${lines[${PAYLOAD_LINE}]}" = "v4.9.1" ]
 }
+
+@test "auto .nvmrc, sub directory" {
+  cd "${MY_DIR}"
+  printf "v102.0.3\n" > .nvmrc
+  mkdir sub-npmrc
+  cd sub-npmrc
+  run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
+  [ "$status" -eq 0 ]
+  [ "${lines[${PAYLOAD_LINE}]}" = "v102.0.3" ]
+}

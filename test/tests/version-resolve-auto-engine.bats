@@ -169,6 +169,16 @@ function write_engine() {
   [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v8.17.0" ]
 }
 
+@test "auto engine, subdir" {
+  cd "${MY_DIR}"
+  write_engine "8.11.2"
+  mkdir sub-engine
+  cd sub-engine
+  run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
+  [ "$status" -eq 0 ]
+  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v8.11.2" ]
+}
+
 @test "auto engine (semver), <8.12" {
   cd "${MY_DIR}"
   write_engine "<8.12"
