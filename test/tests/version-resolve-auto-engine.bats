@@ -1,7 +1,5 @@
 #!/usr/bin/env bats
 
-# Note: full semver is resolved without lookup, so can use arbitrary versions for testing like 999.999.999
-
 load shared-functions
 
 
