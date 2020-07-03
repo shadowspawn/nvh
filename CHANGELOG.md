@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - support for node support alias `supported`
-- auto support for:
+- `auto` support for:
     - `.node-version`
     - `.nvmrc`
     - `engines` field of `package.json`
