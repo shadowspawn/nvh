@@ -79,19 +79,22 @@ There are labels for two especially useful versions:
 - `lts`: newest Long Term Support official release
 - `latest`, `current`: newest official release
 
-There is a label to read the target version from a file, on the first line:
-
-- `auto`: read version from `.nvh-node-version` file
-
 There is support for release streams:
 
 - `argon`, `boron`, `carbon`: codenames for LTS release streams
 
-These node support aliases may be used, although for now simply resolve to the latest matching version:
+These node support aliases may be used, although simply resolve to the latest matching version:
 
 - `lts`, `active`, `lts_active`, `lts_latest`, `supported`, `current`
 
-The last form is for specifying [other releases](https://nodejs.org/download) available using the name of the remote download folder optionally followed by the complete or incomplete version.
+There is an `auto` label to read the target version from a file in the current directory, or any parent directory. `nvh` looks for in order:
+
+- `.nvh-node-version`: version on first line
+- `.node-version`: version on first line
+- `.nvmrc`: version on first line
+- `package.json`: use `engines` field to determine compatible `node`. Requires an installed version of `node`, and uses `npx semver` to resolve complex ranges.
+
+The last form is for specifying [other releases](https://nodejs.org/download) available using the name of the remote download folder optionally followed by the complete or incomplete version. For example:
 
 - `chakracore-release/latest`
 - `nightly`
