@@ -94,7 +94,7 @@ There is an `auto` label to read the target version from a file in the current d
 - `.nvmrc`: version on first line
 - `package.json`: use `engines` field to determine compatible `node`. Requires an installed version of `node`, and uses `npx semver` to resolve complex ranges.
 
-The last form is for specifying [other releases](https://nodejs.org/download) available using the name of the remote download folder optionally followed by the complete or incomplete version. For example:
+The last version form is for specifying [other releases](https://nodejs.org/download) available using the name of the remote download folder optionally followed by the complete or incomplete version. For example:
 
 - `chakracore-release/latest`
 - `nightly`

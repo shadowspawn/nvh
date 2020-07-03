@@ -7,11 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
-## [Unreleased] (date goes here)
+## [9.5.0] (2020-07-04)
 
 ### Added
 
 - support for node support alias `supported`
+- auto support for:
+    - `.node-version`
+    - `.nvmrc`
+    - `engines` field of `package.json`
 
 ## [9.4.0] (2020-04-27)
 
@@ -356,6 +360,7 @@ Changes from [tj/n](https://github.com/tj/n) v2.1.12
 - `--arch` option
 
 [Unreleased]: https://github.com/shadowspawn/nvh/compare/master...develop
+[9.5.0]: https://github.com/shadowspawn/nvh/compare/v9.4.0...shadowspawn:v9.5.0
 [9.4.0]: https://github.com/shadowspawn/nvh/compare/v9.3.0...shadowspawn:v9.4.0
 [9.3.0]: https://github.com/shadowspawn/nvh/compare/v9.2.0...shadowspawn:v9.3.0
 [9.2.0]: https://github.com/shadowspawn/nvh/compare/v9.1.2...shadowspawn:v9.2.0
