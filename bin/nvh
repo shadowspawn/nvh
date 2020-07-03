@@ -372,7 +372,7 @@ Versions:
     4.9.1, 8, v6.1    Numeric versions
     lts               Newest Long Term Support official release
     latest, current   Newest official release
-    auto              Read version from .nvh-node-version
+    auto              Read version from file: .nvh-node-version, .node-version, .nvmrc, or package.json
     boron, carbon     Codenames for release streams
     lts_latest        node support aliases
     and nightly, chakracore-release/latest, rc/10 et al
