@@ -47,6 +47,10 @@ function write_engine() {
   echo '{ "engines" : { "node" : "'"$1"'" } }' > package.json
 }
 
+@test "setupAll for auto-engine # (1 install)" {
+  # Dummy test so setupAll displayed while running first setup
+}
+
 @test "auto engine, 104.0.1" {
   cd "${MY_DIR}"
   write_engine "103.0.1"
