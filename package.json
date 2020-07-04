@@ -1,7 +1,7 @@
 {
   "name": "@shadowspawn/nvh",
   "description": "Node Version Helper. Easily install Node.js versions.",
-  "version": "9.5.0",
+  "version": "9.5.1-0",
   "author": "John Gee",
   "homepage": "https://github.com/shadowspawn/nvh",
   "bugs": "https://github.com/shadowspawn/nvh/issues",
