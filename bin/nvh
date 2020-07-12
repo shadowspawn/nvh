@@ -280,9 +280,9 @@ function is_node_support_version() {
 function display_latest_node_support_alias() {
   case "$1" in
     "active") printf "current" ;;
-    "lts_active") printf "lts" ;;
-    "lts_latest") printf "lts" ;;
-    "lts") printf "lts" ;;
+    "lts_active") printf "lts_latest" ;;
+    "lts_latest") printf "lts_latest" ;;
+    "lts") printf "lts_latest" ;;
     "current") printf "current" ;;
     "supported") printf "current" ;;
     *) printf "unexpected-version"
@@ -1069,11 +1069,7 @@ function display_remote_versions() {
   fi
   if [[ -z "${version}" ]]; then
     match='.'
-  elif [[ "${version}" = "lts" ]]; then
-    match_count=1
-    # Codename is last field, first one with a name is newest lts
-    match="${TAB_CHAR}[a-zA-Z]+\$"
-  elif [[ "${version}" = "latest" || "${version}" = "current" ]]; then
+  elif [[ "${version}" = "latest" ]]; then
     match_count=1
     match='.'
   elif is_numeric_version "${version}"; then
