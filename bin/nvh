@@ -1121,6 +1121,35 @@ function display_remote_versions() {
 }
 
 #
+# Synopsis: display_remote_streams alias
+# Display the latest versions numbers on the target streams matching the node support aliases
+#
+
+function display_remote_streams {
+  local today=$(date '+%Y-%m-%d')
+  local awk_init='BEGIN {'
+  awk_init+='FS="\t";'
+  awk_init+="today=\"${today}\";"
+  awk_init+='ltsEnd["Argon"]="2018-04-30";'
+  awk_init+='ltsEnd["Boron"]="2019-04-30";'
+  awk_init+='ltsEnd["Carbon"]="2019-12-31";'
+  awk_init+='ltsEnd["Dubnium"]="2021-04-30";'
+  awk_init+='ltsEnd["Erbium"]="2022-04-30";'
+  awk_init+='}'
+
+  echo "\$1 is $1"
+  local awk_code
+  case "$1" in
+    "lts") awk_code='$1 ~ /[a-zA-Z]+/ && $3 && ! count[$3] && today < ltsEnd[$3] { count[$3]++ ; print $1 }' ;;
+    *) abort "unexpected label"
+  esac
+  display_remote_index \
+    | awk "${awk_init}""${awk_code}" \
+    | cut -f 1
+  return "${PIPESTATUS[0]}"
+}
+
+#
 # Synopsis: cache_subcommand subcommand [arguments...]
 # Parse cache sub-commands
 #
@@ -1429,6 +1458,7 @@ function main() {
       uninstall) uninstall_installed ;;
       which) shift; display_bin_path_for_version "$1" ;;
       NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION) shift; display_latest_resolved_version "$1"; exit ;;
+      NVH_UNSTABLE_LSR) shift; display_remote_streams "$1" ;;
       *) abort "unrecognised command '$1' (perhaps you want 'nvh install $1'?)" ;;
     esac
   fi
