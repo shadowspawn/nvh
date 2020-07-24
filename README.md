@@ -89,9 +89,9 @@ These node support aliases may be used, although simply resolve to the latest ma
 
 There is an `auto` label to read the target version from a file in the current directory, or any parent directory. `nvh` looks for in order:
 
-- `.nvh-node-version`: version on first line
-- `.node-version`: version on first line
-- `.nvmrc`: version on first line
+- `.nvh-node-version`: version on single line. Custom to `nvh`.
+- `.node-version`: version on single line. Used by multiple tools: https://github.com/shadowspawn/node-version-usage
+- `.nvmrc`: version on single line. Used by `nvm`.
 - `package.json`: use `engines` field to determine compatible `node`. Requires an installed version of `node`, and uses `npx semver` to resolve complex ranges.
 
 The last version form is for specifying [other releases](https://nodejs.org/download) available using the name of the remote download folder optionally followed by the complete or incomplete version. For example:
