@@ -182,7 +182,7 @@ function install_log() {
   printf "  ${SGR_CYAN}%10s${SGR_RESET} : ${SGR_FAINT}%s${SGR_RESET}\n" "$1" "$2"
 }
 function trace_log() {
-  >&2 printf "  ${SGR_CYAN}%10s${SGR_RESET} : ${SGR_FAINT}%s${SGR_RESET}\n" "$1" "$2"
+  >&2 install_log "$1" "$2"
 }
 
 #

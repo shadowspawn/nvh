@@ -4,6 +4,10 @@
 
 load shared-functions
 
+function setup() {
+  unset_nvh_env
+}
+
 
 # node support aliases
 

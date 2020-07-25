@@ -56,7 +56,7 @@ function teardown() {
   [ "${lines[${PAYLOAD_LINE}]}" = "v401.0.2" ]
 }
 
-@test ".node-version third" {
+@test ".nvmrc third" {
   cd "${MY_DIR}"
   echo "401.0.3" > .nvmrc
   echo '{ "engines" : { "node" : "v401.0.4" } }' > package.json
