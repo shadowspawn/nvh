@@ -7,7 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
-## [Unreleased] (date goes here)
+## [9.5.1] (2020-11-28)
+
+### Fixed
+
+- add error handling if node download failed
+- suppress unwanted warning during `auto` when using npx with npm 7
+
+### Changed
+
+- improvements to README
 
 ## [9.5.0] (2020-07-04)
 
@@ -362,6 +371,7 @@ Changes from [tj/n](https://github.com/tj/n) v2.1.12
 - `--arch` option
 
 [Unreleased]: https://github.com/shadowspawn/nvh/compare/master...develop
+[9.5.1]: https://github.com/shadowspawn/nvh/compare/v9.5.0...shadowspawn:v9.5.1
 [9.5.0]: https://github.com/shadowspawn/nvh/compare/v9.4.0...shadowspawn:v9.5.0
 [9.4.0]: https://github.com/shadowspawn/nvh/compare/v9.3.0...shadowspawn:v9.4.0
 [9.3.0]: https://github.com/shadowspawn/nvh/compare/v9.2.0...shadowspawn:v9.3.0
