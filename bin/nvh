@@ -797,6 +797,9 @@ function install() {
 
   install_log "fetch" "${url}"
   do_get "${url}" | tar "${tarflags}" --strip-components=1 --no-same-owner
+  if [[ "${PIPESTATUS[0]}" -ne 0 ]]; then
+    abort "failed to download archive for $resolved_version"
+  fi
   [[ "${GET_OPTIONS_SHOW_PROGRESS}" = "true" ]] && erase_line
   rm -f "${dir}/nvh.lock"
 
