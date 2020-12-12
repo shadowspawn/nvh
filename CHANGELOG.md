@@ -7,7 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
-## [Unreleased] (date goes here)
+## [9.6.0] (2020-12-12)
+
+### Fixed
+
+- temporary fix for installing on Mac with Apple M1 chip, look for x64 versions of node as arm64 not available yet
 
 ## [9.5.1] (2020-11-28)
 
@@ -373,6 +377,7 @@ Changes from [tj/n](https://github.com/tj/n) v2.1.12
 - `--arch` option
 
 [Unreleased]: https://github.com/shadowspawn/nvh/compare/master...develop
+[9.6.0]: https://github.com/shadowspawn/nvh/compare/v9.5.1...shadowspawn:v9.6.0
 [9.5.1]: https://github.com/shadowspawn/nvh/compare/v9.5.0...shadowspawn:v9.5.1
 [9.5.0]: https://github.com/shadowspawn/nvh/compare/v9.4.0...shadowspawn:v9.5.0
 [9.4.0]: https://github.com/shadowspawn/nvh/compare/v9.3.0...shadowspawn:v9.4.0

@@ -6,7 +6,7 @@
 # Setup.
 #
 
-readonly VERSION="9.5.2-0"
+readonly VERSION="9.6.0"
 readonly TAB_CHAR=$'\t'
 
 NVH_PREFIX=${NVH_PREFIX:-/usr/local}
@@ -651,7 +651,8 @@ function display_tarball_platform() {
       arch="${uname_m}"
       ;;
   esac
-  # (arch unlikely to be right for SunOS and AIX. Investigate further if/when anyone asks!)
+  # Fallback to x64 on Apple M1, native versions not available yet.
+  [[ "$os" == "darwin" && "$arch" == "arm64" ]] && arch=x64
 
   echo "${os}-${arch}"
 }
