@@ -1,6 +1,8 @@
 #!/usr/bin/env bats
 
 load shared-functions
+load '../../node_modules/bats-support/load'
+load '../../node_modules/bats-assert/load'
 
 
 # auto
@@ -14,8 +16,6 @@ function setup() {
   rm -f "${MY_DIR}/.nvh-node-version"
   rm -f "${MY_DIR}/.node-version"
   rm -f "${MY_DIR}/.nvmrc"
-
-  PAYLOAD_LINE=2
 
   # Need a version of node available for reading package.json
   export NVH_PREFIX="${MY_DIR}"
@@ -41,8 +41,7 @@ function teardown() {
   echo '{ "engines" : { "node" : "v401.0.4" } }' > package.json
 
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_LINE}]}" = "v401.0.1" ]
+  assert_line "v401.0.1"
 }
 
 @test ".node-version second" {
@@ -52,8 +51,7 @@ function teardown() {
   echo '{ "engines" : { "node" : "v401.0.4" } }' > package.json
 
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_LINE}]}" = "v401.0.2" ]
+  assert_line "v401.0.2"
 }
 
 @test ".nvmrc third" {
@@ -62,8 +60,7 @@ function teardown() {
   echo '{ "engines" : { "node" : "v401.0.4" } }' > package.json
 
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_LINE}]}" = "v401.0.3" ]
+  assert_line "v401.0.3"
 }
 
 @test ".package.json last" {
@@ -71,7 +68,6 @@ function teardown() {
   echo '{ "engines" : { "node" : "v401.0.4" } }' > package.json
 
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_LINE}]}" = "v401.0.4" ]
+  assert_line "v401.0.4"
 }
 
