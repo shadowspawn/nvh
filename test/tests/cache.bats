@@ -24,7 +24,7 @@ function teardown() {
 # nvh cache ls
 
 @test "nvh cache ls # albeit cache ls is undocumented" {
-  output=$(nvh cache ls)
+  local output=$(nvh cache ls)
   assert_equal "${output}" "nightly/${NIGHTLY_VERSION}
 node/${ARGON_VERSION}
 node/${LTS_VERSION}"
@@ -37,7 +37,7 @@ node/${LTS_VERSION}"
 @test "nvh rm lts v4.9.1" {
   nvh rm lts v4.9.1
 
-  output=$(nvh cache ls)
+  local output=$(nvh cache ls)
   assert_equal "${output}" "nightly/${NIGHTLY_VERSION}"
 }
 
@@ -47,7 +47,7 @@ node/${LTS_VERSION}"
 @test "nvh remove nightly/${NIGHTLY_VERSION}" {
   nvh remove "nightly/${NIGHTLY_VERSION}"
 
-  output=$(nvh cache ls)
+  local output=$(nvh cache ls)
   assert_equal "${output}" "node/${ARGON_VERSION}
 node/${LTS_VERSION}"
 }
@@ -58,7 +58,7 @@ node/${LTS_VERSION}"
 @test "nvh cache rm 4 # albeit cache rm is undocumented" {
   nvh cache rm 4
 
-  output=$(nvh cache ls)
+  local output=$(nvh cache ls)
   assert_equal "${output}" "nightly/${NIGHTLY_VERSION}
 node/${LTS_VERSION}"
 }
@@ -69,7 +69,7 @@ node/${LTS_VERSION}"
 @test "nvh cache clear" {
   nvh cache clear
 
-  output=$(nvh cache ls)
+  local output=$(nvh cache ls)
   assert_equal "${output}" ""
 }
 
@@ -82,6 +82,6 @@ node/${LTS_VERSION}"
   nvh install lts
   nvh cache prune
 
-  output=$(nvh cache ls)
+  local output=$(nvh cache ls)
   assert_equal "${output}" "node/${LTS_VERSION}"
 }
