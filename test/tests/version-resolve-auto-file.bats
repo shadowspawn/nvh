@@ -10,13 +10,11 @@ load '../../node_modules/bats-assert/load'
 
 # auto
 
-function setup() {
+function setup_file() {
   unset_nvh_env
   tmpdir="${TMPDIR:-/tmp}"
   export MY_DIR="${tmpdir}/nvh/test/version-resolve-auto-file"
   mkdir -p "${MY_DIR}"
-  rm -f "${MY_DIR}/.nvh-node-version"
-  rm -f "${MY_DIR}/.node-version"
 
   # Output looks likes:
   ##        found : .nvh-node-version
@@ -24,11 +22,13 @@ function setup() {
   ## v101.0.1
 }
 
-function teardown() {
-  # afterAll
-  if [[ "${#BATS_TEST_NAMES[@]}" -eq "${BATS_TEST_NUMBER}" ]] ; then
-    rm -rf "${MY_DIR}"
-  fi
+function setup() {
+  rm -f "${MY_DIR}/.nvh-node-version"
+  rm -f "${MY_DIR}/.node-version"
+}
+
+function teardown_file() {
+  rm -rf "${MY_DIR}"
 }
 
 @test "auto, missing file" {

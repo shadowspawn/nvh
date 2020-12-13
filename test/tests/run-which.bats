@@ -4,24 +4,18 @@ load shared-functions
 load '../../node_modules/bats-support/load'
 load '../../node_modules/bats-assert/load'
 
-function setup() {
+function setup_file() {
   unset_nvh_env
   # fixed directory so can reuse the two installs
   export NVH_PREFIX="${TMPDIR:-/tmp}/nvh/test/run-which"
-  # beforeAll
-  # See https://github.com/bats-core/bats-core/issues/39
-  if [[ "${BATS_TEST_NUMBER}" -eq 1 ]] ; then
-    # Using --preserve to speed install, as only care about the cached versions.
-    nvh install --preserve 4.9.1
-    nvh install --preserve lts
-  fi
+
+  # Using --preserve to speed install, as only care about the cached versions.
+  nvh install --preserve 4.9.1
+  nvh install --preserve lts
 }
 
-function teardown() {
-  # afterAll
-  if [[ "${#BATS_TEST_NAMES[@]}" -eq "${BATS_TEST_NUMBER}" ]] ; then
-    rm -rf "${NVH_PREFIX}"
-  fi
+function teardown_file() {
+  rm -rf "${NVH_PREFIX}"
 }
 
 

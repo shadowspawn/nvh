@@ -7,20 +7,16 @@ load '../../node_modules/bats-assert/load'
 
 # auto
 
-function setup() {
+function setup_file() {
   unset_nvh_env
   tmpdir="${TMPDIR:-/tmp}"
   export MY_DIR="${tmpdir}/nvh/test/version-resolve-auto-engine"
   mkdir -p "${MY_DIR}"
-  rm -f "${MY_DIR}/package.json"
 
   # Need a version of node and npx available for reading package.json
   export NVH_PREFIX="${MY_DIR}"
   export PATH="${MY_DIR}/bin:${PATH}"
-  # beforeAll
-  if [[ "${BATS_TEST_NUMBER}" -eq 1 ]] ; then
-    nvh install lts
-  fi
+  nvh install lts
 
   # Output looks likes:
   ##        found : package.json
@@ -34,11 +30,12 @@ function setup() {
   ## v4.8.4
 }
 
-function teardown() {
-  # afterAll
-  if [[ "${#BATS_TEST_NAMES[@]}" -eq "${BATS_TEST_NUMBER}" ]] ; then
-    rm -rf "${MY_DIR}"
-  fi
+function setup() {
+  rm -f "${MY_DIR}/package.json"
+}
+
+function teardown_file() {
+  rm -rf "${MY_DIR}"
 }
 
 function write_engine() {

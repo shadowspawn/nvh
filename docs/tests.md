@@ -27,13 +27,13 @@ Run all the tests on a single system:
 
     cd test
     npx bats tests
-    docker-compose run ubuntu-curl bats /mnt/tests
+    docker-compose run ubuntu-curl bats /mnt/test/tests
 
 Run single test on a single system:
 
     cd test
     npx bats tests/lsr.bats
-    docker-compose run ubuntu-curl bats /mnt/tests/lsr.bats
+    docker-compose run ubuntu-curl bats /mnt/test/tests/lsr.bats
 
 Run a single command on more containers:
 
@@ -59,7 +59,7 @@ The containers each have:
 Using `docker-compose` adds:
 
 * specified `nvh` script mounted to `/usr/local/bin/nvh`
-* `test/tests` mounted to `/mnt/tests`
+* `test/tests` mounted to `/mnt/test/tests`
 * `node_modules/bats` provides `/usr/local/bin/bats` et al
 * curl and wget startup files to suppress certificate checking, to allow proxy usage
 
@@ -69,4 +69,4 @@ So for example:
     docker-compose run ubuntu-curl
       # in container
       nvh --version
-      bats /mnt/tests
+      bats /mnt/test/tests
