@@ -1,7 +1,8 @@
 #!/usr/bin/env bats
 
 load shared-functions
-
+load '../../node_modules/bats-support/load'
+load '../../node_modules/bats-assert/load'
 
 function setup() {
   unset_nvh_env
@@ -23,12 +24,10 @@ function teardown() {
 # nvh cache ls
 
 @test "nvh cache ls # albeit cache ls is undocumented" {
-  run nvh cache ls
-  [ "${status}" -eq "0" ]
-  [ "${lines[0]}" = "nightly/${NIGHTLY_VERSION}" ]
-  [ "${lines[1]}" = "node/${ARGON_VERSION}" ]
-  [ "${lines[2]}" = "node/${LTS_VERSION}" ]
-  [ "${lines[3]}" = "" ]
+  output=$(nvh cache ls)
+  assert_equal "${output}" "nightly/${NIGHTLY_VERSION}
+node/${ARGON_VERSION}
+node/${LTS_VERSION}"
 }
 
 
@@ -38,10 +37,8 @@ function teardown() {
 @test "nvh rm lts v4.9.1" {
   nvh rm lts v4.9.1
 
-  run nvh cache ls
-  [ "${status}" -eq "0" ]
-  [ "${lines[0]}" = "nightly/${NIGHTLY_VERSION}" ]
-  [ "${lines[1]}" = "" ]
+  output=$(nvh cache ls)
+  assert_equal "${output}" "nightly/${NIGHTLY_VERSION}"
 }
 
 
@@ -50,11 +47,9 @@ function teardown() {
 @test "nvh remove nightly/${NIGHTLY_VERSION}" {
   nvh remove "nightly/${NIGHTLY_VERSION}"
 
-  run nvh cache ls
-  [ "${status}" -eq "0" ]
-  [ "${lines[0]}" = "node/${ARGON_VERSION}" ]
-  [ "${lines[1]}" = "node/${LTS_VERSION}" ]
-  [ "${lines[2]}" = "" ]
+  output=$(nvh cache ls)
+  assert_equal "${output}" "node/${ARGON_VERSION}
+node/${LTS_VERSION}"
 }
 
 
@@ -63,11 +58,9 @@ function teardown() {
 @test "nvh cache rm 4 # albeit cache rm is undocumented" {
   nvh cache rm 4
 
-  run nvh cache ls
-  [ "${status}" -eq "0" ]
-  [ "${lines[0]}" = "nightly/${NIGHTLY_VERSION}" ]
-  [ "${lines[1]}" = "node/${LTS_VERSION}" ]
-  [ "${lines[2]}" = "" ]
+  output=$(nvh cache ls)
+  assert_equal "${output}" "nightly/${NIGHTLY_VERSION}
+node/${LTS_VERSION}"
 }
 
 
@@ -76,9 +69,8 @@ function teardown() {
 @test "nvh cache clear" {
   nvh cache clear
 
-  run nvh cache ls
-  [ "${status}" -eq "0" ]
-  [ "$output" = "" ]
+  output=$(nvh cache ls)
+  assert_equal "${output}" ""
 }
 
 
@@ -90,8 +82,6 @@ function teardown() {
   nvh install lts
   nvh cache prune
 
-  run nvh cache ls
-  [ "${status}" -eq "0" ]
-  [ "${lines[0]}" = "node/${LTS_VERSION}" ]
-  [ "${lines[1]}" = "" ]
+  output=$(nvh cache ls)
+  assert_equal "${output}" "node/${LTS_VERSION}"
 }
