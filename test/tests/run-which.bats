@@ -1,6 +1,8 @@
 #!/usr/bin/env bats
 
 load shared-functions
+load '../../node_modules/bats-support/load'
+load '../../node_modules/bats-assert/load'
 
 function setup() {
   unset_nvh_env
@@ -32,70 +34,61 @@ function teardown() {
 # nvh which
 
 @test "nvh which 4" {
-  run nvh which 4
-  [ "$status" -eq 0 ]
-  [ "$output" = "${NVH_PREFIX}/nvh/versions/node/v4.9.1/bin/node" ]
+  local output=$(nvh which 4)
+  assert_equal "$output" "${NVH_PREFIX}/nvh/versions/node/v4.9.1/bin/node"
 }
 
 
 @test "nvh which v4.9.1" {
-  run nvh which v4.9.1
-  [ "$status" -eq 0 ]
-  [ "$output" = "${NVH_PREFIX}/nvh/versions/node/v4.9.1/bin/node" ]
+  local output=$(nvh which v4.9.1)
+  assert_equal "$output" "${NVH_PREFIX}/nvh/versions/node/v4.9.1/bin/node"
 }
 
 
 @test "nvh which argon" {
-  run nvh which argon
-  [ "$status" -eq 0 ]
-  [ "$output" = "${NVH_PREFIX}/nvh/versions/node/v4.9.1/bin/node" ]
+  local output=$(nvh which argon)
+  assert_equal "$output" "${NVH_PREFIX}/nvh/versions/node/v4.9.1/bin/node"
 }
 
 
 @test "nvh which lts" {
-  run nvh which lts
+  local output=$(nvh which lts)
   local LTS_VERSION="$(display_remote_version lts)"
-  [ "$status" -eq 0 ]
-  [ "$output" = "${NVH_PREFIX}/nvh/versions/node/${LTS_VERSION}/bin/node" ]
+  assert_equal "$output" "${NVH_PREFIX}/nvh/versions/node/${LTS_VERSION}/bin/node"
 }
 
 
 # nvh run
 
 @test "nvh run 4" {
-  run nvh run 4 --version
-  [ "$status" -eq 0 ]
-  [ "$output" = "v4.9.1" ]
+  local output=$(nvh run 4 --version)
+  assert_equal "$output" "v4.9.1"
 }
 
 
 @test "nvh run lts" {
-  run nvh run lts --version
+  local output=$(nvh run lts --version)
   local LTS_VERSION="$(display_remote_version lts)"
-  [ "$status" -eq 0 ]
-  [ "$output" = "${LTS_VERSION}" ]
+  assert_equal "$output" "${LTS_VERSION}"
 }
 
 
 # nvh exec
 
 @test "nvh exec v4.9.1 node" {
-  run nvh exec v4.9.1 node --version
-  [ "$status" -eq 0 ]
-  [ "$output" = "v4.9.1" ]
+  local output=$(nvh exec v4.9.1 node --version)
+  assert_equal "$output" "v4.9.1"
 }
 
 
 @test "nvh exec 4 npm" {
-  run nvh exec 4 npm --version
-  [ "$status" -eq 0 ]
-  [ "$output" = "2.15.11" ]
+  local output=$(nvh exec 4 npm --version)
+  assert_equal "$output" "2.15.11"
 }
 
 
 @test "nvh exec lts" {
-  run nvh exec lts node --version
+  local output=$(nvh exec lts node --version)
   local LTS_VERSION="$(display_remote_version lts)"
-  [ "$status" -eq 0 ]
-  [ "$output" = "${LTS_VERSION}" ]
+  assert_equal "$output" "${LTS_VERSION}"
 }
