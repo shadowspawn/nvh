@@ -3,6 +3,8 @@
 # Note: full semver is resolved without lookup, so can use arbitrary versions for testing like 999.999.999
 
 load shared-functions
+load '../../node_modules/bats-support/load'
+load '../../node_modules/bats-assert/load'
 
 
 # auto
@@ -18,8 +20,6 @@ function setup() {
   ##        found : .nvmrc
   ##         read : 101.0.1
   ## v101.0.1
-  # so payload to check is on line #2.
-  PAYLOAD_LINE=2
 }
 
 function teardown() {
@@ -33,16 +33,14 @@ function teardown() {
   cd "${MY_DIR}"
   printf "102.0.1\n" > .nvmrc
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_LINE}]}" = "v102.0.1" ]
+  assert_line "v102.0.1"
 }
 
 @test "auto .nvmrc, numeric with leading v" {
   cd "${MY_DIR}"
   printf "v102.0.2\n" > .nvmrc
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_LINE}]}" = "v102.0.2" ]
+  assert_line "v102.0.2"
 }
 
 @test "auto .nvmrc, node" {
@@ -50,8 +48,7 @@ function teardown() {
   cd "${MY_DIR}"
   printf "node\n" > .nvmrc
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_LINE}]}" = "${TARGET_VERSION}" ]
+  assert_line "${TARGET_VERSION}"
 }
 
 @test "auto .nvmrc, lts/*" {
@@ -59,8 +56,7 @@ function teardown() {
   cd "${MY_DIR}"
   printf "lts/*\n" > .nvmrc
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_LINE}]}" = "${TARGET_VERSION}" ]
+  assert_line "${TARGET_VERSION}"
 }
 
 @test "auto .nvmrc, lts/argon" {
@@ -68,8 +64,7 @@ function teardown() {
   cd "${MY_DIR}"
   printf "lts/argon\n" > .nvmrc
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_LINE}]}" = "v4.9.1" ]
+  assert_line "v4.9.1"
 }
 
 @test "auto .nvmrc, sub directory" {
@@ -78,6 +73,5 @@ function teardown() {
   mkdir -p sub-npmrc
   cd sub-npmrc
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_LINE}]}" = "v102.0.3" ]
+  assert_line "v102.0.3"
 }
