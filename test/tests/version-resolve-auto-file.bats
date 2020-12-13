@@ -4,6 +4,8 @@
 # Not testing all the permutations on both files, as know they are currenly implemented using same code!
 
 load shared-functions
+load '../../node_modules/bats-support/load'
+load '../../node_modules/bats-assert/load'
 
 
 # auto
@@ -20,8 +22,6 @@ function setup() {
   ##        found : .nvh-node-version
   ##         read : 101.0.1
   ## v101.0.1
-  # so payload to check is on line #2.
-  PAYLOAD_LINE=2
 }
 
 function teardown() {
@@ -41,40 +41,35 @@ function teardown() {
   cd "${MY_DIR}"
   printf "101.0.1" > .nvh-node-version
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_LINE}]}" = "v101.0.1" ]
+  assert_line "v101.0.1"
 }
 
 @test "auto .nvh-node-version, unix eol" {
   cd "${MY_DIR}"
   printf "101.0.2\n" > .nvh-node-version
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_LINE}]}" = "v101.0.2" ]
+  assert_line "v101.0.2"
 }
 
 @test "auto .nvh-node-version, Windows eol" {
   cd "${MY_DIR}"
   printf "101.0.3\r\n" > .nvh-node-version
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_LINE}]}" = "v101.0.3" ]
+  assert_line "v101.0.3"
 }
 
 @test "auto .nvh-node-version, leading v" {
   cd "${MY_DIR}"
   printf "v101.0.4\n" > .nvh-node-version
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_LINE}]}" = "v101.0.4" ]
+  assert_line "v101.0.4"
 }
 
 @test "auto .nvh-node-version, first line only" {
   cd "${MY_DIR}"
   printf "101.0.5\nmore text\n" > .nvh-node-version
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_LINE}]}" = "v101.0.5" ]
+  assert_line "v101.0.5"
 }
 
 @test "auto .nvh-node-version, from sub directory" {
@@ -83,8 +78,7 @@ function teardown() {
   mkdir -p sub6
   cd sub6
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_LINE}]}" = "v101.0.6" ]
+  assert_line "v101.0.6"
 }
 
 @test "auto .node-version, partial version lookup" {
@@ -92,8 +86,7 @@ function teardown() {
   cd "${MY_DIR}"
   printf "4.9\n" > .node-version
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_LINE}]}" = "v4.9.1" ]
+  assert_line "v4.9.1"
 }
 
 @test "auto .node-version, from sub directory" {
@@ -102,7 +95,6 @@ function teardown() {
   mkdir -p sub7
   cd sub7
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_LINE}]}" = "v101.0.7" ]
+  assert_line "v101.0.7"
 }
 
