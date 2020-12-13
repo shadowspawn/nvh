@@ -1,6 +1,8 @@
 #!/usr/bin/env bats
 
 load shared-functions
+load '../../node_modules/bats-support/load'
+load '../../node_modules/bats-assert/load'
 
 
 # auto
@@ -24,16 +26,12 @@ function setup() {
   ##        found : package.json
   ##         read : 101.0.1
   ## v101.0.1
-  # so version payload is...
-  PAYLOAD_SIMPLE_LINE=2
 
   # Output looks likes:
   ##        found : package.json
   ##       read : 4.8.2 - 4.8.4
   ##  resolving : 4.8.2 - 4.8.4
   ## v4.8.4
-  # so version payload is...
-  PAYLOAD_COMPLEX_LINE=3
 }
 
 function teardown() {
@@ -55,32 +53,28 @@ function write_engine() {
   cd "${MY_DIR}"
   write_engine "103.0.1"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v103.0.1" ]
+  assert_line "v103.0.1"
 }
 
 @test "auto engine, v104.0.2" {
   cd "${MY_DIR}"
   write_engine "v104.0.2"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v104.0.2" ]
+  assert_line "v104.0.2"
 }
 
 @test "auto engine, =104.0.3" {
   cd "${MY_DIR}"
   write_engine "=103.0.3"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v103.0.3" ]
+  assert_line "v103.0.3"
 }
 
 @test "auto engine, =v104.0.4" {
   cd "${MY_DIR}"
   write_engine "=v104.0.4"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v104.0.4" ]
+  assert_line "v104.0.4"
 }
 
 @test "auto engine, >1" {
@@ -88,8 +82,7 @@ function write_engine() {
   cd "${MY_DIR}"
   write_engine ">1"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "${TARGET_VERSION}" ]
+  assert_line "${TARGET_VERSION}"
 }
 
 @test "auto engine, >=2" {
@@ -97,80 +90,70 @@ function write_engine() {
   cd "${MY_DIR}"
   write_engine ">=2"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "${TARGET_VERSION}" ]
+  assert_line "${TARGET_VERSION}"
 }
 
 @test "auto engine, 8" {
   cd "${MY_DIR}"
   write_engine "8"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v8.17.0" ]
+  assert_line "v8.17.0"
 }
 
 @test "auto engine, 8.x" {
   cd "${MY_DIR}"
   write_engine "8.x"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v8.17.0" ]
+  assert_line "v8.17.0"
 }
 
 @test "auto engine, 8.X" {
   cd "${MY_DIR}"
   write_engine "8.X"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v8.17.0" ]
+  assert_line "v8.17.0"
 }
 
 @test "auto engine, 8.*" {
   cd "${MY_DIR}"
   write_engine "8.*"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v8.17.0" ]
+  assert_line "v8.17.0"
 }
 
 @test "auto engine, ~8.11.0" {
   cd "${MY_DIR}"
   write_engine "~8.11.0"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v8.11.4" ]
+  assert_line "v8.11.4"
 }
 
 @test "auto engine, ~8.11" {
   cd "${MY_DIR}"
   write_engine "~8.11"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v8.11.4" ]
+  assert_line "v8.11.4"
 }
 
 @test "auto engine, ~8" {
   cd "${MY_DIR}"
   write_engine "~8"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v8.17.0" ]
+  assert_line "v8.17.0"
 }
 
 @test "auto engine, ^8.11.0" {
   cd "${MY_DIR}"
   write_engine "^8.11.0"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v8.17.0" ]
+  assert_line "v8.17.0"
 }
 
 @test "auto engine, ^8.x" {
   cd "${MY_DIR}"
   write_engine "^8.x"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v8.17.0" ]
+  assert_line "v8.17.0"
 }
 
 @test "auto engine, subdir" {
@@ -179,30 +162,26 @@ function write_engine() {
   mkdir -p sub-engine
   cd sub-engine
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_SIMPLE_LINE}]}" = "v8.11.2" ]
+  assert_line "v8.11.2"
 }
 
 @test "auto engine (semver), <8.12" {
   cd "${MY_DIR}"
   write_engine "<8.12"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_COMPLEX_LINE}]}" = "v8.11.4" ]
+  assert_line "v8.11.4"
 }
 
 @test "auto engine (semver), 8.11.1 - 8.11.3" {
   cd "${MY_DIR}"
   write_engine "8.11.1 - 8.11.3"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_COMPLEX_LINE}]}" = "v8.11.3" ]
+  assert_line "v8.11.3"
 }
 
 @test "auto engine (semver), >8.1 <8.12 || >2.1 <3.4" {
   cd "${MY_DIR}"
   write_engine ">8.1 <8.12 || >2.1 <3.4"
   run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_COMPLEX_LINE}]}" = "v8.11.4" ]
+  assert_line "v8.11.4"
 }
