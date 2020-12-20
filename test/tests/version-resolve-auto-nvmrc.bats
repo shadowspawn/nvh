@@ -32,39 +32,39 @@ function teardown_file() {
 @test "auto .nvmrc, numeric" {
   cd "${MY_DIR}"
   printf "102.0.1\n" > .nvmrc
-  run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  assert_line "v102.0.1"
+  output="$(nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto)"
+  assert_equal "${output}" "v102.0.1"
 }
 
 @test "auto .nvmrc, numeric with leading v" {
   cd "${MY_DIR}"
   printf "v102.0.2\n" > .nvmrc
-  run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  assert_line "v102.0.2"
+  output="$(nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto)"
+  assert_equal "${output}" "v102.0.2"
 }
 
 @test "auto .nvmrc, node" {
   local TARGET_VERSION="$(display_remote_version latest)"
   cd "${MY_DIR}"
   printf "node\n" > .nvmrc
-  run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  assert_line "${TARGET_VERSION}"
+  output="$(nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto)"
+  assert_equal "${output}" "${TARGET_VERSION}"
 }
 
 @test "auto .nvmrc, lts/*" {
   local TARGET_VERSION="$(display_remote_version lts)"
   cd "${MY_DIR}"
   printf "lts/*\n" > .nvmrc
-  run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  assert_line "${TARGET_VERSION}"
+  output="$(nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto)"
+  assert_equal "${output}" "${TARGET_VERSION}"
 }
 
 @test "auto .nvmrc, lts/argon" {
   local TARGET_VERSION="$(display_remote_version lts)"
   cd "${MY_DIR}"
   printf "lts/argon\n" > .nvmrc
-  run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  assert_line "v4.9.1"
+  output="$(nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto)"
+  assert_equal "${output}" "v4.9.1"
 }
 
 @test "auto .nvmrc, sub directory" {
@@ -72,6 +72,6 @@ function teardown_file() {
   printf "v102.0.3\n" > .nvmrc
   mkdir -p sub-npmrc
   cd sub-npmrc
-  run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  assert_line "v102.0.3"
+  output="$(nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto)"
+  assert_equal "${output}" "v102.0.3"
 }

@@ -37,8 +37,8 @@ function teardown_file() {
   echo "401.0.3" > .nvmrc
   echo '{ "engines" : { "node" : "v401.0.4" } }' > package.json
 
-  run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  assert_line "v401.0.1"
+  output="$(nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto)"
+  assert_equal "${output}" "v401.0.1"
 }
 
 @test ".node-version second" {
@@ -47,8 +47,8 @@ function teardown_file() {
   echo "401.0.3" > .nvmrc
   echo '{ "engines" : { "node" : "v401.0.4" } }' > package.json
 
-  run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  assert_line "v401.0.2"
+  output="$(nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto)"
+  assert_equal "${output}" "v401.0.2"
 }
 
 @test ".nvmrc third" {
@@ -56,15 +56,15 @@ function teardown_file() {
   echo "401.0.3" > .nvmrc
   echo '{ "engines" : { "node" : "v401.0.4" } }' > package.json
 
-  run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  assert_line "v401.0.3"
+  output="$(nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto)"
+  assert_equal "${output}" "v401.0.3"
 }
 
 @test ".package.json last" {
   cd "${MY_DIR}"
   echo '{ "engines" : { "node" : "v401.0.4" } }' > package.json
 
-  run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  assert_line "v401.0.4"
+  output="$(nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto)"
+  assert_equal "${output}" "v401.0.4"
 }
 
