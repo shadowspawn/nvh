@@ -1,6 +1,8 @@
 #!/usr/bin/env bats
 
 load shared-functions
+load '../../node_modules/bats-support/load'
+load '../../node_modules/bats-assert/load'
 
 function setup() {
   unset_nvh_env
@@ -17,11 +19,9 @@ function teardown() {
   mkdir -p "${NVH_PREFIX}/nvh/versions/node/v4.9.1"
   mkdir -p "${NVH_PREFIX}/nvh/versions/node/v10.15.0"
 
-  run nvh ls
-  [ "$status" -eq 0 ]
-  [ "${lines[0]}" = "node/v4.9.1" ]
-  [ "${lines[1]}" = "node/v10.15.0" ]
-  [ "${lines[2]}" = "" ]
+  local output=$(nvh ls)
+  assert_equal "${output}" "node/v4.9.1
+node/v10.15.0"
 }
 
 
@@ -31,10 +31,8 @@ function teardown() {
   mkdir -p "${NVH_PREFIX}/nvh/versions/nightly/${NIGHTLY_VERSION}"
   mkdir -p "${NVH_PREFIX}/nvh/versions/node/v10.15.0"
 
-  run nvh list
-  [ "$status" -eq 0 ]
-  [ "${lines[0]}" = "nightly/${NIGHTLY_VERSION}" ]
-  [ "${lines[1]}" = "node/v10.15.0" ]
-  [ "${lines[2]}" = "" ]
+  local output=$(nvh list)
+  assert_equal "${output}" "nightly/${NIGHTLY_VERSION}
+node/v10.15.0"
 }
 

@@ -3,73 +3,68 @@
 # Note: full semver is resolved without lookup, so can use arbitrary versions for testing like 999.999.999
 
 load shared-functions
+load '../../node_modules/bats-support/load'
+load '../../node_modules/bats-assert/load'
 
 
 # auto
 
-function setup() {
+function setup_file() {
   unset_nvh_env
   tmpdir="${TMPDIR:-/tmp}"
   export MY_DIR="${tmpdir}/nvh/test/version-resolve-auto-nvmrc"
   mkdir -p "${MY_DIR}"
-  rm -f "${MY_DIR}/.nvmrc"
 
   # Output looks likes:
   ##        found : .nvmrc
   ##         read : 101.0.1
   ## v101.0.1
-  # so payload to check is on line #2.
-  PAYLOAD_LINE=2
 }
 
-function teardown() {
-  # afterAll
-  if [[ "${#BATS_TEST_NAMES[@]}" -eq "${BATS_TEST_NUMBER}" ]] ; then
-    rm -rf "${MY_DIR}"
-  fi
+function setup() {
+  rm -f "${MY_DIR}/.nvmrc"
+}
+
+function teardown_file() {
+  rm -rf "${MY_DIR}"
 }
 
 @test "auto .nvmrc, numeric" {
   cd "${MY_DIR}"
   printf "102.0.1\n" > .nvmrc
-  run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_LINE}]}" = "v102.0.1" ]
+  output="$(nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto)"
+  assert_equal "${output}" "v102.0.1"
 }
 
 @test "auto .nvmrc, numeric with leading v" {
   cd "${MY_DIR}"
   printf "v102.0.2\n" > .nvmrc
-  run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_LINE}]}" = "v102.0.2" ]
+  output="$(nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto)"
+  assert_equal "${output}" "v102.0.2"
 }
 
 @test "auto .nvmrc, node" {
   local TARGET_VERSION="$(display_remote_version latest)"
   cd "${MY_DIR}"
   printf "node\n" > .nvmrc
-  run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_LINE}]}" = "${TARGET_VERSION}" ]
+  output="$(nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto)"
+  assert_equal "${output}" "${TARGET_VERSION}"
 }
 
 @test "auto .nvmrc, lts/*" {
   local TARGET_VERSION="$(display_remote_version lts)"
   cd "${MY_DIR}"
   printf "lts/*\n" > .nvmrc
-  run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_LINE}]}" = "${TARGET_VERSION}" ]
+  output="$(nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto)"
+  assert_equal "${output}" "${TARGET_VERSION}"
 }
 
 @test "auto .nvmrc, lts/argon" {
   local TARGET_VERSION="$(display_remote_version lts)"
   cd "${MY_DIR}"
   printf "lts/argon\n" > .nvmrc
-  run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_LINE}]}" = "v4.9.1" ]
+  output="$(nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto)"
+  assert_equal "${output}" "v4.9.1"
 }
 
 @test "auto .nvmrc, sub directory" {
@@ -77,7 +72,6 @@ function teardown() {
   printf "v102.0.3\n" > .nvmrc
   mkdir -p sub-npmrc
   cd sub-npmrc
-  run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto
-  [ "$status" -eq 0 ]
-  [ "${lines[${PAYLOAD_LINE}]}" = "v102.0.3" ]
+  output="$(nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION auto)"
+  assert_equal "${output}" "v102.0.3"
 }

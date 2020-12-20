@@ -3,6 +3,8 @@
 # Note: full semver is resolved without lookup, so can use arbitrary versions for testing like 999.999.999
 
 load shared-functions
+load '../../node_modules/bats-support/load'
+load '../../node_modules/bats-assert/load'
 
 function setup() {
   unset_nvh_env
@@ -13,42 +15,36 @@ function setup() {
 
 @test "display_latest_resolved_version active" {
   local TARGET_VERSION="$(display_remote_version latest)"
-  run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION active
-  [ "$status" -eq 0 ]
-  [ "$output" = "${TARGET_VERSION}" ]
+  local output=$(nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION active)
+  assert_equal "$output" "${TARGET_VERSION}"
 }
 
 @test "display_latest_resolved_version lts_active" {
   local TARGET_VERSION="$(display_remote_version lts)"
-  run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION lts_active
-  [ "$status" -eq 0 ]
-  [ "$output" = "${TARGET_VERSION}" ]
+  local output=$(nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION lts_active)
+  assert_equal "$output" "${TARGET_VERSION}"
 }
 
 @test "display_latest_resolved_version lts_latest" {
   local TARGET_VERSION="$(display_remote_version lts)"
-  run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION lts_latest
-  [ "$status" -eq 0 ]
-  [ "$output" = "${TARGET_VERSION}" ]
+  local output=$(nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION lts_latest)
+  assert_equal "$output" "${TARGET_VERSION}"
 }
 
 @test "display_latest_resolved_version lts" {
   local TARGET_VERSION="$(display_remote_version lts)"
-  run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION lts
-  [ "$status" -eq 0 ]
-  [ "$output" = "${TARGET_VERSION}" ]
+  local output=$(nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION lts)
+  assert_equal "$output" "${TARGET_VERSION}"
 }
 
 @test "display_latest_resolved_version current" {
   local TARGET_VERSION="$(display_remote_version latest)"
-  run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION current
-  [ "$status" -eq 0 ]
-  [ "$output" = "${TARGET_VERSION}" ]
+  local output=$(nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION current)
+  assert_equal "$output" "${TARGET_VERSION}"
 }
 
 @test "display_latest_resolved_version supported" {
   local TARGET_VERSION="$(display_remote_version latest)"
-  run nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION supported
-  [ "$status" -eq 0 ]
-  [ "$output" = "${TARGET_VERSION}" ]
+  local output=$(nvh NVH_TEST_DISPLAY_LATEST_RESOLVED_VERSION supported)
+  assert_equal "$output" "${TARGET_VERSION}"
 }
