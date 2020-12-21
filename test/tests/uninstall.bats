@@ -1,6 +1,8 @@
 #!/usr/bin/env bats
 
 load shared-functions
+load '../../node_modules/bats-support/load'
+load '../../node_modules/bats-assert/load'
 
 function setup() {
   unset_nvh_env
@@ -21,9 +23,8 @@ function teardown() {
   # Check we get all the files if we uninstall and rm cache.
   nvh uninstall
   nvh rm lts
-  run find "${NVH_PREFIX}" -not -type d
-  [ "${status}" -eq "0" ]
-  [ "$output" = "" ]
+  output="$(find "${NVH_PREFIX}" -not -type d)"
+  assert_equal "$output" ""
 }
 
 
@@ -37,6 +38,5 @@ function teardown() {
   nvh uninstall
   nvh rm nightly/latest
   run find "${NVH_PREFIX}" -not -type d
-  [ "${status}" -eq "0" ]
-  [ "$output" = "" ]
+  assert_equal "$output" ""
 }

@@ -1,6 +1,8 @@
 #!/usr/bin/env bats
 
 load shared-functions
+load '../../node_modules/bats-support/load'
+load '../../node_modules/bats-assert/load'
 
 function setup() {
   unset_nvh_env
@@ -8,20 +10,17 @@ function setup() {
 
 
 @test "nvh prefix" {
-  run nvh prefix
-  [ "${status}" -eq "0" ]
-  [ "$output" = "/usr/local" ]
+  output="$(nvh prefix)"
+  assert_equal "$output" "/usr/local"
 }
 
 @test "NVH_PREFIX=/xyz nvh prefix" {
-  NVH_PREFIX=/xyz run nvh prefix
-  [ "${status}" -eq "0" ]
-  [ "$output" = "/xyz" ]
+  output="$(NVH_PREFIX=/xyz nvh prefix)"
+  assert_equal "$output" "/xyz"
 }
 
 # Check strip trailing slash so get predictable format
 @test "NVH_PREFIX=/xyz/ nvh prefix" {
-  NVH_PREFIX=/xyz/ run nvh prefix
-  [ "${status}" -eq "0" ]
-  [ "$output" = "/xyz" ]
+  output="$(NVH_PREFIX=/xyz/ nvh prefix)"
+  assert_equal "$output" "/xyz"
 }
