@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased] (date goes here)
 
+### Changed
+
+- tests: update bats, and use bats-assert for better failure messages
+
 ## [9.6.0] (2020-12-12)
 
 ### Fixed
