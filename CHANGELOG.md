@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - tests: update bats, and use bats-assert for better failure messages
 
+### Fixed
+
+- fail to display error for missing `curl` and `wget` for some uses
+
 ## [9.6.0] (2020-12-12)
 
 ### Fixed
