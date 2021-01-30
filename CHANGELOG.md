@@ -7,15 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
-## [Unreleased] (date goes here)
+## [9.6.1] (2021-01-30)
 
 ### Changed
 
-- tests: update bats, and use bats-assert for better failure messages
+- tests: update bats, and use bats-assert for better unit test failure messages
 
 ### Fixed
 
-- fail to display error for missing `curl` and `wget` for some uses
+- fail to display error in some cases for missing both `curl` and `wget`
 
 ## [9.6.0] (2020-12-12)
 
@@ -387,6 +387,7 @@ Changes from [tj/n](https://github.com/tj/n) v2.1.12
 - `--arch` option
 
 [Unreleased]: https://github.com/shadowspawn/nvh/compare/master...develop
+[9.6.1]: https://github.com/shadowspawn/nvh/compare/v9.6.0...shadowspawn:v9.6.1
 [9.6.0]: https://github.com/shadowspawn/nvh/compare/v9.5.1...shadowspawn:v9.6.0
 [9.5.1]: https://github.com/shadowspawn/nvh/compare/v9.5.0...shadowspawn:v9.5.1
 [9.5.0]: https://github.com/shadowspawn/nvh/compare/v9.4.0...shadowspawn:v9.5.0
