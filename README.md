@@ -1,5 +1,7 @@
 # Node Version Helper
 
+*Project status: planning to archive this project.* See https://github.com/shadowspawn/nvh/issues/16.
+
 [![npm version](https://img.shields.io/npm/v/@shadowspawn/nvh.svg)](https://www.npmjs.com/package/@shadowspawn/nvh)
 
 Easily install Node.js versions. No profile setup required for default install location.
