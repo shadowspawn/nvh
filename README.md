@@ -1,6 +1,6 @@
 # Node Version Helper
 
-*Project status: planning to archive this project.* See https://github.com/shadowspawn/nvh/issues/16.
+**Project status: planning to archive this project.** See https://github.com/shadowspawn/nvh/issues/16.
 
 [![npm version](https://img.shields.io/npm/v/@shadowspawn/nvh.svg)](https://www.npmjs.com/package/@shadowspawn/nvh)
 
